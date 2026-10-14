@@ -59,16 +59,16 @@ Nếu chạy backend trực tiếp trên máy thay vì qua Compose, dùng ba `*_
 
 Ba Prisma schema đã khai báo URL tương ứng nhưng chưa có model nghiệp vụ; backend chạy trực tiếp trên máy cũng chưa tự nạp file `.env` ở gốc repo. Khi bắt đầu triển khai backend, hãy cấu hình cách nạp biến môi trường, kiểm tra kết nối và xác nhận database local/dev đích trước khi chạy bất kỳ migration nào.
 
-## Đẩy lên GitHub
+## Mã nguồn trên GitHub
 
-Nếu checkout của bạn chưa có remote, hãy tự tạo một repository trống trên GitHub rồi chạy từ thư mục gốc (thay `TEN_TAI_KHOAN` và `TEN_REPO` bằng giá trị của bạn):
+Repository: [anh-tus/exe_gophuquoc](https://github.com/anh-tus/exe_gophuquoc), nhánh chính `main`. Để lấy mã nguồn trên máy khác:
 
 ```powershell
-git remote add origin https://github.com/TEN_TAI_KHOAN/TEN_REPO.git
-git push -u origin main
+git clone https://github.com/anh-tus/exe_gophuquoc.git
+cd exe_gophuquoc
 ```
 
-Kiểm tra remote đã có trước khi thêm bằng `git remote -v`. Không commit `.env`, secret, cache hoặc thư mục tạm của Docker.
+Sau khi cập nhật mã nguồn, tạo commit và đẩy lên nhánh `main` theo quy trình của nhóm. File `.env`, secret, cache và dữ liệu PostgreSQL không được đưa vào Git; mỗi máy tự tạo `.env` từ `.env.example` trước khi chạy Docker Compose.
 
 ## Cấu trúc
 
