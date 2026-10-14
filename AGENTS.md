@@ -5,7 +5,6 @@
 Đây là khung codebase. Không coi placeholder là nghiệp vụ đã triển khai. Không tự thêm payment, AI planner, booking workflow hay provider integration khi chưa có yêu cầu và quyết định sản phẩm tương ứng.
 
 ## Kiến trúc
-
 - Monorepo dùng pnpm workspace và Turborepo.
 - Ứng dụng giao diện nằm trong `frontend/`; backend service nằm trong `backend/`; thư viện dùng chung nằm trong `packages/`.
 - Frontend: Zalo Mini App React/Vite; public website Next.js; operations portal React/Vite.

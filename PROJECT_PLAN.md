@@ -1,8 +1,10 @@
-# Kế hoạch dự án Phú Quốc Local Companion
+# Kế hoạch dự án GOPU — Go Phu Quoc, Go Paradise!
 
 ## Tóm tắt điều hành
 
-Phú Quốc Local Companion là nền tảng marketplace và trợ lý hành trình dành riêng cho Phú Quốc, được triển khai trên Zalo Mini App và website song ngữ. Sản phẩm kết nối khách du lịch với các nhà cung cấp địa phương đã được xác minh, đồng thời hỗ trợ khách xây dựng lịch trình, theo dõi thời tiết và điều chỉnh kế hoạch khi điều kiện thực tế thay đổi.
+GOPU là thương hiệu du lịch với Phú Quốc là điểm khởi đầu. Khẩu hiệu cho giai đoạn này là “Go Phu Quoc, Go Paradise!”. MVP là nền tảng marketplace và trợ lý hành trình dành riêng cho Phú Quốc, được triển khai trên Zalo Mini App và website song ngữ. Sản phẩm kết nối khách du lịch với các nhà cung cấp địa phương đã được xác minh, đồng thời hỗ trợ khách xây dựng lịch trình, theo dõi thời tiết và điều chỉnh kế hoạch khi điều kiện thực tế thay đổi.
+
+Định hướng dài hạn là mở rộng GOPU đến các điểm đến du lịch khác trên thế giới. Đây là định hướng thương hiệu, chưa mở rộng phạm vi vận hành hoặc kiến trúc đa điểm đến của MVP.
 
 MVP được phát triển trong 16 tuần bởi nhóm ba người. Thành công của dự án không chỉ được đo bằng khả năng chạy demo mà còn bằng nguồn cung thật, booking hoàn thành, phản hồi của người dùng và bằng chứng về khả năng tạo doanh thu. Phạm vi được khóa quanh một khu vực duy nhất để nhóm kiểm soát chất lượng dữ liệu và vận hành tốt hơn một marketplace du lịch tổng quát.
 
@@ -336,6 +338,8 @@ Một Neon PostgreSQL cluster chứa ba database riêng:
 - `booking_db`
 
 Mỗi service có credential riêng và không truy cập trực tiếp database của service khác.
+
+Môi trường Docker local dùng một PostgreSQL container với database `trip_trip` và ba schema `identity`, `supply`, `booking` để chạy starter. Mỗi service chỉ nhận URL đến schema mình sở hữu. Dữ liệu nằm trong Docker volume; cấu hình local này không thay đổi phương án database production ở trên và không tự chạy migration.
 
 ### Giao tiếp service
 
