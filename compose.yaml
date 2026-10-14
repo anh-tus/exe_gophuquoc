@@ -1,0 +1,8 @@
+services:
+  public-web:
+    build:
+      context: .
+      dockerfile: frontend/public-web/Dockerfile
+    ports:
+      - "3000:3000"
+    restart: unless-stopped

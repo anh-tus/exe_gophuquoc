@@ -1,0 +1,6 @@
+{
+  "name": "@pqlc/api-contracts",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": { "build": "node -e \"console.log('OpenAPI source package; generated artifacts are not configured yet.')\"" }
+}

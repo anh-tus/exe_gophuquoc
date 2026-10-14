@@ -1,0 +1,11 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("IDENTITY_DATABASE_URL")
+}
+
+// This service owns the `identity` schema in the shared trip_trip database.
+// TODO: Add Identity-owned models after the domain is agreed.

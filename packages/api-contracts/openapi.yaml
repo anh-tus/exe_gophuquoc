@@ -1,0 +1,28 @@
+openapi: 3.1.0
+info:
+  title: Phu Quoc Local Companion API
+  version: 0.1.0
+  description: >-
+    Contract starter only. Add service-owned endpoint specifications before
+    implementing business APIs or generating clients.
+servers:
+  - url: https://api.example.invalid/v1
+    description: Placeholder; replace per environment.
+paths: {}
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+  schemas:
+    ErrorResponse:
+      type: object
+      required: [code, message]
+      properties:
+        code:
+          type: string
+        message:
+          type: string
+        correlationId:
+          type: string

@@ -1,0 +1,11 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("BOOKING_DATABASE_URL")
+}
+
+// This service owns the `booking` schema in the shared trip_trip database.
+// TODO: Add Booking-owned models after the domain is agreed.

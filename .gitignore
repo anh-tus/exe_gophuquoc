@@ -1,0 +1,17 @@
+node_modules/
+.pnpm-store/
+.docker-cli-local/
+.turbo/
+.next/
+dist/
+coverage/
+*.log
+*.tsbuildinfo
+~$*
+.env
+.env.*
+!.env.example
+backend/*/prisma/*.db
+backend/*/prisma/*.db-journal
+.DS_Store
+Thumbs.db

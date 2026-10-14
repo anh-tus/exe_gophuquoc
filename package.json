@@ -1,0 +1,19 @@
+{
+  "name": "phu-quoc-local-companion",
+  "private": true,
+  "packageManager": "pnpm@9.15.9",
+  "scripts": {
+    "dev": "turbo dev --continue",
+    "dev:zalo": "pnpm --filter @pqlc/zalo-mini dev",
+    "dev:web": "pnpm --filter @pqlc/public-web dev",
+    "dev:portal": "pnpm --filter @pqlc/operations-portal dev",
+    "dev:services": "turbo dev --filter=@pqlc/identity-service --filter=@pqlc/supply-service --filter=@pqlc/booking-service --parallel",
+    "build": "turbo build",
+    "typecheck": "turbo typecheck",
+    "prisma:validate": "pnpm --filter @pqlc/identity-service prisma:validate && pnpm --filter @pqlc/supply-service prisma:validate && pnpm --filter @pqlc/booking-service prisma:validate"
+  },
+  "devDependencies": {
+    "turbo": "^2.5.6",
+    "typescript": "~5.8.3"
+  }
+}

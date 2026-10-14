@@ -1,0 +1,11 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("SUPPLY_DATABASE_URL")
+}
+
+// This service owns the `supply` schema in the shared trip_trip database.
+// TODO: Add Supply-owned models after the domain is agreed.
