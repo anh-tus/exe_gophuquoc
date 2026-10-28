@@ -6,6 +6,7 @@
     "build": "nest build",
     "dev": "nest start --watch",
     "start": "node dist/main.js",
+    "test": "node --test test/*.test.cjs",
     "typecheck": "tsc --noEmit",
     "prisma:validate": "prisma validate --schema prisma/schema.prisma",
     "prisma:generate": "prisma generate --schema prisma/schema.prisma"
@@ -14,6 +15,7 @@
     "@nestjs/common": "^11.0.11",
     "@nestjs/core": "^11.0.11",
     "@nestjs/platform-express": "^11.0.11",
+    "@prisma/client": "^6.16.1",
     "reflect-metadata": "^0.2.2",
     "rxjs": "^7.8.2"
   },

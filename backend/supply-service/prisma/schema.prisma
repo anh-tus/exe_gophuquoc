@@ -1,11 +1,109 @@
 generator client {
   provider = "prisma-client-js"
+  output   = "../generated/client"
 }
 
 datasource db {
   provider = "postgresql"
   url      = env("SUPPLY_DATABASE_URL")
+  schemas  = ["supply"]
 }
 
-// This service owns the `supply` schema in the shared trip_trip database.
-// TODO: Add Supply-owned models after the domain is agreed.
+enum ServiceCategory {
+  STAY
+  TOUR
+  TRANSPORT
+  SPA
+  LAUNDRY
+  @@schema("supply")
+}
+enum ListingStatus {
+  DRAFT
+  PUBLISHED
+  ARCHIVED
+  @@schema("supply")
+}
+enum HoldStatus {
+  ACTIVE
+  CONFIRMED
+  RELEASED
+  EXPIRED
+  @@schema("supply")
+}
+
+model Listing {
+  id String @id @default(cuid())
+  category ServiceCategory
+  status ListingStatus @default(DRAFT)
+  titleVi String
+  titleEn String
+  descriptionVi String @default("")
+  descriptionEn String @default("")
+  area String
+  latitude Float?
+  longitude Float?
+  imageUrl String?
+  partnerRef String?
+  publishedAt DateTime?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  offerings Offering[]
+  @@index([status, category, area])
+  @@schema("supply")
+}
+
+model Offering {
+  id String @id @default(cuid())
+  listingId String
+  listing Listing @relation(fields: [listingId], references: [id])
+  titleVi String
+  titleEn String
+  unitPriceVnd Int
+  capacity Int
+  minGuests Int @default(1)
+  maxGuests Int
+  durationMinutes Int?
+  cancellation String @default("FLEXIBLE")
+  active Boolean @default(true)
+  slots InventorySlot[]
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  @@index([listingId, active])
+  @@schema("supply")
+}
+
+model InventorySlot {
+  id String @id @default(cuid())
+  offeringId String
+  offering Offering @relation(fields: [offeringId], references: [id])
+  dateTime DateTime
+  capacity Int
+  blocked Boolean @default(false)
+  holds InventoryHold[]
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  @@unique([offeringId, dateTime])
+  @@schema("supply")
+}
+
+model InventoryHold {
+  id String @id @default(cuid())
+  slotId String
+  slot InventorySlot @relation(fields: [slotId], references: [id])
+  bookingId String?
+  idempotencyKey String @unique
+  requestHash String
+  quantity Int
+  unitPriceVnd Int
+  category ServiceCategory
+  cancellationPolicy String
+  partnerRef String?
+  status HoldStatus @default(ACTIVE)
+  expiresAt DateTime
+  extendedAt DateTime?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  @@index([slotId, status, expiresAt])
+  @@index([bookingId])
+  @@schema("supply")
+}

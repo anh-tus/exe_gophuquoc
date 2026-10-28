@@ -1,5 +1,6 @@
 generator client {
   provider = "prisma-client-js"
+  output   = "../generated/client"
 }
 
 datasource db {
@@ -7,5 +8,23 @@ datasource db {
   url      = env("IDENTITY_DATABASE_URL")
 }
 
-// This service owns the `identity` schema in the shared trip_trip database.
-// TODO: Add Identity-owned models after the domain is agreed.
+model Customer {
+  id              String             @id @default(uuid()) @db.Uuid
+  displayName     String?            @db.VarChar(80)
+  preferredLocale String             @default("vi") @db.VarChar(2)
+  createdAt       DateTime           @default(now())
+  updatedAt       DateTime           @updatedAt
+  identities      ExternalIdentity[]
+}
+
+model ExternalIdentity {
+  id         String   @id @default(uuid()) @db.Uuid
+  customerId String   @db.Uuid
+  provider   String   @db.VarChar(32)
+  subject    String   @db.VarChar(128)
+  createdAt  DateTime @default(now())
+  customer   Customer @relation(fields: [customerId], references: [id], onDelete: Cascade)
+
+  @@unique([provider, subject])
+  @@index([customerId])
+}

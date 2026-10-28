@@ -8,9 +8,13 @@
     "start": "node dist/main.js",
     "typecheck": "tsc --noEmit",
     "prisma:validate": "prisma validate --schema prisma/schema.prisma",
-    "prisma:generate": "prisma generate --schema prisma/schema.prisma"
+    "prisma:generate": "prisma generate --schema prisma/schema.prisma",
+    "test": "pnpm build && node --experimental-strip-types --test src/profile-input.test.mts test/auth.test.cjs"
   },
   "dependencies": {
+    "@prisma/client": "^6.16.1",
+    "firebase-admin": "^13.5.0",
+    "jsonwebtoken": "^9.0.2",
     "@nestjs/common": "^11.0.11",
     "@nestjs/core": "^11.0.11",
     "@nestjs/platform-express": "^11.0.11",
@@ -18,6 +22,7 @@
     "rxjs": "^7.8.2"
   },
   "devDependencies": {
+    "@types/jsonwebtoken": "^9.0.10",
     "@nestjs/cli": "^11.0.7",
     "@nestjs/schematics": "^11.0.5",
     "@nestjs/testing": "^11.0.11",

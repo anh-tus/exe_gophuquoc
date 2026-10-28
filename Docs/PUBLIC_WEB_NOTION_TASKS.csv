@@ -1,0 +1,29 @@
+﻿Tên việc,Mã,Nhóm,Giai đoạn,Ưu tiên,Trạng thái,Phụ thuộc,Tiêu chí hoàn thành
+Chốt mục tiêu và phạm vi public web,WEB-01,Product,Khởi động,P0,Chưa bắt đầu,,Trang đích và các luồng trong đợt đầu được nhóm duyệt; việc ngoài phạm vi được ghi rõ
+Xác định persona và hành trình khách Việt/khách quốc tế,WEB-02,Product,Khởi động,P0,Chưa bắt đầu,WEB-01,Liệt kê nhu cầu trước chuyến đi và khi đang ở Phú Quốc cho cả hai nhóm khách
+Chốt sitemap và cấu trúc URL song ngữ,WEB-03,UX,Khởi động,P0,Chưa bắt đầu,WEB-01; WEB-02,Sitemap có trang chủ; danh mục; danh sách; chi tiết; FAQ/liên hệ và quy tắc URL vi/en
+Kiểm kê nội dung và ảnh được phép dùng,WEB-04,Content,Khởi động,P0,Chưa bắt đầu,WEB-03,Có danh sách nội dung vi/en; nguồn ảnh; chủ sở hữu và trạng thái duyệt
+Thiết kế wireframe responsive cho luồng khám phá,WEB-05,UX,Thiết kế,P0,Chưa bắt đầu,WEB-03,Wireframe mobile và desktop cho trang chủ; danh sách; bộ lọc; chi tiết; trạng thái rỗng/lỗi
+Chốt hệ thống giao diện và prototype,WEB-06,UX,Thiết kế,P0,Chưa bắt đầu,WEB-05,Typography; màu; spacing; component; prototype và tiêu chí accessibility được duyệt
+Thiết kế nội dung trang chủ song ngữ,WEB-07,Content,Thiết kế,P0,Chưa bắt đầu,WEB-04,Thông điệp; CTA; năm danh mục và nội dung vi/en được biên tập
+Dựng layout; header; footer; navigation responsive,WEB-08,Frontend,Nền tảng,P0,Chưa bắt đầu,WEB-06,Hoạt động trên mobile/desktop; điều hướng bàn phím và menu không che nội dung
+Thiết lập chuyển ngôn ngữ Việt–Anh,WEB-09,Frontend,Nền tảng,P0,Chưa bắt đầu,WEB-03; WEB-04,Đường dẫn và nội dung đúng ngôn ngữ; giữ ngữ cảnh trang khi chuyển
+Triển khai trang chủ,WEB-10,Frontend,Nền tảng,P0,Chưa bắt đầu,WEB-07; WEB-08,Hiển thị thương hiệu; năm danh mục; CTA khám phá và nội dung thật đã duyệt
+Chốt contract dữ liệu listing và cách hiển thị,WEB-11,API/Product,Khám phá,P0,Chưa bắt đầu,WEB-03,OpenAPI /v1 xác định listing; bản dịch; giá; khu vực; ảnh; trạng thái và phân trang; có ghi chú tương thích client
+Dựng trang danh mục và danh sách dịch vụ,WEB-12,Frontend,Khám phá,P0,Chưa bắt đầu,WEB-06; WEB-11,Khách duyệt được năm danh mục; có loading; empty; error; dữ liệu giả được gắn nhãn khi chưa có API
+Triển khai tìm kiếm và bộ lọc cơ bản,WEB-13,Frontend,Khám phá,P1,Chưa bắt đầu,WEB-11; WEB-12,Lọc theo khu vực; ngày; giá; số người theo dữ liệu API hỗ trợ; reset bộ lọc được
+Triển khai trang chi tiết listing song ngữ,WEB-14,Frontend,Khám phá,P0,Chưa bắt đầu,WEB-11; WEB-12,Có ảnh; mô tả; giá VND; khu vực; chính sách; CTA phù hợp trạng thái listing
+Hiển thị phụ phí vùng và giá USD tham khảo,WEB-15,Frontend,Khám phá,P1,Chưa bắt đầu,WEB-11; WEB-14,Giá VND là nguồn chính; phụ phí và tỷ giá tham khảo có nhãn rõ ràng
+Xác định bản đồ và điểm địa lý listing,WEB-16,Product/API,Khám phá,P1,Chưa bắt đầu,WEB-11,Có quyết định về provider; tọa độ; quyền riêng tư; chi phí và trạng thái lỗi
+Tích hợp bản đồ trên danh sách/chi tiết,WEB-17,Frontend,Khám phá,P1,Chưa bắt đầu,WEB-16; WEB-12,Marker khớp listing; có fallback khi bản đồ không tải
+Chốt luồng concierge request,WEB-18,Product/API,Hỗ trợ,P1,Chưa bắt đầu,WEB-01,Trường thông tin tối thiểu; kênh tiếp nhận; giờ hỗ trợ và SLA được duyệt; OpenAPI cập nhật
+Triển khai form concierge,WEB-19,Frontend,Hỗ trợ,P1,Chưa bắt đầu,WEB-18,Form xác thực; gửi một lần; thông báo thành công/lỗi; không log PII
+Soạn FAQ; liên hệ; chính sách cần công bố,WEB-20,Content,Hỗ trợ,P1,Chưa bắt đầu,WEB-04,Nội dung vi/en được duyệt; liên kết hoạt động; chính sách phù hợp luồng đã triển khai
+Thiết lập SEO; metadata và chia sẻ trang,WEB-21,Frontend,Hoàn thiện,P1,Chưa bắt đầu,WEB-09; WEB-10; WEB-14,Title/description; canonical/hreflang; OG; sitemap phù hợp URL thực tế
+Thiết lập sự kiện analytics không chứa PII,WEB-22,Frontend,Hoàn thiện,P2,Chưa bắt đầu,WEB-01,Sự kiện xem danh mục; xem listing; tìm kiếm; CTA được định nghĩa và kiểm tra payload
+Kiểm thử accessibility; responsive và hiệu năng,WEB-23,QA,Hoàn thiện,P0,Chưa bắt đầu,WEB-10; WEB-12; WEB-14,Luồng chính dùng được bằng bàn phím; mobile/desktop; ảnh tối ưu; không lỗi nghiêm trọng
+Kiểm thử song ngữ và các trạng thái dữ liệu,WEB-24,QA,Hoàn thiện,P0,Chưa bắt đầu,WEB-09; WEB-12; WEB-14,Nội dung vi/en đầy đủ; loading/empty/error; listing thiếu dữ liệu được xử lý rõ
+Kiểm tra build và phát hành bản preview,WEB-25,DevOps,Hoàn thiện,P0,Chưa bắt đầu,WEB-23; WEB-24,Typecheck/build thành công; preview hoạt động; nhóm duyệt trước khi phát hành công khai
+Đặc tả luồng đăng nhập/booking web,WEB-26,Product/API,Sau đợt đầu,P2,Chưa bắt đầu,WEB-11,State machine; identity; inventory hold; lỗi và chính sách được duyệt trước khi code
+Đặc tả payment và legal gate,WEB-27,Product/Legal,Sau đợt đầu,P2,Chưa bắt đầu,WEB-26,Merchant; chính sách; idempotency; audit và phương án pay-at-provider được xác nhận
+Đánh giá weather widget và template planner,WEB-28,Product,Sau đợt đầu,P2,Chưa bắt đầu,WEB-25,Nguồn dữ liệu; nội dung mẫu; fallback và phạm vi UI được chốt trước triển khai

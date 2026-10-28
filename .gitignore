@@ -13,5 +13,6 @@ coverage/
 !.env.example
 backend/*/prisma/*.db
 backend/*/prisma/*.db-journal
+backend/*/generated/
 .DS_Store
 Thumbs.db

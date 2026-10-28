@@ -1,14 +1,168 @@
 openapi: 3.1.0
 info:
   title: Phu Quoc Local Companion API
-  version: 0.1.0
-  description: >-
-    Contract starter only. Add service-owned endpoint specifications before
-    implementing business APIs or generating clients.
+  version: 0.2.0
+  description: Customer pilot contract. Sandbox payments and partner direct payment only until the legal gate is approved.
 servers:
   - url: https://api.example.invalid/v1
     description: Placeholder; replace per environment.
-paths: {}
+paths:
+  /auth/session:
+    post:
+      summary: Exchange a Firebase ID token for a customer session
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [idToken]
+              properties:
+                idToken: { type: string }
+      responses:
+        '201': { description: Identity JWT and customer profile }
+        '401': { description: Invalid Firebase token }
+  /auth/me:
+    get:
+      security: [{ bearerAuth: [] }]
+      summary: Get current customer profile
+      responses:
+        '200': { description: Customer profile }
+    patch:
+      security: [{ bearerAuth: [] }]
+      summary: Update current customer profile
+      responses:
+        '200': { description: Updated customer profile }
+  /listings:
+    get:
+      summary: Search published listings in five categories
+      parameters:
+        - { in: query, name: category, schema: { type: string, enum: [STAY, TOUR, TRANSPORT, SPA, LAUNDRY] } }
+        - { in: query, name: query, schema: { type: string } }
+        - { in: query, name: area, schema: { type: string } }
+        - { in: query, name: date, schema: { type: string, format: date } }
+        - { in: query, name: minPriceVnd, schema: { type: integer } }
+        - { in: query, name: maxPriceVnd, schema: { type: integer } }
+        - { in: query, name: guests, schema: { type: integer } }
+      responses:
+        '200': { description: Published listings with VI/EN content, VND price and coordinates }
+  /listings/{id}:
+    get:
+      summary: Read a listing and its offerings
+      parameters:
+        - { in: path, name: id, required: true, schema: { type: string } }
+      responses:
+        '200': { description: Published listing }
+        '404': { description: Not found }
+  /holds:
+    post:
+      summary: Internal atomic 15-minute inventory hold
+      parameters:
+        - { in: header, name: X-Service-Key, required: true, schema: { type: string } }
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [offeringId, dateTime, quantity, idempotencyKey]
+              properties:
+                offeringId: { type: string }
+                dateTime: { type: string, format: date-time }
+                quantity: { type: integer, minimum: 1 }
+                idempotencyKey: { type: string }
+      responses:
+        '201': { description: Hold, price snapshot and cancellation policy }
+        '409': { description: Capacity unavailable }
+  /holds/{id}/confirm:
+    post:
+      summary: Internal hold confirmation
+      parameters:
+        - { in: path, name: id, required: true, schema: { type: string } }
+      responses:
+        '201': { description: Confirmed hold }
+  /holds/{id}/release:
+    post:
+      summary: Internal idempotent hold release
+      parameters:
+        - { in: path, name: id, required: true, schema: { type: string } }
+      responses:
+        '201': { description: Released hold }
+  /bookings:
+    get:
+      security: [{ bearerAuth: [] }]
+      summary: List own bookings
+      responses:
+        '200': { description: Bookings }
+  /bookings/instant:
+    post:
+      security: [{ bearerAuth: [] }]
+      summary: Create an instant booking with a 15-minute hold
+      parameters:
+        - { in: header, name: Idempotency-Key, required: true, schema: { type: string } }
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [offeringId, startsAt, quantity]
+              properties:
+                offeringId: { type: string }
+                startsAt: { type: string, format: date-time }
+                quantity: { type: integer, minimum: 1 }
+      responses:
+        '201': { description: Booking awaiting sandbox deposit or partner direct payment }
+        '409': { description: Inventory unavailable }
+  /bookings/requests:
+    post:
+      security: [{ bearerAuth: [] }]
+      summary: Create concierge/request booking
+      parameters:
+        - { in: header, name: Idempotency-Key, required: true, schema: { type: string } }
+      responses:
+        '201': { description: Request pending partner response }
+  /bookings/{id}:
+    get:
+      security: [{ bearerAuth: [] }]
+      summary: Get own booking
+      parameters:
+        - { in: path, name: id, required: true, schema: { type: string } }
+      responses:
+        '200': { description: Booking details }
+  /bookings/{id}/cancel:
+    post:
+      security: [{ bearerAuth: [] }]
+      summary: Cancel own booking and calculate estimated refund eligibility
+      parameters:
+        - { in: path, name: id, required: true, schema: { type: string } }
+      responses:
+        '201': { description: Cancellation; refund not automatically initiated }
+  /bookings/{id}/reviews:
+    post:
+      security: [{ bearerAuth: [] }]
+      summary: Review a completed booking
+      parameters:
+        - { in: path, name: id, required: true, schema: { type: string } }
+      responses:
+        '201': { description: Review created }
+        '409': { description: Booking not completed or already reviewed }
+  /bookings/{id}/sandbox-payment:
+    post:
+      security: [{ bearerAuth: [] }]
+      summary: Start SEPay sandbox checkout when configured
+      parameters:
+        - { in: path, name: id, required: true, schema: { type: string } }
+      responses:
+        '503': { description: Sandbox adapter or merchant config unavailable }
+  /bookings/{id}/payment-proof:
+    post:
+      security: [{ bearerAuth: [] }]
+      summary: Request a private proof upload when configured
+      parameters:
+        - { in: path, name: id, required: true, schema: { type: string } }
+      responses:
+        '503': { description: Private storage unavailable }
 components:
   securitySchemes:
     bearerAuth:

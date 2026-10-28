@@ -2,7 +2,9 @@
 
 Monorepo cho đồ án EXE. **GOPU** lấy Phú Quốc làm điểm khởi đầu; định hướng dài hạn là mở rộng thương hiệu đến những điểm đến du lịch khác. MVP hiện tại vẫn chỉ phục vụ Phú Quốc. Logo gốc nằm tại `frontend/public-web/public/brand/gopu-logo.png`.
 
-Nhóm ưu tiên phát triển `frontend/public-web` trước. Docker Compose có thể khởi động public web, ba backend starter và PostgreSQL cùng lúc; **chưa triển khai nghiệp vụ marketplace/booking, thanh toán, AI hay tích hợp nhà cung cấp**.
+Nhóm ưu tiên phát triển `frontend/public-web` trước. Public web hiện có demo customer song ngữ gồm trang chủ, danh sách dịch vụ, yêu cầu demo và lịch trình mẫu. Giá, dịch vụ, yêu cầu và lịch trình đều là dữ liệu minh họa lưu trong trình duyệt; không có đặt chỗ, giữ tồn, thanh toán hoặc AI thật. Bản đồ OpenStreetMap và dự báo Open-Meteo dùng dữ liệu trực tiếp, kèm nguồn và trạng thái lỗi. Hai ảnh đảo được tạo riêng cho demo và chỉ mang tính minh họa. Quy tắc thiết kế nằm tại `frontend/public-web/DESIGN.md`.
+
+Docker Compose có thể khởi động public web, ba backend starter và PostgreSQL cùng lúc; **chưa triển khai nghiệp vụ marketplace/booking, thanh toán, AI hay tích hợp nhà cung cấp**.
 
 ## Yêu cầu
 

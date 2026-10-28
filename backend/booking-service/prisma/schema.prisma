@@ -1,5 +1,6 @@
 generator client {
   provider = "prisma-client-js"
+  output   = "../generated/client"
 }
 
 datasource db {
@@ -7,5 +8,125 @@ datasource db {
   url      = env("BOOKING_DATABASE_URL")
 }
 
-// This service owns the `booking` schema in the shared trip_trip database.
-// TODO: Add Booking-owned models after the domain is agreed.
+enum BookingStatus {
+  AWAITING_DEPOSIT
+  PAYMENT_SUBMITTED
+  CONFIRMED
+  EXPIRED
+  PENDING_PARTNER
+  ESCALATED
+  CANCELLED
+  SERVICE_DELIVERED
+  COMPLETED
+}
+
+enum BookingKind {
+  INSTANT
+  REQUEST
+}
+
+model Booking {
+  id              String        @id @default(uuid())
+  customerId      String
+  idempotencyKey  String
+  requestHash     String
+  kind            BookingKind
+  status          BookingStatus
+  offeringId      String?
+  holdId          String?
+  startsAt        DateTime?
+  quantity        Int           @default(1)
+  totalPriceVnd   Int?
+  depositVnd      Int?
+  holdExpiresAt   DateTime?
+  partnerDeadline DateTime?
+  adminDeadline   DateTime?
+  category        String?
+  cancellationPolicy String?
+  couponCode      String?
+  cancelledAt     DateTime?
+  deliveredAt     DateTime?
+  completedAt     DateTime?
+  createdAt       DateTime      @default(now())
+  updatedAt       DateTime      @updatedAt
+  audits          BookingAudit[]
+  review          Review?
+
+  @@unique([customerId, idempotencyKey])
+  @@index([customerId, createdAt])
+  @@index([status, holdExpiresAt])
+}
+
+model BookingAudit {
+  id          String   @id @default(uuid())
+  bookingId   String
+  booking     Booking  @relation(fields: [bookingId], references: [id])
+  actorId     String
+  action      String
+  fromStatus  String?
+  toStatus    String
+  createdAt   DateTime @default(now())
+}
+
+model OutboxEvent {
+  id          String    @id @default(uuid())
+  aggregateId String
+  type        String
+  payload     Json
+  createdAt   DateTime  @default(now())
+  deliveredAt DateTime?
+  attempts    Int       @default(0)
+  @@index([deliveredAt, createdAt])
+}
+
+model PaymentEvent {
+  id              String   @id @default(uuid())
+  provider        String
+  providerEventId String
+  bookingId       String
+  amountVnd       Int
+  createdAt       DateTime @default(now())
+  @@unique([provider, providerEventId])
+}
+
+model ConciergeRequest {
+  id         String   @id @default(uuid())
+  customerId String
+  message    String
+  status     String   @default("OPEN")
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+  @@index([customerId, createdAt])
+}
+
+model Review {
+  id         String   @id @default(uuid())
+  bookingId  String   @unique
+  booking    Booking  @relation(fields: [bookingId], references: [id])
+  customerId String
+  rating     Int
+  comment    String
+  createdAt  DateTime @default(now())
+}
+
+model Coupon {
+  code             String   @id
+  partnerId        String
+  kind             String
+  value            Int
+  validFrom        DateTime
+  validUntil       DateTime
+  minSubtotalVnd   Int      @default(0)
+  quota            Int
+  used             Int      @default(0)
+  perCustomerLimit Int      @default(1)
+}
+
+model CouponRedemption {
+  id         String   @id @default(uuid())
+  couponCode String
+  customerId String
+  bookingId  String   @unique
+  createdAt  DateTime @default(now())
+  @@index([couponCode, customerId])
+}
