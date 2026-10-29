@@ -9,6 +9,7 @@ type Props = {
   lang: Lang;
   initialPrompt?: string;
   onInitialPromptConsumed: () => void;
+  onConversationStarted: () => void;
   onPlan: (reply: Extract<AssistantReply, { kind: 'itinerary' }>) => void;
   onSearch: (reply: Extract<AssistantReply, { kind: 'service_search' }>) => void;
   onUseTemplate: (text: string, preferences: TripPreferences) => void;
@@ -61,7 +62,7 @@ const words = {
   },
 };
 
-export default function AssistantChat({ lang, initialPrompt, onInitialPromptConsumed, onPlan, onSearch, onUseTemplate }: Props) {
+export default function AssistantChat({ lang, initialPrompt, onInitialPromptConsumed, onConversationStarted, onPlan, onSearch, onUseTemplate }: Props) {
   const t = words[lang];
   const [messages, setMessages] = useState<ChatMessage[]>([]);
   const [input, setInput] = useState('');
@@ -110,6 +111,7 @@ export default function AssistantChat({ lang, initialPrompt, onInitialPromptCons
   const submit = (text: string) => {
     const trimmed = text.trim();
     if (!trimmed || loading) return;
+    onConversationStarted();
     setInput('');
     const next = [...messages, { role: 'user' as const, text: trimmed }];
     if (!consented) {

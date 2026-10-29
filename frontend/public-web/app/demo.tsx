@@ -62,7 +62,7 @@ export default function Demo() {
     if (params.get('lang') === 'en') setLang('en');
     const rawTrip = params.get('trip');
     if (rawTrip) { try { const parsed = safeTrip(JSON.parse(rawTrip)); if (parsed) { setTrip(parsed); setDays(parsed.days); setInterest(parsed.interest); setBudget(parsed.budget); setView('itinerary'); } } catch { /* malformed URL uses saved/default trip */ } }
-    else setTrip(safeTrip(readJson('gopu-demo-trip', null)));
+    else setTrip(null);
     setRequests(readJson<Request[]>('gopu-demo-requests', []).filter(r => r && typeof r.code === 'string' && services.some(s => s.id === r.serviceId)));
     const onPop = () => { const p = new URLSearchParams(location.search); setView((['home', 'services', 'itinerary', 'requests'].includes(p.get('view') || '') ? p.get('view') : 'home') as View); setLang(p.get('lang') === 'en' ? 'en' : 'vi'); };
     window.addEventListener('popstate', onPop);

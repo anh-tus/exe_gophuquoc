@@ -46,6 +46,7 @@ const copy = {
 
 export default function AssistantWorkspace(props: Props) {
   const [searchResults, setSearchResults] = useState<Extract<AssistantReply, { kind: 'service_search' }> | null>(null);
+  const [chatStarted, setChatStarted] = useState(false);
   const t = copy[props.lang];
   const name = (service: Service) => props.lang === 'vi' ? service.vi : service.en;
   const description = (service: Service) => props.lang === 'vi' ? service.descriptionVi : service.descriptionEn;
@@ -70,7 +71,7 @@ export default function AssistantWorkspace(props: Props) {
 
   return <div className="assistant-workspace">
     <div className="assistant-workspace-chat">
-      <AssistantChat lang={props.lang} initialPrompt={props.initialPrompt} onInitialPromptConsumed={props.onInitialPromptConsumed} onPlan={acceptPlan} onSearch={setSearchResults} onUseTemplate={props.onUseTemplate} />
+      <AssistantChat lang={props.lang} initialPrompt={props.initialPrompt} onInitialPromptConsumed={props.onInitialPromptConsumed} onConversationStarted={() => setChatStarted(true)} onPlan={acceptPlan} onSearch={setSearchResults} onUseTemplate={props.onUseTemplate} />
     </div>
 
     <section className="assistant-plan-panel" aria-labelledby="assistant-plan-heading">
@@ -79,7 +80,7 @@ export default function AssistantWorkspace(props: Props) {
         {!searchResults && props.trip && <div className="assistant-plan-total"><span>{t.estimated}</span><strong>{new Intl.NumberFormat(props.lang === 'vi' ? 'vi-VN' : 'en-US', { style: 'currency', currency: 'VND', maximumFractionDigits: 0 }).format(total)}</strong></div>}
       </header>
 
-      {!searchResults && <div className="assistant-plan-controls">
+      {!searchResults && (chatStarted || props.trip) && <div className="assistant-plan-controls">
         <label>{props.lang === 'vi' ? 'Số ngày' : 'Days'}<select value={props.days} onChange={(event) => props.onDaysChange(Number(event.target.value))}>{[1, 2, 3, 4, 5].map((day) => <option key={day} value={day}>{day}</option>)}</select></label>
         <label>{props.lang === 'vi' ? 'Số khách' : 'Guests'}<select value={props.guests} onChange={(event) => props.onGuestsChange(Number(event.target.value))}>{![1, 2, 3, 4, 5, 6, 8, 10].includes(props.guests) && <option value={props.guests}>{props.guests}</option>}{[1, 2, 3, 4, 5, 6, 8, 10].map((count) => <option key={count} value={count}>{count}</option>)}</select></label>
         <label>{props.lang === 'vi' ? 'Sở thích' : 'Interests'}<select value={props.interest} onChange={(event) => props.onInterestChange(event.target.value)}><option value="mixed">{props.lang === 'vi' ? 'Khám phá tổng hợp' : 'A bit of everything'}</option><option value="beach">{props.lang === 'vi' ? 'Biển & đảo' : 'Sea & islands'}</option><option value="calm">{props.lang === 'vi' ? 'Nghỉ dưỡng' : 'Rest & wellness'}</option></select></label>
@@ -118,7 +119,7 @@ export default function AssistantWorkspace(props: Props) {
           <button className="button outline" onClick={props.onShare}>{props.lang === 'vi' ? 'Sao chép liên kết' : 'Copy link'}</button>
           <span role="status">{props.tripMessage}</span>
         </div>
-      </> : <div className="assistant-plan-empty"><span aria-hidden="true">✦</span><p>{t.empty}</p></div>}
+      </> : chatStarted ? <div className="assistant-plan-empty"><span aria-hidden="true">✦</span><p>{t.empty}</p></div> : null}
     </section>
   </div>;
 }
