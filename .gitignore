@@ -3,6 +3,7 @@ node_modules/
 .docker-cli-local/
 .turbo/
 .next/
+.next-dev/
 dist/
 coverage/
 *.log
