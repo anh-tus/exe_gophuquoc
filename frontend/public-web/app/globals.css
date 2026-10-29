@@ -13,7 +13,6 @@
 @media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}.button,.feature-card{transition:none}}
 
 /* Brand refresh: the symbol is cropped from the supplied square GOPU logo. */
-.pilot-link{display:flex;justify-content:space-between;gap:12px;padding:8px max(16px,calc((100vw - 1200px)/2));background:#073f47;color:#d4f9f1;font-size:12px;font-weight:700}.pilot-link a{color:white;text-decoration:underline;text-underline-offset:3px}
 body{font-family:var(--font-be-vietnam-pro),Arial,sans-serif;letter-spacing:-.015em}
 .site-header{box-shadow:0 1px 12px rgb(17 59 66 / .05)}
 .nav-shell{min-height:72px;gap:20px}
@@ -65,3 +64,9 @@ body{font-family:var(--font-be-vietnam-pro),Arial,sans-serif;letter-spacing:-.01
   .planner-controls>.button{order:4;grid-column:1/-1}
   .filter-bar select,.planner-controls select{padding-inline:8px;font-size:13px}
 }
+
+.service-map-select[aria-pressed=true]{border-color:var(--teal);color:var(--teal);background:#e6f6f2}.service-card:focus-within{border-color:var(--teal)}
+
+.service-card.map-selected{border-color:var(--teal);box-shadow:0 0 0 2px #078b7f22,0 8px 24px #123d3d12}.service-card[tabindex]:focus-visible{outline:2px solid var(--teal);outline-offset:3px;cursor:pointer}.service-card{cursor:pointer}
+
+.modal-map{margin:16px 0 4px}.modal-map h3{font-size:15px;margin:0 0 8px}.modal-map iframe{display:block;width:100%;height:220px;border:0;border-radius:10px;background:#e4f0ee}.modal-map a{display:inline-block;margin-top:6px;font-size:12px}.modal{width:min(100%,560px)}@media(max-width:520px){.modal-backdrop{padding:10px}.modal{padding:18px;max-height:calc(100dvh - 20px)}.modal-map iframe{height:190px}}
