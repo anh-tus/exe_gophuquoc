@@ -20,10 +20,10 @@ export default function HeaderSection({
 
   const navItems = [
     { id: 'home', labelVi: 'Trang chủ', labelEn: 'Home' },
-    { id: 'itinerary', labelVi: 'Kế hoạch hành trình', labelEn: 'AI Itinerary' },
-    { id: 'services', labelVi: 'Dịch vụ đảo', labelEn: 'Island Services' },
-    { id: 'price-table', labelVi: 'Bản tra giá chuẩn', labelEn: 'Price Standard' },
-    { id: 'weather', labelVi: 'Cảnh báo biển & thời tiết', labelEn: 'Marine & Weather' },
+    { id: 'services', labelVi: 'Dịch vụ & đánh giá', labelEn: 'Services & Reviews' },
+    { id: 'itinerary', labelVi: 'Lập kế hoạch GOPU AI', labelEn: 'GOPU AI Planner', hasSparkle: true },
+    { id: 'requests', labelVi: 'Yêu cầu mẫu', labelEn: 'Sample Requests' },
+    { id: 'price-table', labelVi: 'Bảng giá', labelEn: 'Price Standard' },
   ];
 
   return (
@@ -34,30 +34,29 @@ export default function HeaderSection({
           <div className="flex items-center gap-2 overflow-hidden text-ellipsis whitespace-nowrap">
             <span className="inline-block w-2 h-2 rounded-full bg-emerald-400 animate-pulse flex-shrink-0" />
             <span className="text-emerald-300 font-semibold uppercase text-[11px] tracking-wider">
-              {lang === 'vi' ? 'Thông báo du lịch:' : 'Travel Notice:'}
+              {lang === 'vi' ? 'GOPU Phú Quốc:' : 'GOPU Phu Quoc:'}
             </span>
             <span className="text-gray-200">
               {lang === 'vi'
-                ? 'Thời tiết Phú Quốc hôm nay rất đẹp, biển êm, các tuyến cano Nam Đảo hoạt động an toàn.'
-                : 'Phu Quoc weather today is clear with calm seas; all South Island boat tours operate normally.'}
+                ? 'Khám phá dịch vụ và lên lịch trình từ danh mục minh họa; kiểm tra thời tiết và hoạt động trước chuyến đi.'
+                : 'Explore sample services and plan your trip; check weather and activity conditions before travelling.'}
             </span>
           </div>
 
-          <div className="hidden sm:flex items-center gap-4 text-[11px] text-gray-300 flex-shrink-0">
-            <span>{lang === 'vi' ? 'Trạm An Thới: Sóng 0.4m' : 'An Thoi: Wave 0.4m'}</span>
-            <span className="text-emerald-400 font-medium">{lang === 'vi' ? '● Tàu chạy 100%' : '● 100% Operational'}</span>
+          <div className="hidden xl:flex items-center gap-4 text-[11px] text-gray-300 flex-shrink-0">
+            <span>{lang === 'vi' ? 'Dữ liệu dịch vụ minh họa' : 'Illustrative service data'}</span>
           </div>
         </div>
       </div>
 
       {/* 2. Main Navigation Bar */}
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-20 flex items-center justify-between gap-6">
-        {/* Brand Logo */}
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 min-h-16 flex items-center justify-between gap-4">
+        {/* Brand Logo & Sub-tag */}
         <button
           onClick={() => onSelectTab('home')}
-          className="flex items-center gap-3 text-left focus:outline-none group"
+          className="flex items-center gap-2 text-left focus:outline-none group shrink-0"
         >
-          <div className="relative w-12 h-12 rounded-xl overflow-hidden shadow-sm border border-emerald-100 flex-shrink-0">
+          <div className="relative w-11 h-11 rounded-xl overflow-hidden shadow-sm border border-emerald-100 flex-shrink-0">
             <Image
               src="/brand/gopu-logo.png"
               alt="GOPU Logo"
@@ -72,62 +71,55 @@ export default function HeaderSection({
               <span className="text-2xl font-black tracking-tight text-[#087f78] leading-none">
                 GOPU<span className="text-emerald-500 font-bold text-lg">.AI</span>
               </span>
+              <span className="hidden xl:inline-flex items-center gap-1 text-[10px] font-bold text-emerald-800 bg-emerald-50 px-2 py-0.5 rounded-full border border-emerald-200">
+                <span className="w-1.5 h-1.5 rounded-full bg-emerald-500" />
+                Phú Quốc • Đang hoạt động
+              </span>
             </div>
-            <p className="text-[10px] uppercase font-bold tracking-wider text-gray-500 mt-0.5">
+            <p className="hidden sm:block text-[10px] uppercase font-bold tracking-wider text-gray-400 mt-0.5">
               Go Phu Quoc, Go Paradise!
             </p>
           </div>
         </button>
 
-        {/* Desktop Nav Items */}
-        <nav className="hidden lg:flex items-center gap-1 bg-gray-50/80 p-1.5 rounded-full border border-gray-200/70 shadow-inner">
-          {navItems.map((item) => {
-            const isActive = currentTab === item.id;
-            return (
-              <button
-                key={item.id}
-                onClick={() => onSelectTab(item.id)}
-                className={`px-4 py-2 rounded-full text-sm font-semibold transition-all duration-200 ${
-                  isActive
-                    ? 'bg-[#087f78] text-white shadow-sm'
-                    : 'text-gray-600 hover:text-[#087f78] hover:bg-white/80'
-                }`}
-              >
-                {lang === 'vi' ? item.labelVi : item.labelEn}
-              </button>
-            );
-          })}
-        </nav>
-
-        {/* Right Tools (Language, CTA) */}
-        <div className="hidden md:flex items-center gap-3">
+        {/* Right Tools */}
+        <div className="hidden lg:flex shrink-0 items-center gap-2">
           {/* Language Switcher */}
-          <div className="flex items-center bg-gray-100 p-1 rounded-lg border border-gray-200 text-xs font-bold">
+          <div className="flex items-center bg-gray-100 p-0.5 rounded-lg border border-gray-200 text-[11px] font-bold">
             <button
               onClick={() => onToggleLang('vi')}
-              className={`px-2.5 py-1 rounded transition-colors ${
-                lang === 'vi' ? 'bg-white text-[#087f78] shadow-sm' : 'text-gray-500 hover:text-gray-800'
+              className={`px-2 py-1 rounded transition-colors ${
+                lang === 'vi' ? 'bg-white text-[#087f78] shadow-xs' : 'text-gray-500 hover:text-gray-800'
               }`}
             >
               VI
             </button>
             <button
               onClick={() => onToggleLang('en')}
-              className={`px-2.5 py-1 rounded transition-colors ${
-                lang === 'en' ? 'bg-white text-[#087f78] shadow-sm' : 'text-gray-500 hover:text-gray-800'
+              className={`px-2 py-1 rounded transition-colors ${
+                lang === 'en' ? 'bg-white text-[#087f78] shadow-xs' : 'text-gray-500 hover:text-gray-800'
               }`}
             >
               EN
             </button>
           </div>
 
-          {/* Action CTA Button */}
+          {/* Saved Itineraries Button */}
           <button
             onClick={() => onSelectTab('itinerary')}
-            className="bg-[#087f78] hover:bg-[#066761] text-white text-sm font-bold px-5 py-2.5 rounded-xl shadow-md hover:shadow-lg transition-all transform active:scale-95 flex items-center gap-2"
+            className="shrink-0 text-xs font-bold text-gray-600 hover:text-[#087f78] bg-gray-50 hover:bg-emerald-50 px-2.5 py-1.5 rounded-xl border border-gray-200 transition-colors flex items-center gap-1 whitespace-nowrap"
+            aria-label={lang === 'vi' ? 'Xem lịch trình đã lưu' : 'View saved itineraries'}
           >
-            <span>{lang === 'vi' ? 'Lập plan AI ngay' : 'Plan with AI'}</span>
-            <span aria-hidden="true">✨</span>
+            <span>🔖</span>
+            <span>{lang === 'vi' ? 'Lịch trình đã lưu' : 'Saved itineraries'}</span>
+          </button>
+
+          {/* User Profile Avatar */}
+          <button
+            onClick={() => alert('Thông tin tài khoản GOPU')}
+            className="w-9 h-9 rounded-full bg-emerald-700 text-white flex items-center justify-center font-bold text-xs shadow-sm hover:ring-2 hover:ring-emerald-400 transition-all flex-shrink-0"
+          >
+            👤
           </button>
         </div>
 
@@ -157,6 +149,29 @@ export default function HeaderSection({
         </div>
       </div>
 
+      <div className="hidden lg:block border-t border-gray-100 bg-gray-50/70">
+        <nav className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex items-center justify-center gap-2 py-1.5" aria-label={lang === 'vi' ? 'Điều hướng chính' : 'Main navigation'}>
+          {navItems.map((item) => {
+            const isActive = currentTab === item.id;
+            return (
+              <button
+                key={item.id}
+                onClick={() => onSelectTab(item.id)}
+                aria-current={isActive ? 'page' : undefined}
+                className={`shrink-0 whitespace-nowrap px-5 py-2.5 rounded-full text-sm font-semibold transition-colors duration-200 flex items-center gap-1.5 ${
+                  isActive
+                    ? 'bg-[#087f78] text-white shadow-sm'
+                    : 'text-gray-600 hover:text-[#087f78] hover:bg-white'
+                }`}
+              >
+                {item.hasSparkle && <span aria-hidden="true">✨</span>}
+                <span>{lang === 'vi' ? item.labelVi : item.labelEn}</span>
+              </button>
+            );
+          })}
+        </nav>
+      </div>
+
       {/* Mobile Nav Drawer */}
       {mobileMenuOpen && (
         <div className="lg:hidden border-t border-gray-100 bg-white px-4 pt-3 pb-6 shadow-xl animate-fadeIn">
@@ -168,13 +183,14 @@ export default function HeaderSection({
                   onSelectTab(item.id);
                   setMobileMenuOpen(false);
                 }}
-                className={`text-left px-4 py-3 rounded-xl text-sm font-semibold ${
+                className={`text-left px-4 py-3 rounded-xl text-sm font-semibold flex items-center gap-2 ${
                   currentTab === item.id
                     ? 'bg-emerald-50 text-[#087f78]'
                     : 'text-gray-700 hover:bg-gray-50'
                 }`}
               >
-                {lang === 'vi' ? item.labelVi : item.labelEn}
+                {item.hasSparkle && <span>✨</span>}
+                <span>{lang === 'vi' ? item.labelVi : item.labelEn}</span>
               </button>
             ))}
             <div className="pt-3">
@@ -194,4 +210,3 @@ export default function HeaderSection({
     </header>
   );
 }
-

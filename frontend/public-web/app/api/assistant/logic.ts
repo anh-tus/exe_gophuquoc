@@ -11,6 +11,7 @@ export type AssistantActivity = { serviceId: string; time: string; endTime: stri
 export type AssistantPlan = { title: string; days: Array<{ day: number; activities: AssistantActivity[] }> };
 export type ServiceRecommendation = { serviceId: string; reason: string };
 export type AssistantReply =
+  | { kind: 'chat'; message: string; preferences: TripPreferences }
   | { kind: 'clarify'; message: string; preferences: TripPreferences }
   | { kind: 'itinerary'; message: string; preferences: TripPreferences; plan: AssistantPlan }
   | { kind: 'service_search'; message: string; preferences: TripPreferences; title: string; recommendations: ServiceRecommendation[] };
@@ -98,7 +99,9 @@ export function parseAssistantReply(raw: string, allowedServiceIds: readonly str
     interest: preferences.interest,
   };
 
-  if (value.kind === 'clarify') return { kind: 'clarify', message: value.message, preferences: normalizedPreferences };
+  if (value.kind === 'chat' || value.kind === 'clarify') {
+    return { kind: value.kind as 'chat' | 'clarify', message: value.message, preferences: normalizedPreferences };
+  }
   if (value.kind === 'service_search') {
     if (typeof value.title !== 'string' || !value.title.trim() || value.title.length > 120 || !Array.isArray(value.recommendations) || value.recommendations.length > 8) return null;
     const recommendations = value.recommendations.map((item) => {

@@ -3,13 +3,15 @@
 import { useState } from 'react';
 import AssistantChat from './assistant-chat';
 import { estimateServiceCost, priceUnitLabel, services, type Lang, type Service } from './catalog';
-import { getDayPeriod, type AssistantActivity, type AssistantReply, type AssistantPlan, type ServiceRecommendation, type TripPreferences } from './api/assistant/logic';
+import { getDayPeriod, type AssistantActivity, type AssistantReply, type AssistantPlan, type ChatMessage, type ServiceRecommendation, type TripPreferences } from './api/assistant/logic';
 
 export type Trip = { days: number; interest: string; budget: number; guests?: number; ids: string[]; slots?: string[]; planTitle?: string; planDays?: AssistantPlan['days'] };
 
 type Props = {
   lang: Lang;
   initialPrompt?: string;
+  initialMessages?: ChatMessage[];
+  onMessagesChange?: (messages: ChatMessage[]) => void;
   onInitialPromptConsumed: () => void;
   onPlan: (reply: Extract<AssistantReply, { kind: 'itinerary' }>) => void;
   onUseTemplate: (text: string, preferences: TripPreferences) => void;
@@ -27,6 +29,7 @@ type Props = {
   onSave: () => void;
   onShare: () => void;
   tripMessage: string;
+  chatOnly?: boolean;
 };
 
 const copy = {
@@ -69,12 +72,13 @@ export default function AssistantWorkspace(props: Props) {
     props.onPlan(reply);
   };
 
-  return <div className="assistant-workspace">
+  return <div className={props.chatOnly ? 'assistant-workspace assistant-workspace-chat-only' : 'assistant-workspace'}>
     <div className="assistant-workspace-chat">
-      <AssistantChat lang={props.lang} initialPrompt={props.initialPrompt} onInitialPromptConsumed={props.onInitialPromptConsumed} onConversationStarted={() => setChatStarted(true)} onPlan={acceptPlan} onSearch={setSearchResults} onUseTemplate={props.onUseTemplate} />
+      <AssistantChat lang={props.lang} initialPrompt={props.initialPrompt} initialMessages={props.initialMessages} onMessagesChange={props.onMessagesChange} currentPlan={props.trip?.planDays ? { title: props.trip.planTitle || '', days: props.trip.planDays } : null} onInitialPromptConsumed={props.onInitialPromptConsumed} onConversationStarted={() => setChatStarted(true)} onPlan={acceptPlan} onSearch={setSearchResults} onUseTemplate={props.onUseTemplate} />
+      {props.chatOnly && searchResults && <ServiceSearchResults message={searchResults.message} recommendations={searchResults.recommendations} lang={props.lang} />}
     </div>
 
-    <section className="assistant-plan-panel" aria-labelledby="assistant-plan-heading">
+    {!props.chatOnly && <section className="assistant-plan-panel" aria-labelledby="assistant-plan-heading">
       <header className="assistant-plan-header">
         <div><span className="eyebrow">GOPU / {props.lang === 'vi' ? 'DỮ LIỆU MINH HỌA' : 'DEMO DATA'}</span><h2 id="assistant-plan-heading">{searchResults?.title || props.trip?.planTitle || t.plan}</h2></div>
         {!searchResults && props.trip && <div className="assistant-plan-total"><span>{t.estimated}</span><strong>{new Intl.NumberFormat(props.lang === 'vi' ? 'vi-VN' : 'en-US', { style: 'currency', currency: 'VND', maximumFractionDigits: 0 }).format(total)}</strong></div>}
@@ -119,8 +123,8 @@ export default function AssistantWorkspace(props: Props) {
           <button className="button outline" onClick={props.onShare}>{props.lang === 'vi' ? 'Sao chép liên kết' : 'Copy link'}</button>
           <span role="status">{props.tripMessage}</span>
         </div>
-      </> : chatStarted ? <div className="assistant-plan-empty"><span aria-hidden="true">✦</span><p>{t.empty}</p></div> : null}
-    </section>
+      </> : <div className="assistant-plan-empty"><span aria-hidden="true">✦</span><p>{t.empty}</p></div>}
+    </section>}
   </div>;
 }
 
@@ -143,16 +147,16 @@ function ServiceSearchResults({ message, recommendations, lang }: { message: str
     {matches.map(({ recommendation, service }) => {
       const expanded = expandedId === service.id;
       return <article className="trip-item assistant-search-result" key={service.id}>
-        <div className="service-photo" style={{ backgroundImage: `url(${service.image})` }} />
+        <div className="service-photo" style={{ backgroundImage: `url(${service.image})` }}>{service.imageIsIllustrative && <span className="gopu-image-note">{lang === 'vi' ? 'Ảnh minh họa' : 'Illustrative image'}</span>}</div>
         <div className="assistant-search-result-content">
           <span className="chip">{categoryLabels[service.category]} · {service.area} · Demo</span>
           <h3>{lang === 'vi' ? service.vi : service.en}</h3>
-          <div className="review-summary">★ {service.rating.toFixed(1)} <span>· {service.reviewCount} {lang === 'vi' ? 'đánh giá mẫu' : 'sample reviews'}</span></div>
+          {service.reviewCount > 0 && <div className="review-summary">★ {service.rating.toFixed(1)} <span>· {service.reviewCount} {lang === 'vi' ? 'đánh giá mẫu' : 'sample reviews'}</span></div>}
           <p>{recommendation.reason}</p>
           <p className="muted">{lang === 'vi' ? service.descriptionVi : service.descriptionEn}</p>
           <strong>{text.from} {new Intl.NumberFormat(lang === 'vi' ? 'vi-VN' : 'en-US', { style: 'currency', currency: 'VND', maximumFractionDigits: 0 }).format(service.price)} {priceUnitLabel(service.priceUnit, lang)}</strong>
           <button className="button subtle" aria-expanded={expanded} onClick={() => setExpandedId(expanded ? null : service.id)}>{expanded ? text.hide : text.detail}</button>
-          {expanded && <section className="review-list"><h4>{text.reviews} · ★ {service.rating.toFixed(1)} ({service.reviewCount})</h4><p>{lang === 'vi' ? service.area : service.area} · {lang === 'vi' ? service.descriptionVi : service.descriptionEn}</p>{service.reviews.map((review, index) => <blockquote key={index}><strong>★ {review.rating}</strong><p>{lang === 'vi' ? review.commentVi : review.commentEn}</p></blockquote>)}<small>{lang === 'vi' ? 'Thông tin và đánh giá chỉ là minh họa, chưa xác minh.' : 'Details and reviews are illustrative and unverified.'}</small></section>}
+          {expanded && <section className="review-list">{service.reviewCount > 0 && <><h4>{text.reviews} · ★ {service.rating.toFixed(1)} ({service.reviewCount})</h4>{service.reviews.map((review, index) => <blockquote key={index}><strong>★ {review.rating}</strong><p>{lang === 'vi' ? review.commentVi : review.commentEn}</p></blockquote>)}</>}<p>{service.area} · {lang === 'vi' ? service.descriptionVi : service.descriptionEn}</p><small>{lang === 'vi' ? 'Thông tin và đánh giá chỉ là minh họa, chưa xác minh.' : 'Details and reviews are illustrative and unverified.'}</small></section>}
         </div>
       </article>;
     })}
@@ -199,11 +203,11 @@ function PlanActivity({ service, activity, periodLabel, lang, onUpdateTrip, trip
       <button onClick={removeActivity}>{text.remove}</button>
     </div>
     {expanded && <section className="assistant-inline-detail" aria-label={`${name} ${text.detail}`}>
-      <div className="assistant-inline-detail-photo" style={{ backgroundImage: `url(${service.image})` }} />
-      <div className="assistant-inline-detail-content"><div className="assistant-inline-detail-heading"><span className="chip">{categoryName} · {lang === 'vi' ? 'Dữ liệu demo' : 'Demo data'}</span><strong>★ {service.rating.toFixed(1)} <small>· {service.reviewCount} {lang === 'vi' ? 'lượt đánh giá mẫu' : 'sample reviews'}</small></strong></div>
+      <div className="assistant-inline-detail-photo" style={{ backgroundImage: `url(${service.image})` }}>{service.imageIsIllustrative && <span className="gopu-image-note">{lang === 'vi' ? 'Ảnh minh họa' : 'Illustrative image'}</span>}</div>
+      <div className="assistant-inline-detail-content"><div className="assistant-inline-detail-heading"><span className="chip">{categoryName} · {lang === 'vi' ? 'Dữ liệu demo' : 'Demo data'}</span>{service.reviewCount > 0 && <strong>★ {service.rating.toFixed(1)} <small>· {service.reviewCount} {lang === 'vi' ? 'lượt đánh giá mẫu' : 'sample reviews'}</small></strong>}</div>
         <p>{description}</p><p className="muted">{service.area} · {text.from} {new Intl.NumberFormat(lang === 'vi' ? 'vi-VN' : 'en-US', { style: 'currency', currency: 'VND', maximumFractionDigits: 0 }).format(service.price)} {priceUnitLabel(service.priceUnit, lang)}</p>
         <p><strong>{text.duration}:</strong> {activity.durationMinutes} {lang === 'vi' ? 'phút' : 'minutes'}{activity.logistics && <> · <strong>{text.logistics}:</strong> {activity.logistics}</>}{activity.tips && <> · <strong>{text.tips}:</strong> {activity.tips}</>}</p>
-        <h5>{text.reviews}</h5>{service.reviews.map((review, index) => <blockquote key={index}><strong>★ {review.rating}</strong><p>{lang === 'vi' ? review.commentVi : review.commentEn}</p></blockquote>)}
+        {service.reviews.length > 0 && <><h5>{text.reviews}</h5>{service.reviews.map((review, index) => <blockquote key={index}><strong>★ {review.rating}</strong><p>{lang === 'vi' ? review.commentVi : review.commentEn}</p></blockquote>)}</>}
         <p className="assistant-inline-disclaimer">{lang === 'vi' ? 'Giá và đánh giá chỉ là minh họa, chưa xác minh.' : 'Prices and reviews are illustrative and unverified.'}</p>
       </div>
     </section>}
