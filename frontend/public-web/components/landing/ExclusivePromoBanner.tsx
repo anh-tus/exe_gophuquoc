@@ -11,7 +11,7 @@ export default function ExclusivePromoBanner({ onBookPromo, lang }: ExclusivePro
   return (
     <section className="py-6 bg-white">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="relative rounded-3xl overflow-hidden shadow-xl min-h-[340px] flex items-center bg-gradient-to-r from-[#073c38] via-[#0b4d47]/90 to-transparent">
+        <div className="relative rounded-3xl overflow-hidden shadow-xl min-h-[340px] flex items-center bg-gradient-to-r from-[#053f38] via-[#064e43]/90 to-transparent">
           {/* Background Image Layer */}
           <div
             className="absolute inset-0 bg-cover bg-center -z-10 opacity-70 scale-105 transition-transform duration-700 hover:scale-100"
@@ -22,7 +22,7 @@ export default function ExclusivePromoBanner({ onBookPromo, lang }: ExclusivePro
           />
 
           {/* Left Decorative Gradient Mask */}
-          <div className="absolute inset-0 bg-gradient-to-r from-[#052825] via-[#052825]/85 to-transparent -z-10" />
+          <div className="absolute inset-0 bg-gradient-to-r from-[#053f38] via-[#053f38]/85 to-transparent -z-10" />
 
           {/* Content Box */}
           <div className="relative z-10 max-w-2xl p-6 sm:p-10 lg:p-14 text-white">

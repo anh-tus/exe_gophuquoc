@@ -6,7 +6,7 @@ export default function AppDownloadCta({ lang }: { lang: 'vi' | 'en' }) {
   return (
     <section className="py-12 bg-white">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="relative rounded-3xl bg-gradient-to-r from-[#07302d] via-[#09413d] to-[#07302d] p-8 sm:p-12 lg:p-14 text-white overflow-hidden shadow-xl">
+        <div className="relative rounded-3xl bg-gradient-to-r from-[#0b2b2b] via-[#064e43] to-[#0b2b2b] p-8 sm:p-12 lg:p-14 text-white overflow-hidden shadow-xl">
           {/* Subtle Decorative Shapes */}
           <div className="absolute top-0 right-0 w-96 h-96 bg-emerald-500/10 rounded-full blur-3xl pointer-events-none" />
           <div className="absolute bottom-0 left-0 w-64 h-64 bg-teal-500/10 rounded-full blur-2xl pointer-events-none" />
@@ -39,7 +39,7 @@ export default function AppDownloadCta({ lang }: { lang: 'vi' | 'en' }) {
                 rel="noopener noreferrer"
                 className="bg-[#0068ff] hover:bg-[#0057d6] text-white font-bold text-sm px-6 py-3.5 rounded-2xl shadow-lg transition-all flex items-center justify-center gap-2.5 active:scale-95"
               >
-                <span className="text-lg">💬</span>
+                <span className="text-xl">💬</span>
                 <span>{lang === 'vi' ? 'Mở trên Zalo Mini App' : 'Open in Zalo'}</span>
               </a>
 

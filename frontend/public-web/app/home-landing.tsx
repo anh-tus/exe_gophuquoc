@@ -2,6 +2,7 @@
 
 import { useState } from 'react';
 import { type Lang, type Service, type ServiceCategory, services } from './catalog';
+import Icon, { type IconName } from '../components/ui/Icon';
 import type { AssistantReply, ChatMessage } from './api/assistant/logic';
 
 type Props = {
@@ -60,43 +61,43 @@ export default function HomeLanding({
       id: 'tour' as ServiceCategory,
       title: 'Tour & Trải nghiệm',
       sub: '8 gói cano & đảo',
-      icon: '⛵',
-      color: 'bg-teal-50 text-teal-700',
+      icon: 'boat' as IconName,
+      color: 'bg-brand-50 text-brand-700',
     },
     {
       id: 'restaurant' as ServiceCategory,
       title: 'Ẩm thực & Hải sản',
       sub: '18 quán chọn lọc',
-      icon: '🍴',
-      color: 'bg-orange-50 text-orange-600',
+      icon: 'utensils' as IconName,
+      color: 'bg-brand-50 text-brand-700',
     },
     {
       id: 'stay' as ServiceCategory,
       title: 'Khách sạn & Lưu trú',
       sub: '24 resort & villa',
-      icon: '🏨',
-      color: 'bg-blue-50 text-blue-700',
+      icon: 'bed' as IconName,
+      color: 'bg-brand-50 text-brand-700',
     },
     {
       id: 'transport' as ServiceCategory,
       title: 'Đặt xe & Thuê xe máy',
       sub: 'Giao xe tận nơi',
-      icon: '🚗',
-      color: 'bg-purple-50 text-purple-700',
+      icon: 'car' as IconName,
+      color: 'bg-brand-50 text-brand-700',
     },
     {
       id: 'wellness' as ServiceCategory,
       title: 'Spa & Thư giãn',
       sub: 'Liệu trình bấm huyệt',
-      icon: '🌿',
-      color: 'bg-emerald-50 text-emerald-700',
+      icon: 'leaf' as IconName,
+      color: 'bg-brand-50 text-brand-700',
     },
     {
       id: 'laundry' as ServiceCategory,
       title: 'Giặt là du lịch',
       sub: 'Lấy trả nhanh 3h',
-      icon: '🧺',
-      color: 'bg-cyan-50 text-cyan-700',
+      icon: 'basket' as IconName,
+      color: 'bg-brand-50 text-brand-700',
     },
   ];
 
@@ -218,7 +219,8 @@ export default function HomeLanding({
       location: '01 Võ Thị Sáu',
       tag: '5 Sao • Trung tâm Dương Đông',
       desc: 'Vị trí đắc địa ngay trung tâm, đi bộ ra Chợ Đêm trong 5 phút. Hồ bơi vô cực ngắm hoàng hôn đẹp nhất thị trấn.',
-      price: 'Ưu đãi hôm nay từ 1.800.000 đ',
+      priceNote: 'Ưu đãi hôm nay từ',
+      price: '1.800.000 đ',
       unit: '/ đêm',
       rating: 4.8,
       reviews: 520,
@@ -232,7 +234,8 @@ export default function HomeLanding({
       location: 'Trần Hưng Đạo • Bãi Trường',
       tag: 'Biệt thự biển Pháp cổ điển',
       desc: 'Không gian nghỉ dưỡng hoài niệm thập niên 1920 với khu vườn nhiệt đới xanh mát và bãi biển riêng tư yên tĩnh.',
-      price: 'Ưu đãi hôm nay từ 3.500.000 đ',
+      priceNote: 'Ưu đãi hôm nay từ',
+      price: '3.500.000 đ',
       unit: '/ đêm',
       rating: 4.9,
       reviews: 340,
@@ -251,7 +254,7 @@ export default function HomeLanding({
     {
       id: 'spa-duong-dong',
       category: 'wellness',
-      icon: '🌿',
+      icon: 'leaf' as IconName,
       tagTop: '4.9 ★ (120+)',
       tagLabel: 'Liệu pháp bản địa',
       title: 'Liệu trình bấm huyệt thư giãn sau chuyến đi',
@@ -265,7 +268,7 @@ export default function HomeLanding({
     {
       id: 'nightgo-laundry',
       category: 'laundry',
-      icon: '🧺',
+      icon: 'basket' as IconName,
       tagTop: 'Giao nhận 3h',
       tagLabel: 'Tiện lợi tối đa',
       title: 'NightGo Laundry - Giặt sấy khô giao tận phòng',
@@ -279,7 +282,7 @@ export default function HomeLanding({
     {
       id: 'thue-xe-may',
       category: 'transport',
-      icon: '🛵',
+      icon: 'motorbike' as IconName,
       tagTop: 'Xe đời mới 2023–2024',
       tagLabel: 'Tự do khám phá',
       title: 'Thuê xe máy tay ga giao miễn phí resort',
@@ -295,7 +298,7 @@ export default function HomeLanding({
   // 5. Khung giá chuẩn hóa
   const standardPriceRows = [
     {
-      icon: '⛵',
+      icon: 'boat' as IconName,
       name: 'Tour cano ghép 4 đảo ngọc',
       standard: 'Bao gồm cano đời mới, kính lặn, clip flycam, đưa đón',
       price: '450.000 đ',
@@ -303,7 +306,7 @@ export default function HomeLanding({
       serviceId: 'cano-an-thoi',
     },
     {
-      icon: '🚗',
+      icon: 'car' as IconName,
       name: 'Xe đón tiễn Sân bay Phú Quốc',
       standard: 'Xe riêng 4-7 chỗ tới trung tâm Dương Đông hoặc Bãi Trường',
       price: '180.000 đ',
@@ -311,7 +314,7 @@ export default function HomeLanding({
       serviceId: 'xe-san-bay',
     },
     {
-      icon: '🛵',
+      icon: 'motorbike' as IconName,
       name: 'Thuê xe máy tay ga (Vision / Airblade)',
       standard: 'Giao nhận tại khách sạn, gồm 2 nón bảo hiểm chuẩn',
       price: '120.000 đ',
@@ -319,7 +322,7 @@ export default function HomeLanding({
       serviceId: 'thue-xe-may',
     },
     {
-      icon: '🚡',
+      icon: 'cablecar' as IconName,
       name: 'Vé cáp treo Hòn Thơm & Công viên nước',
       standard: 'Cáp treo 2 chiều vượt biển dài nhất thế giới + Aquatopia',
       price: '650.000 đ',
@@ -327,7 +330,7 @@ export default function HomeLanding({
       serviceId: 'cap-treo-hon-thom',
     },
     {
-      icon: '🍲',
+      icon: 'bowl' as IconName,
       name: 'Bữa ăn hải sản tươi sống định lượng',
       standard: 'Thực đơn gồm 4-5 món hải sản theo mùa (ghẹ, mực, ốc)',
       price: '250.000 đ',
@@ -409,24 +412,24 @@ export default function HomeLanding({
         {/* Top Badges */}
         <div className="flex flex-wrap items-center gap-3 text-xs mb-3">
           <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-emerald-50 text-[#087f78] font-bold border border-emerald-200">
-            <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
+            <span className="w-1.5 h-1.5 rounded-full bg-emerald-500" aria-hidden="true" />
             Phú Quốc • Điểm đến đang hoạt động
           </span>
           <span className="inline-flex items-center gap-1 px-3 py-1 rounded-full bg-sky-50 text-sky-700 font-semibold border border-sky-200">
-            🛡️ Dữ liệu minh bạch thời gian thực
+            <Icon name="shield" className="h-3.5 w-3.5" /> Dữ liệu minh bạch thời gian thực
           </span>
-          <span className="text-gray-400 text-xs">Cập nhật 5 phút trước</span>
+          <span className="text-gray-500 text-xs">Cập nhật 5 phút trước</span>
         </div>
 
         {/* Heading & Subtitle */}
         <div className="mb-6">
-          <span className="text-xs font-black uppercase tracking-wider text-[#087f78] block mb-1">
+          <span className="text-xs font-extrabold uppercase tracking-wider text-[#087f78] block mb-1">
             DỊCH VỤ ĐẢO CHỈ TRONG MỘT CHẠM
           </span>
-          <h1 className="text-3xl sm:text-4xl md:text-[42px] font-black tracking-tight text-gray-900 leading-tight">
+          <h1 className="text-3xl sm:text-4xl md:text-[42px] font-extrabold tracking-tight text-gray-900 leading-tight">
             Khám phá Phú Quốc theo cách của bạn
           </h1>
-          <p className="text-sm sm:text-base text-gray-600 mt-2 max-w-3xl leading-relaxed">
+          <p className="text-sm sm:text-base text-gray-600 mt-2 max-w-[54ch] leading-relaxed">
             Tìm trải nghiệm, chỗ nghỉ và dịch vụ địa phương được kiểm định. GOPU AI tối ưu hành
             trình theo thời tiết thực tế và ngân sách chỉ trong vài giây.
           </p>
@@ -441,20 +444,24 @@ export default function HomeLanding({
             }}
             className="flex flex-col md:flex-row items-stretch md:items-center gap-2"
           >
-            <div className="flex-1 flex items-center px-3 gap-2 text-gray-400">
-              <span className="text-lg">🔍</span>
+            <div className="flex-1 flex items-center px-3 gap-2 text-gray-500">
+              <Icon name="search" className="h-5 w-5 text-gray-500" />
+              <label htmlFor="hero-search" className="sr-only">
+                Tìm kiếm dịch vụ du lịch tại Phú Quốc
+              </label>
               <input
+                id="hero-search"
                 type="text"
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
                 placeholder="Tìm tour cano, hải sản, khách sạn view biển, xe đưa đón..."
-                className="w-full text-sm text-gray-800 placeholder-gray-400 bg-transparent focus:outline-none py-1.5"
+                className="w-full min-h-11 text-base sm:text-sm text-gray-800 placeholder-gray-400 bg-transparent focus:outline-none py-1.5"
               />
               {searchQuery && (
                 <button
                   type="button"
                   onClick={() => setSearchQuery('')}
-                  className="text-gray-400 hover:text-gray-600 text-sm px-1"
+                  className="min-w-11 min-h-11 text-gray-500 hover:text-gray-600 text-sm"
                 >
                   ✕
                 </button>
@@ -464,9 +471,9 @@ export default function HomeLanding({
             <div className="flex items-center gap-2">
               <button
                 type="submit"
-                className="px-4 py-2.5 rounded-xl bg-gray-100 hover:bg-gray-200 text-gray-800 font-semibold text-xs transition-colors flex items-center justify-center gap-1.5"
+                className="min-h-11 px-5 py-2.5 rounded-xl bg-[#087f78] hover:bg-[#066862] text-white font-bold text-xs transition-colors flex items-center justify-center gap-1.5 shadow-sm"
               >
-                <span>🔍</span>
+                <Icon name="search" className="h-4 w-4" />
                 <span>Tìm dịch vụ</span>
               </button>
 
@@ -478,9 +485,9 @@ export default function HomeLanding({
                       'Mình muốn đi 3 ngày 2 đêm cùng gia đình (4 người), ngân sách khoảng 12 triệu, ưu tiên tắm biển ngắm hoàng hôn, cano 4 đảo và ăn hải sản ngon.'
                   )
                 }
-                className="px-5 py-2.5 rounded-xl bg-[#087f78] hover:bg-[#066862] text-white font-bold text-xs transition-colors flex items-center justify-center gap-1.5 shadow-sm"
+                className="min-h-11 px-4 py-2.5 rounded-xl border border-[#087f78]/35 bg-white hover:bg-emerald-50 text-[#087f78] font-bold text-xs transition-colors flex items-center justify-center gap-1.5"
               >
-                <span>✨</span>
+                <Icon name="sparkles" className="h-4 w-4" />
                 <span>Nhờ AI lên lịch</span>
               </button>
             </div>
@@ -489,7 +496,7 @@ export default function HomeLanding({
 
         {/* Quick Suggestion Chips */}
         <div className="flex flex-wrap items-center gap-2 text-xs text-gray-500 mb-6">
-          <span className="font-semibold text-gray-600">⚡ Gợi ý nhanh:</span>
+          <span className="font-semibold text-gray-600 inline-flex items-center gap-1"><Icon name="bolt" className="h-3.5 w-3.5" /> Gợi ý nhanh:</span>
           {quickChips.map((chip) => (
             <button
               key={chip}
@@ -497,7 +504,7 @@ export default function HomeLanding({
                 setSearchQuery(chip);
                 onExplore(undefined, chip);
               }}
-              className="px-3 py-1 rounded-full bg-white hover:bg-emerald-50 hover:text-[#087f78] hover:border-emerald-300 border border-gray-200 text-gray-700 transition-all font-medium text-[11px]"
+              className="min-h-11 px-4 rounded-full bg-white hover:bg-emerald-50 hover:text-[#087f78] hover:border-emerald-300 border border-gray-200 text-gray-700 transition-all font-medium text-xs"
             >
               {chip}
             </button>
@@ -505,12 +512,12 @@ export default function HomeLanding({
         </div>
 
         {/* WEATHER & SEA CONDITION CAPSULE */}
-        <div className="bg-white rounded-2xl border border-gray-200 p-4 shadow-sm mb-10">
+        <div id="weather" className="scroll-mt-20 md:scroll-mt-32 bg-white rounded-2xl border border-gray-200 p-4 shadow-sm mb-10">
           <div className="grid grid-cols-2 md:grid-cols-5 gap-4 items-center">
             {/* Col 1: Title */}
             <div className="col-span-2 md:col-span-1 flex items-start gap-2.5 border-b md:border-b-0 md:border-r border-gray-100 pb-2 md:pb-0 md:pr-3">
               <div className="w-8 h-8 rounded-xl bg-teal-50 flex items-center justify-center text-teal-700 shrink-0 text-base">
-                🌊
+                <Icon name="waves" className="h-4 w-4" />
               </div>
               <div>
                 <div className="flex items-center gap-1">
@@ -519,7 +526,7 @@ export default function HomeLanding({
                   </span>
                   <span className="w-1.5 h-1.5 rounded-full bg-emerald-500" />
                 </div>
-                <p className="text-[10px] text-gray-400 mt-0.5 leading-snug">
+                <p className="text-xs text-gray-500 mt-0.5 leading-snug">
                   Dữ liệu quan trắc thực địa tại Dương Đông & Quần đảo An Thới
                 </p>
               </div>
@@ -527,58 +534,58 @@ export default function HomeLanding({
 
             {/* Col 2: Temp */}
             <div className="flex flex-col">
-              <span className="text-sm font-black text-gray-900">
+              <span className="text-sm font-extrabold text-gray-900">
                 {weather?.temp !== null && weather?.temp !== undefined
                   ? `${weather.temp}°C`
                   : '28.5°C'}
               </span>
-              <span className="text-[11px] font-medium text-amber-600 flex items-center gap-1 mt-0.5">
-                ☀️ Nắng trong lành
+              <span className="text-xs font-medium text-amber-600 flex items-center gap-1 mt-0.5">
+                <Icon name="sun" className="h-3.5 w-3.5" /> Nắng trong lành
               </span>
             </div>
 
             {/* Col 3: Wind */}
             <div className="flex flex-col">
-              <span className="text-sm font-black text-gray-900">
+              <span className="text-sm font-extrabold text-gray-900">
                 {weather?.wind !== null && weather?.wind !== undefined
                   ? `${weather.wind} km/h`
                   : '4.2 km/h'}
               </span>
-              <span className="text-[11px] font-medium text-teal-700 flex items-center gap-1 mt-0.5">
-                💨 Gió êm (Hải trình tốt)
+              <span className="text-xs font-medium text-teal-700 flex items-center gap-1 mt-0.5">
+                <Icon name="wind" className="h-3.5 w-3.5" /> Gió êm (Hải trình tốt)
               </span>
             </div>
 
             {/* Col 4: Waves */}
             <div className="flex flex-col">
-              <span className="text-sm font-black text-gray-900">
+              <span className="text-sm font-extrabold text-gray-900">
                 {weather?.wave !== null && weather?.wave !== undefined
                   ? `≈ ${weather.wave} m`
                   : '≈ 0.25 m'}
               </span>
-              <span className="text-[11px] font-medium text-emerald-700 flex items-center gap-1 mt-0.5">
-                🌊 Sóng phẳng, an toàn lặn
+              <span className="text-xs font-medium text-emerald-700 flex items-center gap-1 mt-0.5">
+                <Icon name="waves" className="h-3.5 w-3.5" /> Sóng phẳng, an toàn lặn
               </span>
             </div>
 
             {/* Col 5: Sunset */}
             <div className="flex flex-col">
-              <span className="text-sm font-black text-gray-900">17:48 PM</span>
-              <span className="text-[11px] font-medium text-orange-600 flex items-center gap-1 mt-0.5">
-                🌅 Giờ vàng hoàng hôn
+              <span className="text-sm font-extrabold text-gray-900">17:48 PM</span>
+              <span className="text-xs font-medium text-orange-600 flex items-center gap-1 mt-0.5">
+                <Icon name="sunset" className="h-3.5 w-3.5" /> Giờ vàng hoàng hôn
               </span>
             </div>
           </div>
         </div>
 
         {/* SECTION 2: DANH MỤC THIẾT YẾU */}
-        <div className="mb-14">
+        <div id="services" className="scroll-mt-20 md:scroll-mt-32 mb-14">
           <div className="flex flex-col sm:flex-row sm:items-end justify-between mb-4">
             <div>
-              <span className="text-[11px] font-black uppercase tracking-wider text-[#087f78] block mb-0.5">
+              <span className="text-xs font-extrabold uppercase tracking-wider text-[#087f78] block mb-0.5">
                 DANH MỤC THIẾT YẾU
               </span>
-              <h2 className="text-2xl font-black text-gray-900">Tìm nhanh dịch vụ tại Đảo Ngọc</h2>
+              <h2 className="text-2xl font-extrabold text-gray-900">Tìm nhanh dịch vụ tại Đảo Ngọc</h2>
             </div>
             <span className="text-xs text-gray-500 mt-1 sm:mt-0">
               Khám phá gợi ý chuẩn hóa bởi cộng đồng địa phương
@@ -596,14 +603,14 @@ export default function HomeLanding({
                   <div
                     className={`w-10 h-10 rounded-xl ${cat.color} flex items-center justify-center text-xl mb-3 group-hover:scale-105 transition-transform`}
                   >
-                    {cat.icon}
+                    <Icon name={cat.icon} className="h-5 w-5" />
                   </div>
                   <strong className="text-sm font-bold text-gray-900 block group-hover:text-[#087f78] transition-colors leading-snug">
                     {cat.title}
                   </strong>
                   <span className="text-xs text-gray-500 block mt-1">{cat.sub}</span>
                 </div>
-                <span className="text-xs font-semibold text-gray-400 group-hover:text-[#087f78] flex items-center gap-1 mt-4 transition-colors">
+                <span className="text-xs font-semibold text-gray-500 group-hover:text-[#087f78] flex items-center gap-1 mt-4 transition-colors">
                   Khám phá <span className="text-xs">↗</span>
                 </span>
               </button>
@@ -615,19 +622,19 @@ export default function HomeLanding({
         <div className="mb-14">
           <div className="flex flex-col sm:flex-row sm:items-end justify-between mb-4">
             <div>
-              <span className="text-[11px] font-black uppercase tracking-wider text-[#087f78] block mb-0.5">
+              <span className="text-xs font-extrabold uppercase tracking-wider text-[#087f78] block mb-0.5">
                 ẨM THỰC TINH TUYỂN • ĐÃ XÁC THỰC THỰC ĐƠN & GIÁ NIÊM YẾT
               </span>
-              <h2 className="text-2xl font-black text-gray-900 flex items-center gap-2">
-                Trải nghiệm không thể bỏ lỡ 🦀
+              <h2 className="text-2xl font-extrabold text-gray-900 flex items-center gap-2">
+                Trải nghiệm không thể bỏ lỡ
               </h2>
-              <p className="text-xs text-gray-500 mt-1">
+              <p className="text-sm leading-[1.6] max-w-[54ch] text-gray-500 mt-1">
                 Món ngon bản địa và địa chỉ ăn uống tươi ngon bên bờ biển Tây Đảo Ngọc.
               </p>
             </div>
             <button
               onClick={() => onExplore('restaurant')}
-              className="text-xs font-bold text-[#087f78] hover:text-[#066862] flex items-center gap-1 mt-2 sm:mt-0"
+              className="min-h-11 text-xs font-bold text-[#087f78] hover:text-[#066862] flex items-center gap-1 mt-2 sm:mt-0"
             >
               Xem tất cả ẩm thực →
             </button>
@@ -637,9 +644,14 @@ export default function HomeLanding({
             {diningCards.map((item) => (
               <div
                 key={item.id}
-                onClick={() => handleSelectById(item.id)}
-                className="bg-white rounded-2xl border border-gray-100 overflow-hidden shadow-sm hover:shadow-md transition-all flex flex-col justify-between group cursor-pointer"
+                className="relative bg-white rounded-2xl border border-gray-100 overflow-hidden shadow-sm hover:shadow-md transition-all flex flex-col justify-between group cursor-pointer"
               >
+                <button
+                  type="button"
+                  onClick={() => handleSelectById(item.id)}
+                  aria-label={`Xem chi tiết ${item.title}`}
+                  className="absolute inset-0 z-10 rounded-2xl focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-[#087f78]"
+                />
                 <div>
                   {/* Image with Tag & Rating */}
                   <div className="relative h-40 w-full overflow-hidden bg-gray-100">
@@ -648,18 +660,18 @@ export default function HomeLanding({
                       alt={item.title}
                       className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
                     />
-                    <div className="absolute top-2 left-2 px-2 py-0.5 rounded-md bg-white/90 backdrop-blur-sm text-[10px] font-bold text-gray-800 shadow-xs">
+                    <div className="absolute top-2 left-2 px-2 py-0.5 rounded-md bg-white/90 backdrop-blur-sm text-xs font-bold text-gray-800 shadow-xs">
                       {item.tag}
                     </div>
-                    <div className="absolute bottom-2 left-2 px-2 py-0.5 rounded-md bg-black/60 backdrop-blur-sm text-[10px] font-bold text-white flex items-center gap-1">
+                    <div className="absolute bottom-2 left-2 px-2 py-0.5 rounded-md bg-black/60 backdrop-blur-sm text-xs font-bold text-white flex items-center gap-1">
                       <span className="text-amber-400">★</span> {item.rating} ({item.reviews})
                     </div>
                   </div>
 
                   {/* Body */}
                   <div className="p-3.5">
-                    <span className="text-[11px] text-gray-500 block mb-1">📍 {item.location}</span>
-                    <h3 className="text-sm font-bold text-gray-900 group-hover:text-[#087f78] transition-colors leading-snug line-clamp-1">
+                    <span className="text-xs text-gray-500 flex items-center gap-1 mb-1"><Icon name="mapPin" className="h-3 w-3" /> {item.location}</span>
+                    <h3 className="text-base font-bold text-gray-900 group-hover:text-[#087f78] transition-colors leading-snug line-clamp-2 min-h-[2.75em]">
                       {item.title}
                     </h3>
                     <p className="text-xs text-gray-500 mt-1.5 line-clamp-2 leading-relaxed">
@@ -671,22 +683,20 @@ export default function HomeLanding({
                 {/* Footer with Price and (+) button */}
                 <div className="p-3.5 pt-0 flex items-center justify-between border-t border-gray-50 mt-2">
                   <div>
-                    <span className="text-[10px] text-gray-400 block">Giá từ</span>
-                    <strong className="text-xs font-bold text-gray-900">
+                    <span className="text-xs text-gray-500 block">Giá từ</span>
+                    <strong className="text-sm font-extrabold text-gray-900 tabular-nums">
                       {formatVND(item.price)}{' '}
-                      <span className="text-[10px] font-normal text-gray-500">/ {item.unit}</span>
+                      <span className="text-xs font-normal text-gray-500">/ {item.unit}</span>
                     </strong>
                   </div>
-                  <button
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      handleSelectById(item.id);
-                    }}
-                    title="Xem chi tiết & Đặt món ngay"
-                    className="w-7 h-7 rounded-full bg-emerald-50 text-[#087f78] hover:bg-[#087f78] hover:text-white flex items-center justify-center font-bold text-sm transition-colors border border-emerald-200"
+                  {/* Decorative: the whole card is the button. A "+" implied
+                      add-to-cart, but this opens the detail panel. */}
+                  <span
+                    aria-hidden="true"
+                    className="w-8 h-8 rounded-full bg-emerald-50 text-[#087f78] group-hover:bg-[#087f78] group-hover:text-white flex items-center justify-center transition-colors border border-emerald-200"
                   >
-                    +
-                  </button>
+                    <Icon name="chevronRight" className="h-4 w-4" />
+                  </span>
                 </div>
               </div>
             ))}
@@ -697,23 +707,23 @@ export default function HomeLanding({
         <div className="mb-14">
           <div className="flex flex-col md:flex-row md:items-end justify-between mb-4">
             <div>
-              <span className="text-[11px] font-black uppercase tracking-wider text-[#087f78] block mb-0.5">
+              <span className="text-xs font-extrabold uppercase tracking-wider text-[#087f78] block mb-0.5">
                 TRẢI NGHIỆM CHUẨN MỰC • BẢO HIỂM DU LỊCH TRỌN GÓI & CANO ĐỜI MỚI
               </span>
-              <h2 className="text-2xl font-black text-gray-900 flex items-center gap-2">
-                Hành trình khám phá Đảo Ngọc ⚓
+              <h2 className="text-2xl font-extrabold text-gray-900 flex items-center gap-2">
+                Hành trình khám phá Đảo Ngọc
               </h2>
-              <p className="text-xs text-gray-500 mt-1">
+              <p className="text-sm leading-[1.6] max-w-[54ch] text-gray-500 mt-1">
                 Tour cano biển đảo, xe đưa đón và khu nghỉ dưỡng chọn lọc giúp chuyến đi nhẹ nhàng,
                 thảnh thơi.
               </p>
             </div>
 
             {/* Filter Tabs */}
-            <div className="flex items-center gap-1.5 mt-3 md:mt-0 p-1 bg-gray-100 rounded-xl">
+            <div className="flex flex-wrap items-center gap-1.5 mt-3 md:mt-0 p-1 bg-gray-100 rounded-xl">
               <button
                 onClick={() => setActiveFilter('all')}
-                className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-all ${
+                className={`inline-flex min-h-11 items-center px-3 py-1.5 rounded-lg text-xs font-bold transition-all whitespace-nowrap flex-none ${
                   activeFilter === 'all'
                     ? 'bg-white text-gray-900 shadow-xs'
                     : 'text-gray-600 hover:text-gray-900'
@@ -723,7 +733,7 @@ export default function HomeLanding({
               </button>
               <button
                 onClick={() => setActiveFilter('tour')}
-                className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-all ${
+                className={`inline-flex min-h-11 items-center px-3 py-1.5 rounded-lg text-xs font-bold transition-all whitespace-nowrap flex-none ${
                   activeFilter === 'tour'
                     ? 'bg-white text-gray-900 shadow-xs'
                     : 'text-gray-600 hover:text-gray-900'
@@ -733,7 +743,7 @@ export default function HomeLanding({
               </button>
               <button
                 onClick={() => setActiveFilter('stay')}
-                className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-all ${
+                className={`inline-flex min-h-11 items-center px-3 py-1.5 rounded-lg text-xs font-bold transition-all whitespace-nowrap flex-none ${
                   activeFilter === 'stay'
                     ? 'bg-white text-gray-900 shadow-xs'
                     : 'text-gray-600 hover:text-gray-900'
@@ -743,7 +753,7 @@ export default function HomeLanding({
               </button>
               <button
                 onClick={() => setActiveFilter('transport')}
-                className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-all ${
+                className={`inline-flex min-h-11 items-center px-3 py-1.5 rounded-lg text-xs font-bold transition-all whitespace-nowrap flex-none ${
                   activeFilter === 'transport'
                     ? 'bg-white text-gray-900 shadow-xs'
                     : 'text-gray-600 hover:text-gray-900'
@@ -758,9 +768,14 @@ export default function HomeLanding({
             {filteredExplorationCards.map((card) => (
               <div
                 key={card.id}
-                onClick={() => handleSelectById(card.id)}
-                className="bg-white rounded-2xl border border-gray-100 overflow-hidden shadow-sm hover:shadow-md transition-all flex flex-col justify-between group cursor-pointer"
+                className="relative bg-white rounded-2xl border border-gray-100 overflow-hidden shadow-sm hover:shadow-md transition-all flex flex-col justify-between group cursor-pointer"
               >
+                <button
+                  type="button"
+                  onClick={() => handleSelectById(card.id)}
+                  aria-label={`Xem chi tiết ${card.title}`}
+                  className="absolute inset-0 z-10 rounded-2xl focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-[#087f78]"
+                />
                 <div>
                   {/* Image */}
                   <div className="relative h-48 w-full overflow-hidden bg-gray-100">
@@ -769,11 +784,11 @@ export default function HomeLanding({
                       alt={card.title}
                       className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
                     />
-                    <div className="absolute top-3 left-3 px-2.5 py-1 rounded-md bg-white/95 backdrop-blur-sm text-[11px] font-bold text-gray-800 shadow-xs">
+                    <div className="absolute top-3 left-3 px-2.5 py-1 rounded-md bg-white/95 backdrop-blur-sm text-xs font-bold text-gray-800 shadow-xs">
                       {card.tag}
                     </div>
                     {card.subtag && (
-                      <div className="absolute bottom-3 left-3 px-2.5 py-1 rounded-md bg-black/60 backdrop-blur-sm text-[11px] font-semibold text-white">
+                      <div className="absolute bottom-3 left-3 px-2.5 py-1 rounded-md bg-black/60 backdrop-blur-sm text-xs font-semibold text-white">
                         {card.subtag}
                       </div>
                     )}
@@ -799,37 +814,37 @@ export default function HomeLanding({
                 </div>
 
                 {/* Footer with Price and CTA */}
-                <div className="p-4 pt-2 border-t border-gray-50 flex items-center justify-between">
-                  <div>
-                    <span className="text-sm font-black text-gray-900">{card.price}</span>
-                    <span className="text-xs text-gray-500 font-normal"> {card.unit}</span>
+                <div className="p-4 pt-2 border-t border-gray-50 flex items-end justify-between gap-3">
+                  <div className="min-w-0">
+                    <span className="block text-xs text-gray-500">{card.priceNote}</span>
+                    <span className="text-base font-extrabold text-gray-900 tabular-nums whitespace-nowrap">
+                      {card.price}
+                    </span>
+                    <span className="text-xs text-gray-500 font-normal whitespace-nowrap"> {card.unit}</span>
                   </div>
-                  <button
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      handleSelectById(card.id);
-                    }}
-                    className="px-4 py-2 rounded-xl bg-gray-100 hover:bg-[#087f78] hover:text-white text-gray-800 text-xs font-bold transition-colors"
+                  <span
+                    aria-hidden="true"
+                    className="shrink-0 whitespace-nowrap px-4 py-2 rounded-xl bg-gray-100 group-hover:bg-[#087f78] group-hover:text-white text-gray-800 text-xs font-bold transition-colors"
                   >
                     {card.cta}
-                  </button>
+                  </span>
                 </div>
               </div>
             ))}
 
             {/* CARD 6: GOPU SMART CONCIERGE (Xanh ngọc đậm sang trọng) */}
-            <div className="rounded-2xl bg-gradient-to-br from-[#064e43] to-[#043830] text-white p-6 shadow-md flex flex-col justify-between">
+            <div className="rounded-2xl bg-[#053f38] text-white p-6 shadow-md flex flex-col justify-between">
               <div>
                 <div className="w-10 h-10 rounded-xl bg-white/10 flex items-center justify-center text-emerald-300 text-xl mb-3">
-                  ✦
+                  <Icon name="sparkles" className="h-5 w-5" />
                 </div>
-                <span className="text-[10px] font-bold uppercase tracking-widest text-emerald-300 block mb-1">
+                <span className="text-xs font-bold uppercase tracking-widest text-emerald-300 block mb-1">
                   GOPU SMART CONCIERGE
                 </span>
-                <h3 className="text-lg font-black text-white leading-snug">
+                <h3 className="text-xl font-extrabold text-white leading-snug">
                   Chưa tìm thấy hành trình ưng ý cho nhóm bạn?
                 </h3>
-                <p className="text-xs text-emerald-100/80 mt-2.5 leading-relaxed">
+                <p className="text-sm text-emerald-100/85 mt-2.5 leading-[1.65]">
                   Nhập yêu cầu: &quot;Gia đình 4 người, có trẻ 5 tuổi, thích ngắm biển yên tĩnh, ngân
                   sách 15 triệu trong 3 ngày 2 đêm&quot;. AI sẽ tính toán thời gian di chuyển và lập
                   kế hoạch ngay.
@@ -856,19 +871,19 @@ export default function HomeLanding({
         <div className="mb-14">
           <div className="flex flex-col sm:flex-row sm:items-end justify-between mb-4">
             <div>
-              <span className="text-[11px] font-black uppercase tracking-wider text-[#087f78] block mb-0.5">
+              <span className="text-xs font-extrabold uppercase tracking-wider text-[#087f78] block mb-0.5">
                 DU LỊCH DÀI NGÀY THẢNH THƠI • DỊCH VỤ CHĂM SÓC & TIỆN ÍCH THIẾT YẾU
               </span>
-              <h2 className="text-2xl font-black text-gray-900 flex items-center gap-2">
-                Ở lâu hơn, chăm sóc trọn vẹn ✨
+              <h2 className="text-2xl font-extrabold text-gray-900 flex items-center gap-2">
+                Ở lâu hơn, chăm sóc trọn vẹn
               </h2>
-              <p className="text-xs text-gray-500 mt-1">
+              <p className="text-sm leading-[1.6] max-w-[54ch] text-gray-500 mt-1">
                 Spa phục hồi thể lực sau ngày lặn biển và dịch vụ giặt sấy giao tận phòng.
               </p>
             </div>
             <button
               onClick={() => onExplore('wellness')}
-              className="text-xs font-bold text-[#087f78] hover:text-[#066862] flex items-center gap-1 mt-2 sm:mt-0"
+              className="min-h-11 text-xs font-bold text-[#087f78] hover:text-[#066862] flex items-center gap-1 mt-2 sm:mt-0"
             >
               Xem tất cả dịch vụ hỗ trợ →
             </button>
@@ -878,47 +893,49 @@ export default function HomeLanding({
             {comfortCards.map((c) => (
               <div
                 key={c.id}
-                onClick={() => handleSelectById(c.id)}
-                className="bg-white rounded-2xl border border-gray-100 p-5 shadow-sm hover:shadow-md transition-all flex flex-col justify-between cursor-pointer group"
+                className="relative bg-white rounded-2xl border border-gray-100 p-5 shadow-sm hover:shadow-md transition-all flex flex-col justify-between cursor-pointer group"
               >
+                <button
+                  type="button"
+                  onClick={() => handleSelectById(c.id)}
+                  aria-label={`Xem chi tiết ${c.title}`}
+                  className="absolute inset-0 z-10 rounded-2xl focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-[#087f78]"
+                />
                 <div>
                   <div className="flex items-center justify-between mb-3">
                     <div className="w-10 h-10 rounded-xl bg-emerald-50 flex items-center justify-center text-xl text-emerald-700 group-hover:scale-105 transition-transform">
-                      {c.icon}
+                      <Icon name={c.icon} className="h-5 w-5" />
                     </div>
-                    <span className="text-[11px] font-bold px-2.5 py-1 rounded-full bg-gray-100 text-gray-700">
+                    <span className="text-xs font-bold px-2.5 py-1 rounded-full bg-gray-100 text-gray-700">
                       {c.tagTop}
                     </span>
                   </div>
 
-                  <span className="text-[10px] font-bold uppercase tracking-wider text-gray-400 block mb-1">
+                  <span className="text-xs font-bold uppercase tracking-wider text-gray-500 block mb-1">
                     {c.tagLabel}
                   </span>
                   <h3 className="text-base font-bold text-gray-900 group-hover:text-[#087f78] transition-colors leading-snug">{c.title}</h3>
                   <p className="text-xs text-gray-500 mt-2 leading-relaxed">{c.desc}</p>
 
-                  <div className="mt-3.5 px-3 py-2 rounded-xl bg-[#f8fbfa] border border-gray-100 text-[11px] text-gray-600 font-medium">
+                  <div className="mt-3.5 pl-3 border-l-2 border-emerald-200 text-xs text-gray-600 font-medium">
                     {c.pill}
                   </div>
                 </div>
 
                 <div className="pt-4 border-t border-gray-50 flex items-center justify-between mt-4">
                   <div>
-                    <span className="text-[10px] text-gray-400 block">{c.priceLabel}</span>
-                    <strong className="text-sm font-black text-gray-900">
+                    <span className="text-xs text-gray-500 block">{c.priceLabel}</span>
+                    <strong className="text-sm font-extrabold text-gray-900 tabular-nums">
                       {c.price}{' '}
-                      <span className="text-[11px] font-normal text-gray-500">{c.unit}</span>
+                      <span className="text-xs font-normal text-gray-500">{c.unit}</span>
                     </strong>
                   </div>
-                  <button
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      handleSelectById(c.id);
-                    }}
-                    className="px-4 py-2 rounded-xl bg-[#087f78] hover:bg-[#066862] text-white text-xs font-bold transition-colors shadow-xs"
+                  <span
+                    aria-hidden="true"
+                    className="px-4 py-2 rounded-xl bg-[#087f78] group-hover:bg-[#066862] text-white text-xs font-bold transition-colors shadow-xs"
                   >
                     {c.buttonText}
-                  </button>
+                  </span>
                 </div>
               </div>
             ))}
@@ -926,41 +943,69 @@ export default function HomeLanding({
         </div>
 
         {/* SECTION 6: KHUNG GIÁ DỊCH VỤ CHUẨN HÓA (CHỐNG CHẶT CHÉM) */}
-        <div id="price-table" className="mb-14">
+        <div id="price-table" className="scroll-mt-20 md:scroll-mt-32 mb-14">
           <div className="bg-white rounded-2xl border border-gray-200 p-6 shadow-sm">
             {/* Heading & Guarantee Badge */}
             <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 pb-6 border-b border-gray-100">
               <div>
-                <span className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-emerald-50 text-[#087f78] text-[11px] font-bold border border-emerald-200 mb-1.5">
-                  🛡️ GOPU Fair-Pricing Standard
+                <span className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-emerald-50 text-[#087f78] text-xs font-bold border border-emerald-200 mb-1.5">
+                  <Icon name="shield" className="h-3.5 w-3.5" /> GOPU Fair-Pricing Standard
                 </span>
-                <h2 className="text-2xl font-black text-gray-900">
+                <h2 className="text-2xl font-extrabold text-gray-900">
                   Khung giá dịch vụ chuẩn hóa tại Phú Quốc
                 </h2>
-                <p className="text-xs text-gray-500 mt-1 max-w-2xl leading-relaxed">
+                <p className="text-sm text-gray-500 mt-1 max-w-[54ch] leading-[1.6]">
                   Chúng tôi công khai mức giá trần & giá sàn minh bạch. Du khách được bảo vệ khỏi
                   việc thổi giá vào mùa cao điểm hoặc chèo kéo tại cảng tàu.
                 </p>
               </div>
 
-              <div className="bg-emerald-50/70 border border-emerald-200/60 rounded-xl p-3 shrink-0 flex items-center gap-3">
-                <span className="text-2xl">💵</span>
+              {/* Divider instead of a tinted box: a card inside the price card
+                  read as nested containers rather than a callout. */}
+              <div className="shrink-0 flex items-center gap-3 border-t border-emerald-200/70 pt-3 md:border-t-0 md:border-l md:pt-0 md:pl-4">
+                <Icon name="wallet" className="h-6 w-6 text-[#087f78]" />
                 <div>
-                  <span className="text-[10px] uppercase font-bold text-gray-500 block">
+                  <span className="text-xs uppercase font-bold text-gray-500 block">
                     Cam kết hoàn tiền chênh lệch
                   </span>
-                  <strong className="text-xs font-bold text-[#087f78] block">
+                  <strong className="text-sm font-bold text-[#087f78] block tabular-nums">
                     Đền bù 100% nếu bị bán đắt hơn niêm yết
                   </strong>
                 </div>
               </div>
             </div>
 
-            {/* Table */}
-            <div className="overflow-x-auto mt-4">
-              <table className="w-full text-left text-xs">
+            {/* Mobile: one row per service, whole row is the target */}
+            <div className="md:hidden mt-4 divide-y divide-gray-100">
+              {standardPriceRows.map((row, idx) => (
+                <div key={idx} className="relative py-3.5">
+                  <button
+                    type="button"
+                    onClick={() => handleSelectById(row.serviceId)}
+                    aria-label={`Xem dịch vụ ${row.name}`}
+                    className="absolute inset-0 z-10 rounded-lg focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-[#087f78]"
+                  />
+                  <div className="flex items-start justify-between gap-3">
+                    <span className="text-sm font-bold text-gray-900 flex items-start gap-2">
+                      <Icon name={row.icon} className="h-4 w-4 shrink-0 text-[#087f78]" />
+                      <span>{row.name}</span>
+                    </span>
+                    <span className="text-sm font-extrabold text-gray-900 whitespace-nowrap tabular-nums">{row.price}</span>
+                  </div>
+                  <p className="text-sm text-gray-600 mt-1.5 leading-[1.5]">{row.standard}</p>
+                  <div className="flex items-center justify-between mt-2.5">
+                    <span className="text-sm text-gray-500">{row.unit}</span>
+                    <span aria-hidden="true" className="text-xs font-bold text-[#087f78]">Xem dịch vụ →</span>
+                  </div>
+                </div>
+              ))}
+            </div>
+
+            {/* Desktop: table */}
+            <div className="hidden md:block overflow-x-auto mt-4">
+              <table className="w-full text-left text-sm leading-[1.5]">
                 <thead>
-                  <tr className="text-[11px] uppercase tracking-wider text-gray-400 border-b border-gray-100">
+                  <tr className="text-xs uppercase tracking-wider text-gray-500 border-b border-gray-100">
                     <th className="pb-3 font-bold">HẠNG MỤC DỊCH VỤ</th>
                     <th className="pb-3 font-bold">QUY CHUẨN DỊCH VỤ</th>
                     <th className="pb-3 font-bold">GIÁ SÀN THAM KHẢO</th>
@@ -976,19 +1021,21 @@ export default function HomeLanding({
                       className="hover:bg-gray-50/80 transition-colors cursor-pointer group"
                     >
                       <td className="py-3.5 pr-4 font-bold text-gray-900 group-hover:text-[#087f78] flex items-center gap-2">
-                        <span>{row.icon}</span>
+                        <Icon name={row.icon} className="h-4 w-4 shrink-0 text-[#087f78]" />
                         <span>{row.name}</span>
                       </td>
                       <td className="py-3.5 pr-4 text-gray-600">{row.standard}</td>
-                      <td className="py-3.5 pr-4 font-black text-gray-900">{row.price}</td>
+                      <td className="py-3.5 pr-4 font-extrabold text-gray-900 tabular-nums">{row.price}</td>
                       <td className="py-3.5 pr-4 text-gray-500">{row.unit}</td>
                       <td className="py-3.5 text-right">
                         <button
+                          type="button"
                           onClick={(e) => {
                             e.stopPropagation();
                             handleSelectById(row.serviceId);
                           }}
-                          className="text-[#087f78] hover:text-[#066862] font-bold text-xs"
+                          aria-label={`Xem dịch vụ ${row.name}`}
+                          className="min-h-11 px-2 -my-2 text-[#087f78] hover:text-[#066862] font-bold text-xs rounded-[10px] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#087f78] focus-visible:ring-offset-2"
                         >
                           Xem dịch vụ &gt;
                         </button>
@@ -1000,35 +1047,35 @@ export default function HomeLanding({
             </div>
 
             {/* Table Footer Notes */}
-            <div className="flex flex-col sm:flex-row items-center justify-between text-xs text-gray-400 pt-4 border-t border-gray-100 mt-4 gap-2">
+            <div className="flex flex-col sm:flex-row items-center justify-between text-sm leading-[1.5] text-gray-500 pt-4 border-t border-gray-100 mt-4 gap-2">
               <span className="flex items-center gap-1.5">
                 <span>ⓘ</span>
-                <span>
+                <span className="max-w-[54ch]">
                   Tất cả nhà xe, thuyền trưởng và nhà hàng đối tác đều ký cam kết chuẩn giá bán với
                   GOPU.
                 </span>
               </span>
               <button
                 onClick={() => alert('Đang tải tài liệu Quy chuẩn giá Phú Quốc Mùa 2026 (PDF)...')}
-                className="text-[#087f78] hover:underline font-medium"
+                className="min-h-11 inline-flex items-center text-[#087f78] hover:underline font-medium"
               >
-                Tải bảng quy chuẩn giá toàn đảo PDF (Mùa 2026) 📄
+                <Icon name="doc" className="h-4 w-4" /> Tải bảng quy chuẩn giá toàn đảo PDF (Mùa 2026)
               </button>
             </div>
           </div>
         </div>
 
         {/* SECTION 7: BANNER LỚN GOPU AI PLANNER */}
-        <div className="rounded-3xl bg-gradient-to-r from-[#064e43] via-[#085f53] to-[#043830] text-white p-8 md:p-10 shadow-xl relative overflow-hidden">
+        <div id="ai-planner" className="scroll-mt-20 md:scroll-mt-32 rounded-3xl bg-[#064e43] text-white p-8 md:p-10 shadow-xl relative overflow-hidden">
           <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-8 relative z-10">
             <div className="max-w-2xl">
-              <span className="inline-flex items-center gap-1 px-3 py-1 rounded-full bg-white/10 backdrop-blur-sm text-[11px] font-bold text-emerald-200 border border-white/15 mb-3">
-                ✨ Trợ lý lập trình GOPU AI thế hệ mới
+              <span className="inline-flex items-center gap-1 px-3 py-1 rounded-full bg-white/10 backdrop-blur-sm text-xs font-bold text-emerald-200 border border-white/15 mb-3">
+                <Icon name="sparkles" className="h-3.5 w-3.5" /> Trợ lý lập trình GOPU AI thế hệ mới
               </span>
-              <h2 className="text-2xl sm:text-3xl font-black text-white tracking-tight leading-tight">
+              <h2 className="text-2xl sm:text-3xl font-extrabold text-white tracking-tight leading-tight">
                 Đi ngắn ngày hay ở lại lâu hơn? Lên lịch trình ngay cùng GOPU AI
               </h2>
-              <p className="text-xs sm:text-sm text-emerald-100/90 mt-2.5 leading-relaxed">
+              <p className="text-sm sm:text-sm text-emerald-50 mt-2.5 leading-[1.7] max-w-[54ch]">
                 Chỉ cần chia sẻ số ngày, số lượng người và ngân sách dự kiến. AI sẽ tự động phân bổ
                 điểm đến, thời gian ngắm hoàng hôn, phương tiện và bữa ăn hợp lý nhất theo dữ liệu
                 gió sóng thời gian thực.
@@ -1037,19 +1084,19 @@ export default function HomeLanding({
               {/* 3 Cam kết */}
               <div className="flex flex-wrap items-center gap-4 text-xs font-semibold text-emerald-100 mt-5">
                 <span className="flex items-center gap-1.5">
-                  <span className="w-4 h-4 rounded-full bg-emerald-400 text-[#064e43] flex items-center justify-center text-[10px] font-bold">
+                  <span className="w-4 h-4 rounded-full bg-emerald-400 text-[#064e43] flex items-center justify-center text-xs font-bold">
                     ✓
                   </span>
                   Tối ưu cung đường không mệt mỏi
                 </span>
                 <span className="flex items-center gap-1.5">
-                  <span className="w-4 h-4 rounded-full bg-emerald-400 text-[#064e43] flex items-center justify-center text-[10px] font-bold">
+                  <span className="w-4 h-4 rounded-full bg-emerald-400 text-[#064e43] flex items-center justify-center text-xs font-bold">
                     ✓
                   </span>
                   Dự báo biển động trước 36 giờ
                 </span>
                 <span className="flex items-center gap-1.5">
-                  <span className="w-4 h-4 rounded-full bg-emerald-400 text-[#064e43] flex items-center justify-center text-[10px] font-bold">
+                  <span className="w-4 h-4 rounded-full bg-emerald-400 text-[#064e43] flex items-center justify-center text-xs font-bold">
                     ✓
                   </span>
                   Xuất lịch trình qua Zalo trong 5s
@@ -1065,9 +1112,9 @@ export default function HomeLanding({
                     'Mình muốn đi 3 ngày 2 đêm cùng gia đình (4 người), ngân sách khoảng 12 triệu, ưu tiên tắm biển ngắm hoàng hôn, cano 4 đảo và ăn hải sản ngon.'
                   )
                 }
-                className="px-6 py-3.5 rounded-xl bg-white hover:bg-emerald-50 text-[#064e43] font-black text-xs transition-colors shadow-md flex items-center justify-center gap-2"
+                className="px-6 py-3.5 rounded-xl bg-white hover:bg-emerald-50 text-[#064e43] font-extrabold text-xs transition-colors shadow-md flex items-center justify-center gap-2"
               >
-                <span>✨</span>
+                <Icon name="sparkles" className="h-4 w-4" />
                 <span>Trò chuyện với GOPU AI ngay</span>
               </button>
               <button
@@ -1083,19 +1130,19 @@ export default function HomeLanding({
       </section>
 
       {/* FLOATING CHAT WIDGET: CHAT VỚI GOPU AI */}
-      <div className="fixed bottom-6 right-6 z-40 flex flex-col items-end">
+      <div className="fixed bottom-[calc(1.5rem+env(safe-area-inset-bottom))] right-4 sm:right-6 z-40 flex flex-col items-end">
         {/* Popover Mini Chatbox khi mở */}
         {isChatOpen && (
-          <div className="mb-3 w-80 sm:w-96 bg-white rounded-3xl shadow-2xl border border-gray-100 overflow-hidden animate-fadeIn flex flex-col max-h-[500px]">
+          <div className="mb-3 w-[calc(100vw-2rem)] max-w-96 bg-white rounded-3xl shadow-2xl border border-gray-100 overflow-hidden animate-fadeIn flex flex-col max-h-[500px]">
             {/* Header */}
-            <div className="bg-gradient-to-r from-[#008272] to-[#045248] text-white p-3.5 flex items-center justify-between shrink-0">
+            <div className="bg-gradient-to-r from-[#087f78] to-[#064e43] text-white p-3.5 flex items-center justify-between shrink-0">
               <div className="flex items-center gap-2.5">
                 <div className="w-8 h-8 rounded-full bg-white/15 flex items-center justify-center text-amber-300 text-sm">
                   ✨
                 </div>
                 <div>
-                  <h4 className="text-xs font-black text-white leading-tight">GOPU Smart Concierge</h4>
-                  <p className="text-[10px] text-emerald-200">Trợ lý du lịch kết nối Gemini AI 24/7</p>
+                  <h4 className="text-xs font-extrabold text-white leading-tight">GOPU Smart Concierge</h4>
+                  <p className="text-xs text-emerald-100/90">Trợ lý du lịch kết nối Gemini AI 24/7</p>
                 </div>
               </div>
               <div className="flex items-center gap-1">
@@ -1137,7 +1184,7 @@ export default function HomeLanding({
                   <div
                     className={`max-w-[88%] p-3 rounded-2xl text-xs leading-relaxed ${
                       msg.role === 'user'
-                        ? 'bg-[#008272] text-white rounded-br-xs shadow-xs'
+                        ? 'bg-[#087f78] text-white rounded-br-xs shadow-xs'
                         : 'bg-white text-gray-800 border border-gray-100 rounded-bl-xs shadow-xs'
                     }`}
                   >
@@ -1150,7 +1197,7 @@ export default function HomeLanding({
                           <span className="text-emerald-700">🗺️</span>
                           <span className="text-emerald-900">Kế hoạch chi tiết đã sẵn sàng!</span>
                         </div>
-                        <p className="text-[11px] text-gray-600 mb-2 leading-relaxed">
+                        <p className="text-sm text-gray-600 mb-2 leading-[1.6]">
                           Xem timeline chi tiết từng giờ, bản đồ vệ tinh & bảng dự toán ngân sách minh bạch.
                         </p>
                         <button
@@ -1158,7 +1205,7 @@ export default function HomeLanding({
                             setIsChatOpen(false);
                             onOpenAssistant();
                           }}
-                          className="w-full py-2 px-3 rounded-xl bg-[#008272] hover:bg-[#006f61] text-white font-bold text-xs flex items-center justify-center gap-1.5 shadow-xs transition-colors"
+                          className="w-full py-2 px-3 rounded-xl bg-[#087f78] hover:bg-[#066862] text-white font-bold text-xs flex items-center justify-center gap-1.5 shadow-xs transition-colors"
                         >
                           <span>Xem toàn bộ lịch trình trên GOPU AI</span>
                           <span>→</span>
@@ -1166,7 +1213,7 @@ export default function HomeLanding({
                       </div>
                     )}
                   </div>
-                  <span className="text-[9px] text-gray-400 mt-1 px-1">
+                  <span className="text-xs text-gray-500 mt-1 px-1">
                     {msg.role === 'user' ? 'Bạn' : 'GOPU AI'}
                   </span>
                 </div>
@@ -1176,10 +1223,10 @@ export default function HomeLanding({
               {isSubmitting && (
                 <div className="flex flex-col items-start animate-fadeIn">
                   <div className="bg-white text-gray-600 border border-gray-100 rounded-2xl rounded-bl-xs p-3 text-xs flex items-center gap-2 shadow-xs">
-                    <span className="inline-block w-2 h-2 rounded-full bg-[#008272] animate-bounce" />
-                    <span className="inline-block w-2 h-2 rounded-full bg-[#008272] animate-bounce [animation-delay:0.2s]" />
-                    <span className="inline-block w-2 h-2 rounded-full bg-[#008272] animate-bounce [animation-delay:0.4s]" />
-                    <span className="text-[11px] font-medium text-gray-500">GOPU AI đang phân tích dữ liệu & lên lịch...</span>
+                    <span className="inline-block w-2 h-2 rounded-full bg-[#087f78] animate-bounce" />
+                    <span className="inline-block w-2 h-2 rounded-full bg-[#087f78] animate-bounce [animation-delay:0.2s]" />
+                    <span className="inline-block w-2 h-2 rounded-full bg-[#087f78] animate-bounce [animation-delay:0.4s]" />
+                    <span className="text-xs font-medium text-gray-500">GOPU AI đang phân tích dữ liệu & lên lịch...</span>
                   </div>
                 </div>
               )}
@@ -1187,7 +1234,7 @@ export default function HomeLanding({
               {/* Quick suggestion chips if just 1 message */}
               {chatMessages.length === 1 && !isSubmitting && (
                 <div className="mt-1 pt-1">
-                  <div className="text-[11px] font-bold text-gray-500 mb-1.5">Gợi ý câu hỏi nhanh:</div>
+                  <div className="text-xs font-bold text-gray-500 mb-1.5">Gợi ý câu hỏi nhanh:</div>
                   <div className="flex flex-col gap-1.5">
                     {[
                       'Thời tiết Phú Quốc mùa này thế nào?',
@@ -1197,7 +1244,7 @@ export default function HomeLanding({
                       <button
                         key={idx}
                         onClick={() => handleSendMiniMessage(sug)}
-                        className="text-left px-3 py-2 rounded-xl bg-white hover:bg-teal-50 border border-gray-200/80 hover:border-teal-300 text-gray-700 hover:text-[#008272] transition-colors text-[11px]"
+                        className="text-left px-3 py-2 rounded-xl bg-white hover:bg-teal-50 border border-gray-200/80 hover:border-teal-300 text-gray-700 hover:text-[#087f78] transition-colors text-xs"
                       >
                         💡 {sug}
                       </button>
@@ -1221,12 +1268,12 @@ export default function HomeLanding({
                 onChange={(e) => setChatPrompt(e.target.value)}
                 placeholder="Nhắn tin trò chuyện hoặc bảo AI lên lịch trình..."
                 disabled={isSubmitting}
-                className="flex-1 px-3 py-2 rounded-xl border border-gray-200 bg-gray-50 text-xs focus:outline-none focus:border-[#008272] focus:bg-white"
+                className="flex-1 px-3 py-2 rounded-xl border border-gray-200 bg-gray-50 text-xs focus:outline-none focus:border-[#087f78] focus:bg-white"
               />
               <button
                 type="submit"
                 disabled={!chatPrompt.trim() || isSubmitting}
-                className="px-3.5 py-2 rounded-xl bg-[#008272] disabled:opacity-40 text-white font-bold text-xs hover:bg-[#006f61] transition-colors shadow-xs"
+                className="px-3.5 py-2 rounded-xl bg-[#087f78] disabled:opacity-40 text-white font-bold text-xs hover:bg-[#066862] transition-colors shadow-xs"
               >
                 Gửi
               </button>
@@ -1237,7 +1284,9 @@ export default function HomeLanding({
         {/* Nút Floating Pill khớp chính xác hình ảnh người dùng */}
         <button
           onClick={() => setIsChatOpen(!isChatOpen)}
-          className="rounded-full bg-[#008272] hover:bg-[#006f61] active:scale-95 text-white px-5 py-2.5 shadow-2xl shadow-teal-950/30 flex items-center gap-3 border border-white/20 transition-all hover:scale-105 group"
+          aria-label={isChatOpen ? 'Đóng cửa sổ chat GOPU AI' : 'Mở chat với GOPU AI'}
+          aria-expanded={isChatOpen}
+          className="rounded-full bg-[#087f78] hover:bg-[#066862] active:scale-95 text-white p-3 sm:px-5 sm:py-2.5 shadow-2xl shadow-teal-950/30 flex items-center gap-3 border border-white/20 transition-all hover:scale-105 group"
         >
           {/* Custom Stars Icon matching uploaded image */}
           <div className="relative w-5 h-5 flex items-center justify-center shrink-0">
@@ -1259,12 +1308,13 @@ export default function HomeLanding({
             </svg>
           </div>
 
-          {/* Text Container: 2 rows */}
-          <div className="text-left">
-            <div className="font-extrabold text-[13px] text-white leading-tight tracking-tight">
+          {/* Text Container: 2 rows — icon-only on phones so the pill stops
+              covering the card it sits on top of. */}
+          <div className="text-left hidden sm:block">
+            <div className="font-extrabold text-sm text-white leading-tight tracking-tight">
               Chat với GOPU AI
             </div>
-            <div className="text-[10px] text-emerald-100/90 font-medium leading-tight mt-0.5">
+            <div className="text-xs text-emerald-100/90 font-medium leading-tight mt-0.5">
               Tạo lịch trình tự động 24/7
             </div>
           </div>

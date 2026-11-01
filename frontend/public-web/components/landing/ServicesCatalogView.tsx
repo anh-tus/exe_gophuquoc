@@ -24,7 +24,7 @@ export interface CatalogServiceItem {
 
 const CATALOG_SERVICES: CatalogServiceItem[] = [
   {
-    id: 'cano-4-dao-an-thoi',
+    id: 'cano-an-thoi',
     title: 'Cano cao tốc khám phá quần đảo An Thới & Lặn ngắm san hô tự nhiên',
     categoryBadge: 'Tour & trải nghiệm',
     highlightBadge: 'Bán chạy nhất',
@@ -43,7 +43,7 @@ const CATALOG_SERVICES: CatalogServiceItem[] = [
     lon: 104.017,
   },
   {
-    id: 'bai-sao-sup',
+    id: 'bien-bai-sao',
     title: 'Một ngày thư thả nghỉ dưỡng tại Bãi Sao & chèo SUP bãi cát trắng',
     categoryBadge: 'Tour nghỉ dưỡng',
     highlightBadge: 'Thư giãn',
@@ -60,7 +60,7 @@ const CATALOG_SERVICES: CatalogServiceItem[] = [
     lon: 104.036,
   },
   {
-    id: 'airport-transfer-vip',
+    id: 'xe-san-bay',
     title: 'Xe riêng đưa đón Sân bay Phú Quốc ⇄ Khách sạn trung tâm & Resort',
     categoryBadge: 'Di chuyển',
     highlightBadge: 'Đúng giờ 100%',
@@ -77,7 +77,7 @@ const CATALOG_SERVICES: CatalogServiceItem[] = [
     lon: 103.993,
   },
   {
-    id: 'sunset-sanato-tour',
+    id: 'sunset-sanato-phu-quoc',
     title: 'Vé cổng & Check-in hoàng hôn Sunset Sanato Beach Club',
     categoryBadge: 'Điểm đến & Show',
     highlightBadge: 'Check-in Hot',
@@ -96,7 +96,7 @@ const CATALOG_SERVICES: CatalogServiceItem[] = [
     lon: 103.966,
   },
   {
-    id: 'cau-muc-dem',
+    id: 'cau-muc-dem-an-thoi',
     title: 'Trải nghiệm tàu câu mực đêm & Thưởng thức cháo mực giữa biển',
     categoryBadge: 'Tour & trải nghiệm',
     highlightBadge: 'Trải nghiệm đêm',
@@ -113,7 +113,7 @@ const CATALOG_SERVICES: CatalogServiceItem[] = [
     lon: 103.959,
   },
   {
-    id: 'xe-may-tu-lai',
+    id: 'thue-xe-may',
     title: 'Thuê xe máy tay ga & xe số tự lái giao nhận tận khách sạn',
     categoryBadge: 'Thuê xe tự lái',
     highlightBadge: 'Giao tận nơi',
@@ -212,9 +212,9 @@ export default function ServicesCatalogView({
         {/* Search & Filter Bar */}
         <div className="bg-white rounded-2xl p-4 border border-gray-200 shadow-sm mb-8">
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-12 gap-3 items-center">
-            {/* Search Input (4 cols) */}
-            <div className="lg:col-span-4 relative">
-              <span className="absolute left-3.5 top-1/2 -translate-y-1/2 text-gray-400">🔍</span>
+            {/* Search Input (3 cols) */}
+            <div className="lg:col-span-3 relative">
+              <span className="absolute left-3.5 top-1/2 -translate-y-1/2 text-gray-500">🔍</span>
               <input
                 type="text"
                 value={searchTerm}
@@ -257,7 +257,7 @@ export default function ServicesCatalogView({
             </div>
 
             {/* Price Dropdown (1.5 cols) */}
-            <div className="lg:col-span-1.5">
+            <div className="lg:col-span-2">
               <select
                 value={priceFilter}
                 onChange={(e) => setPriceFilter(e.target.value)}
@@ -271,7 +271,7 @@ export default function ServicesCatalogView({
             </div>
 
             {/* Rating Dropdown (1.5 cols) */}
-            <div className="lg:col-span-1.5">
+            <div className="lg:col-span-2">
               <select
                 value={ratingFilter}
                 onChange={(e) => setRatingFilter(e.target.value)}
@@ -287,7 +287,7 @@ export default function ServicesCatalogView({
             <div className="lg:col-span-1 flex items-center gap-1.5">
               <button
                 type="button"
-                className="w-full py-2.5 px-3 rounded-xl bg-[#087f78] hover:bg-[#066761] text-white font-bold text-xs flex items-center justify-center gap-1 shadow-sm whitespace-nowrap"
+                className="w-full py-2.5 px-3 rounded-xl bg-[#087f78] hover:bg-[#066862] text-white font-bold text-xs flex items-center justify-center gap-1 shadow-sm whitespace-nowrap"
               >
                 <span>Lọc</span>
               </button>
@@ -343,11 +343,11 @@ export default function ServicesCatalogView({
                       className="object-cover"
                     />
                     <div className="absolute top-2.5 left-2.5 flex flex-col gap-1">
-                      <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-black/60 text-white backdrop-blur-md">
+                      <span className="text-xs font-bold px-2 py-0.5 rounded-full bg-black/60 text-white backdrop-blur-md">
                         {service.categoryBadge}
                       </span>
                       {service.highlightBadge && (
-                        <span className="text-[10px] font-black px-2 py-0.5 rounded-full bg-amber-400 text-amber-950">
+                        <span className="text-xs font-black px-2 py-0.5 rounded-full bg-amber-400 text-amber-950">
                           {service.highlightBadge}
                         </span>
                       )}
@@ -373,7 +373,7 @@ export default function ServicesCatalogView({
                         <div className="flex items-center gap-1 font-bold text-gray-800">
                           <span className="text-amber-400">★</span>
                           <span>{service.rating}</span>
-                          <span className="text-gray-400 font-normal">({service.reviewsCount})</span>
+                          <span className="text-gray-500 font-normal">({service.reviewsCount})</span>
                         </div>
                       </div>
 
@@ -395,7 +395,7 @@ export default function ServicesCatalogView({
                         {service.perks.map((perk, pIdx) => (
                           <span
                             key={pIdx}
-                            className="text-[10px] font-bold bg-emerald-50 text-[#087f78] px-2 py-0.5 rounded-md border border-emerald-100"
+                            className="text-xs font-bold bg-emerald-50 text-[#087f78] px-2 py-0.5 rounded-md border border-emerald-100"
                           >
                             ✓ {perk}
                           </span>
@@ -408,16 +408,16 @@ export default function ServicesCatalogView({
                       <div>
                         {service.originalPrice && (
                           <div className="flex items-center gap-1.5 text-xs">
-                            <span className="text-gray-400 line-through">{service.originalPrice}</span>
-                            <span className="text-[10px] font-bold text-rose-600 bg-rose-50 px-1 rounded">
+                            <span className="text-gray-500 line-through">{service.originalPrice}</span>
+                            <span className="text-xs font-bold text-rose-600 bg-rose-50 px-1 rounded-[10px]">
                               {service.discountBadge}
                             </span>
                           </div>
                         )}
                         <div className="flex items-baseline gap-1">
-                          <span className="text-xs text-gray-400 font-medium">Từ</span>
-                          <span className="text-lg font-black text-[#087f78]">{service.price}</span>
-                          <span className="text-xs text-gray-400">{service.priceUnit}</span>
+                          <span className="text-xs text-gray-500 font-medium">Từ</span>
+                          <span className="text-xl font-black text-[#087f78]">{service.price}</span>
+                          <span className="text-xs text-gray-500">{service.priceUnit}</span>
                         </div>
                       </div>
 
@@ -431,7 +431,7 @@ export default function ServicesCatalogView({
                         </button>
                         <button
                           onClick={() => onViewServiceDetail(service)}
-                          className="px-3.5 py-2 rounded-xl text-xs font-bold bg-[#087f78] hover:bg-[#066761] text-white shadow-sm transition-colors flex items-center gap-1"
+                          className="px-3.5 py-2 rounded-xl text-xs font-bold bg-[#087f78] hover:bg-[#066862] text-white shadow-sm transition-colors flex items-center gap-1"
                         >
                           <span>Xem chi tiết</span>
                           <span>→</span>
@@ -445,7 +445,7 @@ export default function ServicesCatalogView({
 
             {/* Pagination */}
             <div className="pt-6 flex items-center justify-center gap-2 text-xs font-bold text-gray-600">
-              <button className="px-3 py-2 rounded-xl border border-gray-200 hover:bg-white bg-gray-50 text-gray-400 cursor-not-allowed">
+              <button className="px-3 py-2 rounded-xl border border-gray-200 hover:bg-white bg-gray-50 text-gray-500 cursor-not-allowed">
                 &lt; Trang trước
               </button>
               <button className="w-8 h-8 rounded-xl bg-[#087f78] text-white flex items-center justify-center shadow-sm">
@@ -476,16 +476,16 @@ export default function ServicesCatalogView({
                   <span>🗺️</span>
                   <span>Bản đồ Đảo Ngọc</span>
                 </span>
-                <div className="flex items-center gap-1 bg-gray-100 p-0.5 rounded-lg text-[11px]">
+                <div className="flex items-center gap-1 bg-gray-100 p-0.5 rounded-lg text-xs">
                   <button
                     onClick={() => setMapMode('map')}
-                    className={`px-2 py-0.5 rounded ${mapMode === 'map' ? 'bg-white shadow-xs text-[#087f78]' : 'text-gray-500'}`}
+                    className={`px-2 py-0.5 rounded-[10px] ${mapMode === 'map' ? 'bg-white shadow-xs text-[#087f78]' : 'text-gray-500'}`}
                   >
                     Bản đồ
                   </button>
                   <button
                     onClick={() => setMapMode('satellite')}
-                    className={`px-2 py-0.5 rounded ${mapMode === 'satellite' ? 'bg-white shadow-xs text-[#087f78]' : 'text-gray-500'}`}
+                    className={`px-2 py-0.5 rounded-[10px] ${mapMode === 'satellite' ? 'bg-white shadow-xs text-[#087f78]' : 'text-gray-500'}`}
                   >
                     Vệ tinh
                   </button>
@@ -501,7 +501,7 @@ export default function ServicesCatalogView({
                   className="border-0"
                   src="https://www.openstreetmap.org/export/embed.html?bbox=103.80%2C9.95%2C104.15%2C100.45&amp;layer=mapnik&amp;marker=10.027%2C104.017"
                 />
-                <div className="absolute top-3 left-3 bg-white/90 backdrop-blur-md px-2.5 py-1 rounded-lg text-[11px] font-bold text-emerald-800 border border-emerald-200">
+                <div className="absolute top-3 left-3 bg-white/90 backdrop-blur-md px-2.5 py-1 rounded-lg text-xs font-bold text-emerald-800 border border-emerald-200">
                   📍 Đang xem: Cảng An Thới
                 </div>
               </div>
@@ -513,7 +513,7 @@ export default function ServicesCatalogView({
                     <span className="text-sm">📍</span>
                     <h4 className="font-bold text-sm text-gray-900">{selectedPoi.title}</h4>
                   </div>
-                  <span className="text-[10px] font-black text-rose-600 bg-rose-50 px-2 py-0.5 rounded">
+                  <span className="text-xs font-black text-rose-600 bg-rose-50 px-2 py-0.5 rounded-[10px]">
                     {selectedPoi.badge}
                   </span>
                 </div>
@@ -551,12 +551,12 @@ export default function ServicesCatalogView({
       <div className="fixed bottom-6 right-6 z-40">
         <button
           onClick={onOpenAiPlanner}
-          className="bg-gradient-to-r from-[#087f78] to-teal-600 hover:from-[#066761] hover:to-teal-700 text-white font-bold text-xs sm:text-sm px-5 py-3 rounded-full shadow-2xl flex items-center gap-2.5 transform hover:scale-105 active:scale-95 transition-all border border-emerald-300/30"
+          className="bg-gradient-to-r from-[#087f78] to-teal-600 hover:from-[#066862] hover:to-teal-700 text-white font-bold text-xs sm:text-sm px-5 py-3 rounded-full shadow-2xl flex items-center gap-2.5 transform hover:scale-105 active:scale-95 transition-all border border-emerald-300/30"
         >
           <span className="text-base">✨</span>
           <div className="text-left leading-tight">
             <span className="block font-black">Chat với GOPU AI</span>
-            <span className="text-[10px] text-emerald-200 font-normal">Tạo lịch trình tự động 24/7</span>
+            <span className="text-xs text-emerald-200 font-normal">Tạo lịch trình tự động 24/7</span>
           </div>
         </button>
       </div>

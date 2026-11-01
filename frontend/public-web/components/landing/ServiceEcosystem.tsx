@@ -49,7 +49,7 @@ export default function ServiceEcosystem({ onSelectService, lang }: ServiceEcosy
               const el = document.getElementById('price-table');
               if (el) el.scrollIntoView({ behavior: 'smooth' });
             }}
-            className="text-sm font-bold text-[#087f78] hover:text-[#066761] flex items-center gap-1.5 flex-shrink-0 group"
+            className="text-sm font-bold text-[#087f78] hover:text-[#066862] flex items-center gap-1.5 flex-shrink-0 group"
           >
             <span>{lang === 'vi' ? 'Xem bảng giá chuẩn toàn đảo' : 'View Island Price Standards'}</span>
             <span className="transform group-hover:translate-x-1 transition-transform">→</span>
@@ -71,7 +71,7 @@ export default function ServiceEcosystem({ onSelectService, lang }: ServiceEcosy
                     {iconMap[item.iconType] || '🌴'}
                   </span>
                   {item.badge && (
-                    <span className="text-[10px] font-bold text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded-full border border-emerald-200/60">
+                    <span className="text-xs font-bold text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded-full border border-emerald-200/60">
                       {item.badge}
                     </span>
                   )}
@@ -93,7 +93,7 @@ export default function ServiceEcosystem({ onSelectService, lang }: ServiceEcosy
 
               {/* Bottom Price */}
               <div className="pt-3 border-t border-gray-100 flex items-baseline justify-between">
-                <span className="text-[11px] text-gray-400 font-medium">
+                <span className="text-xs text-gray-500 font-medium">
                   {lang === 'vi' ? 'Giá minh bạch' : 'Price'}
                 </span>
                 <span className="text-xs sm:text-sm font-bold text-[#087f78]">

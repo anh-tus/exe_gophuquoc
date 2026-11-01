@@ -59,7 +59,7 @@ export default function PriceStandardTable({ onActionClick, lang }: PriceStandar
                   {/* Service name & badge */}
                   <td className="py-4 px-6">
                     <div className="font-bold text-gray-900 mb-1">{item.serviceName}</div>
-                    <span className="inline-block text-[11px] font-semibold text-emerald-700 bg-emerald-50 px-2.5 py-0.5 rounded-md border border-emerald-200/60">
+                    <span className="inline-block text-xs font-semibold text-emerald-700 bg-emerald-50 px-2.5 py-0.5 rounded-md border border-emerald-200/60">
                       {item.categoryBadge}
                     </span>
                   </td>
@@ -67,7 +67,7 @@ export default function PriceStandardTable({ onActionClick, lang }: PriceStandar
                   {/* Price */}
                   <td className="py-4 px-6">
                     <div className="font-bold text-[#087f78]">{item.priceRange}</div>
-                    <span className="text-[11px] text-gray-400">Niêm yết cam kết</span>
+                    <span className="text-xs text-gray-500">Niêm yết cam kết</span>
                   </td>
 
                   {/* Specs & Notes */}
@@ -84,7 +84,7 @@ export default function PriceStandardTable({ onActionClick, lang }: PriceStandar
                   <td className="py-4 px-6 text-center">
                     <button
                       onClick={() => onActionClick(item)}
-                      className="px-3.5 py-1.5 rounded-lg text-xs font-bold bg-[#087f78] hover:bg-[#066761] text-white shadow-sm transition-all"
+                      className="px-3.5 py-1.5 rounded-lg text-xs font-bold bg-[#087f78] hover:bg-[#066862] text-white shadow-sm transition-all"
                     >
                       {item.actionText}
                     </button>
@@ -104,7 +104,7 @@ export default function PriceStandardTable({ onActionClick, lang }: PriceStandar
             >
               <div className="flex items-start justify-between gap-2">
                 <div>
-                  <span className="text-[10px] font-bold text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded border border-emerald-200/60 inline-block mb-1">
+                  <span className="text-xs font-bold text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded-[10px] border border-emerald-200/60 inline-block mb-1">
                     {item.categoryBadge}
                   </span>
                   <h3 className="font-bold text-base text-gray-900">{item.serviceName}</h3>

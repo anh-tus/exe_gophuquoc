@@ -37,7 +37,7 @@ export default function CuratedSpots({ onSelectSpot, lang }: CuratedSpotsProps) 
               const el = document.getElementById('services-ecosystem');
               if (el) el.scrollIntoView({ behavior: 'smooth' });
             }}
-            className="text-sm font-bold text-[#087f78] hover:text-[#066761] flex items-center gap-1.5 flex-shrink-0 group"
+            className="text-sm font-bold text-[#087f78] hover:text-[#066862] flex items-center gap-1.5 flex-shrink-0 group"
           >
             <span>{lang === 'vi' ? 'Xem tất cả 48 địa điểm' : 'Browse All 48 Spots'}</span>
             <span className="transform group-hover:translate-x-1 transition-transform">→</span>
@@ -65,7 +65,7 @@ export default function CuratedSpots({ onSelectSpot, lang }: CuratedSpotsProps) 
 
                   {/* Top Badge */}
                   <div className="absolute top-3 left-3">
-                    <span className="text-[11px] font-bold px-2.5 py-1 rounded-full bg-white/90 text-gray-900 backdrop-blur-md shadow-sm">
+                    <span className="text-xs font-bold px-2.5 py-1 rounded-full bg-white/90 text-gray-900 backdrop-blur-md shadow-sm">
                       {spot.category}
                     </span>
                   </div>
@@ -74,7 +74,7 @@ export default function CuratedSpots({ onSelectSpot, lang }: CuratedSpotsProps) 
                   <div className="absolute bottom-3 left-3 flex items-center gap-1.5 text-white text-xs font-bold bg-black/40 backdrop-blur-md px-2 py-0.5 rounded-md">
                     <span className="text-amber-400">★</span>
                     <span>{spot.rating}</span>
-                    <span className="text-gray-300 text-[10px] font-normal">({spot.reviewsCount})</span>
+                    <span className="text-gray-300 text-xs font-normal">({spot.reviewsCount})</span>
                   </div>
                 </div>
 
@@ -98,7 +98,7 @@ export default function CuratedSpots({ onSelectSpot, lang }: CuratedSpotsProps) 
               {/* Price & Action */}
               <div className="px-4 pb-4 pt-3 border-t border-gray-100 flex items-center justify-between">
                 <div>
-                  <span className="text-[10px] text-gray-400 block font-medium">
+                  <span className="text-xs text-gray-500 block font-medium">
                     {lang === 'vi' ? 'Mức giá tham khảo' : 'Reference price'}
                   </span>
                   <span className="text-sm font-bold text-[#087f78]">

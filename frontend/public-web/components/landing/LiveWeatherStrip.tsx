@@ -73,7 +73,7 @@ export default function LiveWeatherStrip({ lang }: { lang: 'vi' | 'en' }) {
             <h2 className="text-xl sm:text-2xl font-black text-gray-900 tracking-tight flex items-center gap-2">
               <span>{lang === 'vi' ? 'Cảnh Báo Biển & Thời Tiết Thời Gian Thực' : 'Real-time Marine & Weather Alerts'}</span>
             </h2>
-            <span className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-[11px] font-bold bg-emerald-100 text-[#087f78] border border-emerald-200">
+            <span className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-xs font-bold bg-emerald-100 text-[#087f78] border border-emerald-200">
               <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-ping" />
               {lang === 'vi' ? 'Cập nhật trực tiếp' : 'Live Data'}
             </span>
@@ -97,7 +97,7 @@ export default function LiveWeatherStrip({ lang }: { lang: 'vi' | 'en' }) {
               <span className="text-xs font-bold text-gray-500 uppercase tracking-wider">
                 {lang === 'vi' ? 'Độ cao sóng biển (Nam Đảo)' : 'Wave Height (South)'}
               </span>
-              <span className="px-2 py-0.5 rounded-md text-[10px] font-bold bg-emerald-50 text-emerald-700 border border-emerald-200">
+              <span className="px-2 py-0.5 rounded-md text-xs font-bold bg-emerald-50 text-emerald-700 border border-emerald-200">
                 {lang === 'vi' ? 'Biển êm / Rất an toàn' : 'Calm / Safe'}
               </span>
             </div>
@@ -105,7 +105,7 @@ export default function LiveWeatherStrip({ lang }: { lang: 'vi' | 'en' }) {
               <span className="text-3xl sm:text-4xl font-black text-[#087f78]">
                 {data.waveHeight ?? 0.4}m
               </span>
-              <span className="text-xs text-gray-400 font-medium">Sóng cấp 1 • Gió êm</span>
+              <span className="text-xs text-gray-500 font-medium">Sóng cấp 1 • Gió êm</span>
             </div>
             <p className="text-xs text-gray-600 line-clamp-2 leading-relaxed">
               {lang === 'vi'
@@ -120,7 +120,7 @@ export default function LiveWeatherStrip({ lang }: { lang: 'vi' | 'en' }) {
               <span className="text-xs font-bold text-gray-500 uppercase tracking-wider">
                 {lang === 'vi' ? 'Dự báo & Khí quyển' : 'Atmosphere Forecast'}
               </span>
-              <span className="px-2 py-0.5 rounded-md text-[10px] font-bold bg-cyan-50 text-cyan-700 border border-cyan-200">
+              <span className="px-2 py-0.5 rounded-md text-xs font-bold bg-cyan-50 text-cyan-700 border border-cyan-200">
                 {lang === 'vi' ? 'Nắng đẹp / Mây nhẹ' : 'Sunny / Light clouds'}
               </span>
             </div>
@@ -128,7 +128,7 @@ export default function LiveWeatherStrip({ lang }: { lang: 'vi' | 'en' }) {
               <span className="text-3xl sm:text-4xl font-black text-[#087f78]">
                 {data.temp ?? 29}°C
               </span>
-              <span className="text-xs text-gray-400 font-medium">Tầm nhìn &gt; 10km</span>
+              <span className="text-xs text-gray-500 font-medium">Tầm nhìn &gt; 10km</span>
             </div>
             <p className="text-xs text-gray-600 line-clamp-2 leading-relaxed">
               {lang === 'vi'
@@ -143,7 +143,7 @@ export default function LiveWeatherStrip({ lang }: { lang: 'vi' | 'en' }) {
               <span className="text-xs font-bold text-gray-500 uppercase tracking-wider">
                 {lang === 'vi' ? 'Giờ vàng hoàng hôn' : 'Golden Sunset Hour'}
               </span>
-              <span className="px-2 py-0.5 rounded-md text-[10px] font-bold bg-amber-50 text-amber-700 border border-amber-200">
+              <span className="px-2 py-0.5 rounded-md text-xs font-bold bg-amber-50 text-amber-700 border border-amber-200">
                 {lang === 'vi' ? 'Khuyên chụp: Rất đẹp' : 'Photo Worthy'}
               </span>
             </div>
@@ -151,7 +151,7 @@ export default function LiveWeatherStrip({ lang }: { lang: 'vi' | 'en' }) {
               <span className="text-3xl sm:text-4xl font-black text-amber-600">
                 {data.sunsetTime}
               </span>
-              <span className="text-xs text-gray-400 font-medium">Đẹp nhất 17:20 - 18:05</span>
+              <span className="text-xs text-gray-500 font-medium">Đẹp nhất 17:20 - 18:05</span>
             </div>
             <p className="text-xs text-gray-600 line-clamp-2 leading-relaxed">
               {lang === 'vi'
@@ -166,11 +166,11 @@ export default function LiveWeatherStrip({ lang }: { lang: 'vi' | 'en' }) {
               <span className="text-xs font-bold text-emerald-100 uppercase tracking-wider">
                 {lang === 'vi' ? 'Khuyến nghị du lịch' : 'Travel Advice'}
               </span>
-              <span className="px-2 py-0.5 rounded-md text-[10px] font-bold bg-white/20 text-white">
+              <span className="px-2 py-0.5 rounded-md text-xs font-bold bg-white/20 text-white">
                 VIP Safe
               </span>
             </div>
-            <div className="text-lg font-bold mb-1.5 flex items-center gap-1.5">
+            <div className="text-xl font-bold mb-1.5 flex items-center gap-1.5">
               <span>🤿</span>
               <span>{lang === 'vi' ? 'Phù hợp lặn san hô' : 'Ideal for Coral Diving'}</span>
             </div>

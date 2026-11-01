@@ -2,6 +2,7 @@
 
 import React, { useState } from 'react';
 import Image from 'next/image';
+import Icon from '../ui/Icon';
 
 interface HeaderProps {
   currentTab: string;
@@ -27,27 +28,30 @@ export default function HeaderSection({
   ];
 
   return (
-    <header className="sticky top-0 z-50 bg-white/95 backdrop-blur-md border-b border-emerald-950/10 transition-all">
-      {/* 1. Top Ticker Bar */}
+    <>
+      {/* 1. Top Ticker Bar — deliberately OUTSIDE the sticky header: it is a
+          one-time notice, so pinning it would cost 30px of every scroll. */}
       <div className="bg-[#0b2b2b] text-white text-xs py-1.5 px-4">
         <div className="max-w-7xl mx-auto flex items-center justify-between gap-4">
-          <div className="flex items-center gap-2 overflow-hidden text-ellipsis whitespace-nowrap">
-            <span className="inline-block w-2 h-2 rounded-full bg-emerald-400 animate-pulse flex-shrink-0" />
-            <span className="text-emerald-300 font-semibold uppercase text-[11px] tracking-wider">
+          <div className="flex items-center gap-2 min-w-0">
+            <span className="inline-block w-2 h-2 rounded-full bg-emerald-400 flex-shrink-0" aria-hidden="true" />
+            <span className="text-emerald-300 font-semibold uppercase text-xs tracking-wider flex-shrink-0">
               {lang === 'vi' ? 'GOPU Phú Quốc:' : 'GOPU Phu Quoc:'}
             </span>
-            <span className="text-gray-200">
+            <span className="text-gray-200 truncate">
               {lang === 'vi'
-                ? 'Khám phá dịch vụ và lên lịch trình từ danh mục minh họa; kiểm tra thời tiết và hoạt động trước chuyến đi.'
-                : 'Explore sample services and plan your trip; check weather and activity conditions before travelling.'}
+                ? 'Dịch vụ minh họa; kiểm tra thời tiết và hoạt động trước chuyến đi.'
+                : 'Sample services; check weather and activity before you travel.'}
             </span>
           </div>
 
-          <div className="hidden xl:flex items-center gap-4 text-[11px] text-gray-300 flex-shrink-0">
+          <div className="hidden xl:flex items-center gap-4 text-xs text-gray-300 flex-shrink-0">
             <span>{lang === 'vi' ? 'Dữ liệu dịch vụ minh họa' : 'Illustrative service data'}</span>
           </div>
         </div>
       </div>
+
+      <header className="sticky top-0 z-50 bg-white/95 backdrop-blur-md border-b border-emerald-950/10 shadow-[0_2px_14px_rgba(16,59,59,0.06)] transition-all">
 
       {/* 2. Main Navigation Bar */}
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 min-h-16 flex items-center justify-between gap-4">
@@ -68,15 +72,15 @@ export default function HeaderSection({
           </div>
           <div>
             <div className="flex items-center gap-1.5">
-              <span className="text-2xl font-black tracking-tight text-[#087f78] leading-none">
-                GOPU<span className="text-emerald-500 font-bold text-lg">.AI</span>
+              <span className="text-2xl font-extrabold tracking-tight text-[#087f78] leading-none">
+                GOPU<span className="text-emerald-500 font-bold text-xl">.AI</span>
               </span>
-              <span className="hidden xl:inline-flex items-center gap-1 text-[10px] font-bold text-emerald-800 bg-emerald-50 px-2 py-0.5 rounded-full border border-emerald-200">
+              <span className="hidden xl:inline-flex items-center gap-1 text-xs font-bold text-emerald-800 bg-emerald-50 px-2 py-0.5 rounded-full border border-emerald-200">
                 <span className="w-1.5 h-1.5 rounded-full bg-emerald-500" />
                 Phú Quốc • Đang hoạt động
               </span>
             </div>
-            <p className="hidden sm:block text-[10px] uppercase font-bold tracking-wider text-gray-400 mt-0.5">
+            <p className="hidden sm:block text-xs uppercase font-bold tracking-wider text-gray-500 mt-0.5">
               Go Phu Quoc, Go Paradise!
             </p>
           </div>
@@ -85,10 +89,10 @@ export default function HeaderSection({
         {/* Right Tools */}
         <div className="hidden lg:flex shrink-0 items-center gap-2">
           {/* Language Switcher */}
-          <div className="flex items-center bg-gray-100 p-0.5 rounded-lg border border-gray-200 text-[11px] font-bold">
+          <div className="flex items-center bg-gray-100 p-0.5 rounded-lg border border-gray-200 text-xs font-bold">
             <button
               onClick={() => onToggleLang('vi')}
-              className={`px-2 py-1 rounded transition-colors ${
+              className={`min-h-11 px-3 rounded-[10px] transition-colors ${
                 lang === 'vi' ? 'bg-white text-[#087f78] shadow-xs' : 'text-gray-500 hover:text-gray-800'
               }`}
             >
@@ -96,7 +100,7 @@ export default function HeaderSection({
             </button>
             <button
               onClick={() => onToggleLang('en')}
-              className={`px-2 py-1 rounded transition-colors ${
+              className={`min-h-11 px-3 rounded-[10px] transition-colors ${
                 lang === 'en' ? 'bg-white text-[#087f78] shadow-xs' : 'text-gray-500 hover:text-gray-800'
               }`}
             >
@@ -107,41 +111,41 @@ export default function HeaderSection({
           {/* Saved Itineraries Button */}
           <button
             onClick={() => onSelectTab('itinerary')}
-            className="shrink-0 text-xs font-bold text-gray-600 hover:text-[#087f78] bg-gray-50 hover:bg-emerald-50 px-2.5 py-1.5 rounded-xl border border-gray-200 transition-colors flex items-center gap-1 whitespace-nowrap"
+            className="shrink-0 text-xs font-bold text-gray-600 hover:text-[#087f78] bg-gray-50 hover:bg-emerald-50 min-h-11 px-2.5 py-1.5 rounded-xl border border-gray-200 transition-colors flex items-center gap-1 whitespace-nowrap"
             aria-label={lang === 'vi' ? 'Xem lịch trình đã lưu' : 'View saved itineraries'}
           >
-            <span>🔖</span>
+            <Icon name="bookmark" className="h-4 w-4" />
             <span>{lang === 'vi' ? 'Lịch trình đã lưu' : 'Saved itineraries'}</span>
           </button>
 
           {/* User Profile Avatar */}
           <button
             onClick={() => alert('Thông tin tài khoản GOPU')}
-            className="w-9 h-9 rounded-full bg-emerald-700 text-white flex items-center justify-center font-bold text-xs shadow-sm hover:ring-2 hover:ring-emerald-400 transition-all flex-shrink-0"
+            className="w-11 h-11 rounded-full bg-emerald-700 text-white flex items-center justify-center font-bold text-xs shadow-sm hover:ring-2 hover:ring-emerald-400 transition-all flex-shrink-0"
           >
-            👤
+            <Icon name="user" className="h-4 w-4" />
           </button>
         </div>
 
         {/* Mobile menu toggle */}
         <div className="flex items-center gap-2 lg:hidden">
-          <div className="flex items-center bg-gray-100 p-0.5 rounded text-xs font-bold mr-1">
+          <div className="flex items-center bg-gray-100 p-0.5 rounded-[10px] text-xs font-bold mr-1">
             <button
               onClick={() => onToggleLang('vi')}
-              className={`px-2 py-0.5 rounded ${lang === 'vi' ? 'bg-white text-[#087f78]' : 'text-gray-500'}`}
+              className={`min-h-11 min-w-9 min-[360px]:min-w-11 px-2.5 rounded-[10px] ${lang === 'vi' ? 'bg-white text-[#087f78]' : 'text-gray-500'}`}
             >
               VI
             </button>
             <button
               onClick={() => onToggleLang('en')}
-              className={`px-2 py-0.5 rounded ${lang === 'en' ? 'bg-white text-[#087f78]' : 'text-gray-500'}`}
+              className={`min-h-11 min-w-9 min-[360px]:min-w-11 px-2.5 rounded-[10px] ${lang === 'en' ? 'bg-white text-[#087f78]' : 'text-gray-500'}`}
             >
               EN
             </button>
           </div>
           <button
             onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-            className="p-2.5 rounded-xl text-gray-700 hover:bg-gray-100 border border-gray-200"
+            className="min-w-11 min-h-11 p-2.5 rounded-xl text-gray-700 hover:bg-gray-100 border border-gray-200"
             aria-label="Toggle navigation"
           >
             <span className="text-xl leading-none">{mobileMenuOpen ? '✕' : '☰'}</span>
@@ -207,6 +211,7 @@ export default function HeaderSection({
           </div>
         </div>
       )}
-    </header>
+      </header>
+    </>
   );
 }

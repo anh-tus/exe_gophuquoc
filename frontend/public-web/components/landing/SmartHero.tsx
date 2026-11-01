@@ -83,7 +83,7 @@ export default function SmartHero({ onPlanTrip, lang }: SmartHeroProps) {
                       ? 'Nhập yêu cầu: Số ngày, số người, ngân sách, sở thích...'
                       : 'Enter request: Days, travelers, budget, interests...'
                   }
-                  className="w-full bg-transparent text-sm sm:text-base font-medium text-gray-900 placeholder:text-gray-400 focus:outline-none"
+                  className="w-full bg-transparent text-sm sm:text-base font-medium text-gray-900 placeholder:text-gray-500 focus:outline-none"
                 />
               </div>
 
@@ -105,7 +105,7 @@ export default function SmartHero({ onPlanTrip, lang }: SmartHeroProps) {
                 {/* Submit Action */}
                 <button
                   type="submit"
-                  className="bg-[#087f78] hover:bg-[#066761] text-white font-bold text-sm sm:text-base px-5 py-2.5 rounded-lg shadow-md transition-all flex items-center justify-center gap-2 whitespace-nowrap"
+                  className="bg-[#087f78] hover:bg-[#066862] text-white font-bold text-sm sm:text-base px-5 py-2.5 rounded-lg shadow-md transition-all flex items-center justify-center gap-2 whitespace-nowrap"
                 >
                   <span>{lang === 'vi' ? 'Lập plan AI ngay!' : 'Generate Plan!'}</span>
                   <span>🚀</span>
@@ -116,30 +116,30 @@ export default function SmartHero({ onPlanTrip, lang }: SmartHeroProps) {
             {/* Parameter Badges */}
             <div className="grid grid-cols-2 sm:grid-cols-4 gap-2.5 mt-4 pt-3 border-t border-gray-100 text-xs">
               <div className="flex items-center gap-2 bg-gray-50/80 p-2 rounded-lg border border-gray-100">
-                <span className="text-gray-400">📅</span>
+                <span className="text-gray-500">📅</span>
                 <div>
-                  <div className="text-[10px] text-gray-400 font-bold uppercase">Ngày đi</div>
+                  <div className="text-xs text-gray-500 font-bold uppercase">Ngày đi</div>
                   <div className="font-semibold text-gray-700">15 - 17 Th05, 2026</div>
                 </div>
               </div>
               <div className="flex items-center gap-2 bg-gray-50/80 p-2 rounded-lg border border-gray-100">
-                <span className="text-gray-400">👥</span>
+                <span className="text-gray-500">👥</span>
                 <div>
-                  <div className="text-[10px] text-gray-400 font-bold uppercase">Số lượng</div>
+                  <div className="text-xs text-gray-500 font-bold uppercase">Số lượng</div>
                   <div className="font-semibold text-gray-700">4 người (2 lớn, 2 bé)</div>
                 </div>
               </div>
               <div className="flex items-center gap-2 bg-gray-50/80 p-2 rounded-lg border border-gray-100">
-                <span className="text-gray-400">💰</span>
+                <span className="text-gray-500">💰</span>
                 <div>
-                  <div className="text-[10px] text-gray-400 font-bold uppercase">Ngân sách</div>
+                  <div className="text-xs text-gray-500 font-bold uppercase">Ngân sách</div>
                   <div className="font-semibold text-[#087f78]">15.000.000đ</div>
                 </div>
               </div>
               <div className="flex items-center gap-2 bg-gray-50/80 p-2 rounded-lg border border-gray-100">
-                <span className="text-gray-400">🏖️</span>
+                <span className="text-gray-500">🏖️</span>
                 <div>
-                  <div className="text-[10px] text-gray-400 font-bold uppercase">Sở thích</div>
+                  <div className="text-xs text-gray-500 font-bold uppercase">Sở thích</div>
                   <div className="font-semibold text-gray-700">Nghỉ dưỡng &amp; Biển</div>
                 </div>
               </div>
@@ -148,7 +148,7 @@ export default function SmartHero({ onPlanTrip, lang }: SmartHeroProps) {
 
           {/* Quick Prompt Chips */}
           <div className="mt-4 flex flex-wrap items-center gap-2">
-            <span className="text-xs font-bold text-gray-400 uppercase tracking-wider mr-1">
+            <span className="text-xs font-bold text-gray-500 uppercase tracking-wider mr-1">
               {lang === 'vi' ? 'Gợi ý nhanh:' : 'Quick ideas:'}
             </span>
             {PROMPT_CHIPS.map((chip, idx) => (

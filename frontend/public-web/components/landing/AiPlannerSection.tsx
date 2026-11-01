@@ -47,7 +47,7 @@ export default function AiPlannerSection({ onOpenChat, lang }: AiPlannerSectionP
                 <span className="text-xs font-bold text-[#087f78] bg-emerald-50 px-2.5 py-1 rounded-full border border-emerald-100 inline-block mb-1">
                   {lang === 'vi' ? 'Lịch Trình Mẫu • Gia đình 4 người (3N2Đ)' : 'Sample Trip • Family 4 (3D2N)'}
                 </span>
-                <h3 className="font-bold text-lg text-gray-900">
+                <h3 className="font-bold text-xl text-gray-900">
                   {lang === 'vi' ? 'Ngày 1: Khám phá trọn vẹn cụm 4 đảo Nam' : 'Day 1: Southern 4-Island Adventure'}
                 </h3>
               </div>
@@ -91,7 +91,7 @@ export default function AiPlannerSection({ onOpenChat, lang }: AiPlannerSectionP
                         {item.title}
                       </h4>
                       {item.location && (
-                        <span className="text-[11px] font-semibold text-emerald-700 bg-emerald-50/80 px-2 py-0.5 rounded flex-shrink-0">
+                        <span className="text-xs font-semibold text-emerald-700 bg-emerald-50/80 px-2 py-0.5 rounded-[10px] flex-shrink-0">
                           📍 {item.location}
                         </span>
                       )}
@@ -107,17 +107,17 @@ export default function AiPlannerSection({ onOpenChat, lang }: AiPlannerSectionP
             {/* Bottom Total & Actions */}
             <div className="pt-6 border-t border-gray-100 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
               <div>
-                <span className="text-xs text-gray-400 block font-medium">
+                <span className="text-xs text-gray-500 block font-medium">
                   {lang === 'vi' ? 'Tổng chi phí ước tính (Ngày 1):' : 'Estimated Cost (Day 1):'}
                 </span>
                 <span className="text-xl sm:text-2xl font-black text-[#087f78]">
-                  4.250.000đ <span className="text-xs font-normal text-gray-400">/ 4 khách</span>
+                  4.250.000đ <span className="text-xs font-normal text-gray-500">/ 4 khách</span>
                 </span>
               </div>
 
               <button
                 onClick={handleExportQr}
-                className="bg-[#087f78] hover:bg-[#066761] text-white font-bold text-xs sm:text-sm px-5 py-2.5 rounded-xl shadow-md transition-all flex items-center justify-center gap-2 whitespace-nowrap active:scale-95"
+                className="bg-[#087f78] hover:bg-[#066862] text-white font-bold text-xs sm:text-sm px-5 py-2.5 rounded-xl shadow-md transition-all flex items-center justify-center gap-2 whitespace-nowrap active:scale-95"
               >
                 <span>{copied ? '✓ Đã tạo mã QR lưu máy' : 'Lưu & Xuất Lịch Trình (QR)'}</span>
                 <span>📱</span>
@@ -134,7 +134,7 @@ export default function AiPlannerSection({ onOpenChat, lang }: AiPlannerSectionP
                   <span>🗺️</span>
                   <span>{lang === 'vi' ? 'Bản Đồ Tuyến Di Chuyển Thông Minh' : 'Route Map Preview'}</span>
                 </span>
-                <span className="text-emerald-600 font-semibold bg-emerald-50 px-2 py-0.5 rounded">
+                <span className="text-emerald-600 font-semibold bg-emerald-50 px-2 py-0.5 rounded-[10px]">
                   Nam Đảo (4 đảo)
                 </span>
               </div>
@@ -157,7 +157,7 @@ export default function AiPlannerSection({ onOpenChat, lang }: AiPlannerSectionP
             </div>
 
             {/* AI Assistant Callout Box */}
-            <div className="bg-gradient-to-br from-[#0c3935] to-[#072422] rounded-3xl p-6 text-white shadow-lg flex items-start gap-4">
+            <div className="bg-gradient-to-br from-[#053f38] to-[#0b2b2b] rounded-3xl p-6 text-white shadow-lg flex items-start gap-4">
               <div className="w-12 h-12 rounded-2xl bg-emerald-400/20 border border-emerald-300/30 flex items-center justify-center text-2xl flex-shrink-0">
                 🤖
               </div>
