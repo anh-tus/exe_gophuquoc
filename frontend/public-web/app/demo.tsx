@@ -4,17 +4,42 @@ import { useEffect, useMemo, useState } from 'react';
 import HeaderSection from '../components/landing/HeaderSection';
 import FooterSection from '../components/landing/FooterSection';
 import ServicesCatalogView, { type CatalogServiceItem } from '../components/landing/ServicesCatalogView';
+import ServiceDetailPanel from '../components/booking/ServiceDetailPanel';
 import HomeLanding from './home-landing';
-import { estimateServiceCost, priceUnitLabel, services, type Lang, type Service } from './catalog';
+import { detailFor, estimateServiceCost, priceUnitLabel, services, type Lang, type Service } from './catalog';
 import AssistantWorkspace, { type Trip } from './assistant-workspace';
 import type { AssistantReply, ChatMessage, TripPreferences } from './api/assistant/logic';
 
 type View = 'home' | 'services' | 'itinerary' | 'requests';
-type Request = { code: string; serviceId: string; date: string; guests: number; total: number };
+type Request = { code: string; serviceId: string; date: string; guests: number; total: number; time?: string };
 
 const formatMoney = (n: number) => new Intl.NumberFormat('vi-VN').format(n) + ' ₫';
 const name = (s: Service, lang: Lang) => lang === 'vi' ? s.vi : s.en;
 const description = (s: Service, lang: Lang) => lang === 'vi' ? s.descriptionVi : s.descriptionEn;
+
+/** The quantity field means something different per price unit. */
+const quantityLabel = (s: Service, lang: Lang): string => {
+  const labels: Partial<Record<Service['priceUnit'], { vi: string; en: string }>> = {
+    'per-night': { vi: 'Số đêm lưu trú', en: 'Nights' },
+    'per-vehicle': { vi: 'Số chuyến xe', en: 'Trips' },
+    'per-kg': { vi: 'Số kg dự kiến', en: 'Estimated kg' },
+  };
+  return labels[s.priceUnit]?.[lang] ?? (lang === 'vi' ? 'Số khách' : 'Guests');
+};
+
+/** The date input stores ISO; everything the user reads shows dd/mm/yyyy. */
+const formatDate = (iso: string): string => {
+  const [y, m, d] = iso.split('-');
+  return y && m && d ? `${d}/${m}/${y}` : iso;
+};
+
+/** Booking a table and booking a tour are not the same action. */
+const bookingHeading = (s: Service, lang: Lang): string => {
+  if (s.category === 'restaurant') {
+    return lang === 'vi' ? 'Chi tiết nhà hàng & đặt bàn' : 'Restaurant details & table booking';
+  }
+  return lang === 'vi' ? 'Chi tiết & đặt dịch vụ trực tiếp' : 'Details & direct booking';
+};
 const readJson = <T,>(key: string, fallback: T): T => {
   try {
     const raw = localStorage.getItem(key);
@@ -29,6 +54,7 @@ export default function Demo() {
   const [view, setView] = useState<View>('home');
   const [selected, setSelected] = useState<Service | null>(null);
   const [date, setDate] = useState('2026-05-15');
+  const [arrivalTime, setArrivalTime] = useState('19:00');
   const [guests, setGuests] = useState(4);
   const [assistantSeed, setAssistantSeed] = useState('');
   const [conversation, setConversation] = useState<ChatMessage[]>([]);
@@ -119,6 +145,7 @@ export default function Demo() {
       date,
       guests,
       total: estimateServiceCost(selected, guests, 1),
+      time: selected.category === 'restaurant' ? arrivalTime : undefined,
     };
     const next = [entry, ...requests];
     setRequests(next);
@@ -163,6 +190,9 @@ export default function Demo() {
     alert(`🎉 Giữ chỗ trọn gói thành công!\nMã đặt tour của bạn: ${tourCode}\nTổng chi phí: 11.840.000 đ (4 khách)\nĐội ngũ GOPU sẽ liên hệ xác nhận chuyến bay và chuẩn bị xe đón.`);
     setFullTourBookingModal(false);
   };
+
+  const selectedDetail = selected ? detailFor(selected.id) : undefined;
+  const isRestaurant = selected?.category === 'restaurant';
 
   return (
     <div className="site min-h-screen bg-white flex flex-col">
@@ -218,9 +248,10 @@ export default function Demo() {
               go('itinerary');
             }}
             onViewServiceDetail={(service: CatalogServiceItem) => {
-              // Match with local service object if available
-              const found = services.find((s) => s.id === service.id) || services[0];
-              setSelected(found);
+              // Card ids are service ids. If a card ever drifts from the catalog,
+              // open nothing rather than silently showing a different service.
+              const found = services.find((s) => s.id === service.id);
+              if (found) setSelected(found);
             }}
             onOpenAiPlanner={() => {
               go('itinerary');
@@ -264,7 +295,7 @@ export default function Demo() {
               <span className="eyebrow text-[#087f78] text-xs font-bold uppercase tracking-wider block mb-1">
                 GOPU / Yêu cầu demo
               </span>
-              <h1 className="text-3xl font-black text-gray-900">Yêu cầu mẫu của bạn</h1>
+              <h1 className="text-3xl font-extrabold text-gray-900">Yêu cầu mẫu của bạn</h1>
               <p className="text-sm text-gray-500 mt-1">
                 Các yêu cầu được lưu trên trình duyệt của bạn để trải nghiệm giao diện.
               </p>
@@ -276,14 +307,18 @@ export default function Demo() {
                   const s = services.find((item) => item.id === r.serviceId);
                   return (
                     <article className="bg-white p-5 rounded-2xl border border-gray-200 shadow-sm" key={r.code}>
-                      <span className="text-[10px] font-bold px-2 py-0.5 rounded bg-emerald-50 text-[#087f78]">
+                      <span className="text-xs font-bold px-2 py-0.5 rounded-[10px] bg-emerald-50 text-[#087f78]">
                         Đã xác nhận demo
                       </span>
                       <h2 className="text-base font-bold text-gray-900 mt-2 mb-1">
                         {s ? name(s, lang) : r.serviceId}
                       </h2>
                       <p className="text-xs text-gray-500">Mã yêu cầu: <strong className="text-gray-900">{r.code}</strong></p>
-                      <p className="text-xs text-gray-500">Ngày: {r.date} • Khách: {r.guests}</p>
+                      <p className="text-xs text-gray-500">
+                        Ngày: {formatDate(r.date)}
+                        {r.time ? ` • Giờ: ${r.time}` : ''}
+                        {s ? ` • ${quantityLabel(s, lang)}: ${r.guests}` : ''}
+                      </p>
                       <strong className="text-base text-[#087f78] block mt-2">{formatMoney(r.total)}</strong>
                     </article>
                   );
@@ -291,7 +326,7 @@ export default function Demo() {
               </div>
             ) : (
               <div className="bg-white p-12 rounded-3xl border border-gray-200 text-center">
-                <h2 className="text-lg font-bold text-gray-700 mb-4">Bạn chưa tạo yêu cầu demo nào.</h2>
+                <h2 className="text-xl font-bold text-gray-700 mb-4">Bạn chưa tạo yêu cầu demo nào.</h2>
                 <button
                   className="bg-[#087f78] text-white px-5 py-2.5 rounded-xl font-bold text-xs"
                   onClick={() => go('services')}
@@ -318,40 +353,62 @@ export default function Demo() {
             }
           }}
         >
-          <div className="bg-white rounded-3xl max-w-lg w-full p-6 sm:p-8 shadow-2xl border border-gray-100 relative max-h-[90vh] overflow-y-auto">
+          {/* Flex column, not a single scroll box: the summary bar must never be
+              scrollable past, and nothing may render in the gap beneath it. */}
+          <div className="bg-white rounded-3xl max-w-lg w-full shadow-2xl border border-gray-100 relative max-h-[90vh] flex flex-col overflow-hidden">
             <button
               onClick={() => {
                 setSelected(null);
                 setSuccess(null);
               }}
-              className="absolute top-4 right-4 z-10 w-8 h-8 rounded-full bg-white/90 hover:bg-white text-gray-700 flex items-center justify-center text-sm font-bold shadow-md transition-colors"
+              className="absolute top-4 right-4 z-10 w-11 h-11 rounded-full bg-white/90 hover:bg-white text-gray-700 flex items-center justify-center text-sm font-bold shadow-md transition-colors"
             >
               ✕
             </button>
 
             {success ? (
-              <div className="text-center py-6">
+              <div className="p-6 sm:p-8 overflow-y-auto text-center py-6">
                 <div className="w-16 h-16 rounded-full bg-emerald-100 text-emerald-600 flex items-center justify-center text-3xl mx-auto mb-4">
                   ✓
                 </div>
-                <h3 className="text-xl font-black text-gray-900 mb-1">Đặt Dịch Vụ Thành Công!</h3>
+                <h3 className="text-xl font-extrabold text-gray-900 mb-1">
+                  {isRestaurant
+                    ? lang === 'vi' ? 'Đặt Bàn Thành Công!' : 'Table booked!'
+                    : lang === 'vi' ? 'Đặt Dịch Vụ Thành Công!' : 'Booking confirmed!'}
+                </h3>
                 <p className="text-xs text-gray-500 mb-2">
-                  Dịch vụ: <strong className="text-gray-900">{name(selected, lang)}</strong>
+                  {lang === 'vi' ? 'Dịch vụ: ' : 'Service: '}
+                  <strong className="text-gray-900">{name(selected, lang)}</strong>
                 </p>
                 <div className="p-3.5 bg-gray-50 rounded-2xl border border-gray-100 mb-4 inline-block text-left text-xs">
-                  <p className="text-gray-500">Mã yêu cầu: <strong className="text-[#087f78]">{success.code}</strong></p>
-                  <p className="text-gray-500">Ngày sử dụng: <strong className="text-gray-800">{success.date}</strong></p>
-                  <p className="text-gray-500">Tổng thanh toán dự kiến: <strong className="text-[#087f78]">{formatMoney(success.total)}</strong></p>
+                  <p className="text-gray-500">
+                    {lang === 'vi' ? 'Mã yêu cầu: ' : 'Request code: '}
+                    <strong className="text-[#087f78]">{success.code}</strong>
+                  </p>
+                  <p className="text-gray-500">
+                    {lang === 'vi' ? 'Ngày sử dụng: ' : 'Date: '}
+                    <strong className="text-gray-800">{formatDate(success.date)}</strong>
+                  </p>
+                  {success.time && (
+                    <p className="text-gray-500">
+                      {lang === 'vi' ? 'Giờ đến: ' : 'Arrival time: '}
+                      <strong className="text-gray-800">{success.time}</strong>
+                    </p>
+                  )}
+                  <p className="text-gray-500">
+                    {lang === 'vi' ? 'Tổng thanh toán dự kiến: ' : 'Estimated total: '}
+                    <strong className="text-[#087f78]">{formatMoney(success.total)}</strong>
+                  </p>
                 </div>
                 <div className="flex flex-col sm:flex-row items-center justify-center gap-2.5">
                   <button
-                    className="w-full sm:w-auto bg-[#087f78] hover:bg-[#066761] text-white font-bold px-6 py-2.5 rounded-xl text-xs transition-colors shadow-sm"
+                    className="w-full sm:w-auto bg-[#087f78] hover:bg-[#066862] text-white font-bold px-6 py-2.5 rounded-xl text-xs transition-colors shadow-sm"
                     onClick={() => {
                       setSelected(null);
                       setSuccess(null);
                     }}
                   >
-                    Tiếp tục xem trang chủ
+                    {lang === 'vi' ? 'Tiếp tục xem trang chủ' : 'Back to home'}
                   </button>
                   <button
                     className="w-full sm:w-auto bg-gray-100 hover:bg-gray-200 text-gray-800 font-bold px-5 py-2.5 rounded-xl text-xs transition-colors"
@@ -361,12 +418,13 @@ export default function Demo() {
                       go('requests');
                     }}
                   >
-                    Xem danh sách yêu cầu
+                    {lang === 'vi' ? 'Xem danh sách yêu cầu' : 'View my requests'}
                   </button>
                 </div>
               </div>
             ) : (
-              <div>
+              <>
+                <div className="min-h-0 flex-1 overflow-y-auto p-6 sm:p-8">
                 {/* Header Image if present */}
                 {selected.image && (
                   <div className="relative h-44 -mx-6 sm:-mx-8 -mt-6 sm:-mt-8 mb-4 overflow-hidden rounded-t-3xl bg-gray-100">
@@ -375,83 +433,112 @@ export default function Demo() {
                       alt={name(selected, lang)}
                       className="w-full h-full object-cover"
                     />
-                    <div className="absolute top-4 left-4 px-3 py-1 rounded-full bg-white/95 backdrop-blur-sm text-[11px] font-bold text-gray-800 shadow-xs">
+                    <div className="absolute top-4 left-4 px-3 py-1 rounded-full bg-white/95 backdrop-blur-sm text-xs font-bold tracking-normal text-gray-800 shadow-xs">
                       📍 {selected.area}
                     </div>
                     {selected.rating > 0 && (
-                      <div className="absolute bottom-3 left-4 px-2.5 py-0.5 rounded-md bg-black/60 backdrop-blur-sm text-[11px] font-bold text-white flex items-center gap-1">
+                      <div className="absolute bottom-3 left-4 px-2.5 py-0.5 rounded-md bg-black/60 backdrop-blur-sm text-xs font-bold tracking-normal text-white flex items-center gap-1">
                         <span className="text-amber-400">★</span> {selected.rating} ({selected.reviewCount} đánh giá)
                       </div>
                     )}
                   </div>
                 )}
 
-                <span className="text-[11px] font-bold text-[#087f78] uppercase tracking-wider block mb-1">
-                  CHI TIẾT &amp; ĐẶT DỊCH VỤ TRỰC TIẾP
+                <span className="text-xs font-bold text-[#087f78] uppercase tracking-wider block mb-1">
+                  {bookingHeading(selected, lang)}
                 </span>
-                <h2 className="text-xl font-black text-gray-900 mb-1.5">{name(selected, lang)}</h2>
+                <h2 className="text-xl font-extrabold text-gray-900 mb-1.5">{name(selected, lang)}</h2>
                 <p className="text-xs text-gray-500 mb-4 leading-relaxed">{description(selected, lang)}</p>
 
-                <div className="p-3.5 bg-emerald-50/70 border border-emerald-100 rounded-2xl mb-4 flex items-baseline justify-between">
-                  <span className="text-xs font-semibold text-gray-600">Mức giá niêm yết:</span>
-                  <span className="text-lg font-black text-[#087f78]">
-                    {formatMoney(selected.price)} <small className="text-xs font-normal text-gray-500">{priceUnitLabel(selected.priceUnit, lang)}</small>
+                {selectedDetail && (
+                  <ServiceDetailPanel detail={selectedDetail} category={selected.category} lang={lang} />
+                )}
+
+                <div className="p-3.5 bg-emerald-50/70 border border-emerald-100 rounded-2xl mt-4 mb-4 flex items-baseline justify-between">
+                  <span className="text-xs font-semibold text-gray-600">
+                    {lang === 'vi' ? 'Mức giá niêm yết:' : 'Listed price:'}
+                  </span>
+                  <span className="text-xl font-extrabold text-[#087f78]">
+                    {formatMoney(selected.price)}{' '}
+                    <small className="text-xs font-normal text-gray-500">{priceUnitLabel(selected.priceUnit, lang)}</small>
                   </span>
                 </div>
 
                 <div className="grid grid-cols-2 gap-3 mb-4 text-xs">
                   <div>
-                    <label className="block font-bold text-gray-700 mb-1">Ngày sử dụng</label>
+                    <label htmlFor="booking-date" className="block font-bold text-gray-700 mb-1">
+                      {lang === 'vi' ? 'Ngày sử dụng' : 'Date'}
+                    </label>
                     <input
+                      id="booking-date"
                       type="date"
                       value={date}
                       onChange={(e) => setDate(e.target.value)}
-                      className="w-full px-3 py-2 rounded-xl border border-gray-200 bg-gray-50 text-xs font-semibold"
+                      className="w-full min-h-11 px-3 py-2 rounded-xl border border-gray-200 bg-gray-50 text-xs font-semibold"
                     />
                   </div>
-                  <div>
-                    <label className="block font-bold text-gray-700 mb-1">
-                      {selected.priceUnit === 'per-night'
-                        ? 'Số đêm lưu trú'
-                        : selected.priceUnit === 'per-vehicle'
-                        ? 'Số chuyến xe'
-                        : selected.priceUnit === 'per-kg'
-                        ? 'Số kg dự kiến'
-                        : 'Số lượng khách'}
+                  {isRestaurant && (
+                    <div>
+                      <label htmlFor="booking-time" className="block font-bold text-gray-700 mb-1">
+                        {lang === 'vi' ? 'Giờ đến' : 'Arrival time'}
+                      </label>
+                      <input
+                        id="booking-time"
+                        type="time"
+                        value={arrivalTime}
+                        onChange={(e) => setArrivalTime(e.target.value)}
+                        className="w-full min-h-11 px-3 py-2 rounded-xl border border-gray-200 bg-gray-50 text-xs font-semibold"
+                      />
+                    </div>
+                  )}
+                  <div className={isRestaurant ? 'col-span-2' : ''}>
+                    <label htmlFor="booking-qty" className="block font-bold text-gray-700 mb-1">
+                      {quantityLabel(selected, lang)}
                     </label>
                     <input
+                      id="booking-qty"
                       type="number"
                       min="1"
                       max="30"
                       value={guests}
                       onChange={(e) => setGuests(Number(e.target.value))}
-                      className="w-full px-3 py-2 rounded-xl border border-gray-200 bg-gray-50 text-xs font-semibold"
+                      className="w-full min-h-11 px-3 py-2 rounded-xl border border-gray-200 bg-gray-50 text-xs font-semibold"
                     />
                   </div>
                 </div>
 
-                <div className="flex items-center justify-between text-xs font-bold py-3 border-y border-gray-100 mb-5">
-                  <span className="text-gray-600">Tổng chi phí ước tính:</span>
-                  <span className="text-base text-[#087f78]">
-                    {formatMoney(estimateServiceCost(selected, guests, 1))}
-                  </span>
                 </div>
 
-                <div className="flex items-center gap-3">
-                  <button
-                    onClick={() => setSelected(null)}
-                    className="w-1/3 py-2.5 rounded-xl border border-gray-200 text-xs font-bold text-gray-600 hover:bg-gray-50 transition-colors"
-                  >
-                    Đóng
-                  </button>
-                  <button
-                    onClick={createRequest}
-                    className="w-2/3 py-2.5 rounded-xl bg-[#087f78] hover:bg-[#066761] text-white text-xs font-black shadow-md transition-colors"
-                  >
-                    Xác Nhận Giữ Chỗ (Demo)
-                  </button>
+                {/* Outside the scroll region, so it is always reachable and the
+                    content it covers can never peek out underneath it. */}
+                <div className="shrink-0 px-6 sm:px-8 py-3 bg-white border-t border-gray-100 shadow-[0_-8px_16px_-10px_rgba(16,42,44,0.18)]">
+                  <div className="flex items-center justify-between text-xs font-bold mb-2.5">
+                    <span className="text-gray-600">
+                      {lang === 'vi' ? 'Tổng chi phí ước tính:' : 'Estimated total:'}
+                    </span>
+                    <span className="text-base text-[#087f78]">
+                      {formatMoney(estimateServiceCost(selected, guests, 1))}
+                    </span>
+                  </div>
+
+                  <div className="flex items-center gap-3">
+                    <button
+                      onClick={() => setSelected(null)}
+                      className="w-1/3 min-h-11 py-2.5 rounded-xl border border-gray-200 text-xs font-bold text-gray-600 hover:bg-gray-50 transition-colors"
+                    >
+                      {lang === 'vi' ? 'Đóng' : 'Close'}
+                    </button>
+                    <button
+                      onClick={createRequest}
+                      className="w-2/3 min-h-11 py-2.5 rounded-xl bg-[#087f78] hover:bg-[#066862] text-white text-xs font-extrabold shadow-md transition-colors"
+                    >
+                      {isRestaurant
+                        ? lang === 'vi' ? 'Xác Nhận Đặt Bàn (Demo)' : 'Confirm table (demo)'
+                        : lang === 'vi' ? 'Xác Nhận Giữ Chỗ (Demo)' : 'Confirm hold (demo)'}
+                    </button>
+                  </div>
                 </div>
-              </div>
+              </>
             )}
           </div>
         </div>
@@ -474,10 +561,10 @@ export default function Demo() {
             </button>
 
             <form onSubmit={handleConfirmFullTourBooking}>
-              <span className="text-[11px] font-bold text-[#087f78] uppercase tracking-wider block mb-1">
+              <span className="text-xs font-bold text-[#087f78] uppercase tracking-wider block mb-1">
                 ĐẶT TRỌN GÓI TOUR AI GOPU
               </span>
-              <h2 className="text-xl font-black text-gray-900 mb-1">
+              <h2 className="text-xl font-extrabold text-gray-900 mb-1">
                 Phú Quốc 3N2Đ: Thiên Đường Biển Đảo &amp; Hải Sản
               </h2>
               <p className="text-xs text-gray-500 mb-4">
@@ -487,9 +574,9 @@ export default function Demo() {
               <div className="p-4 bg-emerald-50 rounded-2xl border border-emerald-100 mb-4">
                 <div className="flex items-baseline justify-between text-xs mb-1">
                   <span className="text-gray-600 font-semibold">Tổng chi phí trọn gói:</span>
-                  <span className="text-xl font-black text-[#087f78]">11.840.000 đ</span>
+                  <span className="text-xl font-extrabold text-[#087f78]">11.840.000 đ</span>
                 </div>
-                <p className="text-[11px] text-emerald-800">
+                <p className="text-xs text-emerald-800">
                   ✓ Tiết kiệm 160.000 đ so với ngân sách ban đầu (12.000.000 đ)
                 </p>
               </div>
@@ -526,7 +613,7 @@ export default function Demo() {
                 </div>
               </div>
 
-              <div className="p-3 bg-gray-50 rounded-xl text-[11px] text-gray-500 mb-5 leading-relaxed">
+              <div className="p-3 bg-gray-50 rounded-xl text-xs text-gray-500 mb-5 leading-relaxed">
                 🛡️ <strong>Cam kết GOPU:</strong> Không phụ thu ẩn, miễn phí dời chuyến khi thời tiết biển xấu, tài xế bản địa đón tại sân bay đúng giờ.
               </div>
 
@@ -540,7 +627,7 @@ export default function Demo() {
                 </button>
                 <button
                   type="submit"
-                  className="w-2/3 py-3 rounded-xl bg-[#087f78] hover:bg-[#066761] text-white text-xs font-black shadow-lg shadow-teal-950/10 active:scale-95 transition-all"
+                  className="w-2/3 py-3 rounded-xl bg-[#087f78] hover:bg-[#066862] text-white text-xs font-extrabold shadow-lg shadow-teal-950/10 active:scale-95 transition-all"
                 >
                   Xác Nhận Giữ Chỗ Ngay
                 </button>

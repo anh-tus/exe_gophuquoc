@@ -2,6 +2,35 @@ export type ServiceCategory = 'tour' | 'transport' | 'wellness' | 'stay' | 'laun
 export type Lang = 'vi' | 'en';
 export type PriceUnit = 'per-person' | 'per-night' | 'per-vehicle' | 'per-item' | 'per-serving' | 'per-kg';
 export type ServiceReview = { rating: number; commentVi: string; commentEn: string };
+
+/**
+ * One label/value row in a service detail panel.
+ *
+ * `illustrative: true` means the value was written for the demo and has NOT been
+ * confirmed with the provider. The UI must mark those rows, because PRODUCT.md
+ * forbids presenting unverified listing facts as if they were confirmed.
+ */
+export type ServiceFact = {
+  labelVi: string;
+  labelEn: string;
+  valueVi: string;
+  valueEn: string;
+  illustrative?: boolean;
+};
+
+/** Category-specific detail shown before the booking form. All fields optional. */
+export type ServiceDetail = {
+  facts?: ServiceFact[];
+  chipsLabelVi?: string;
+  chipsLabelEn?: string;
+  chipsVi?: string[];
+  chipsEn?: string[];
+  listLabelVi?: string;
+  listLabelEn?: string;
+  listVi?: string[];
+  listEn?: string[];
+};
+
 export type Service = {
   id: string;
   category: ServiceCategory;
@@ -41,6 +70,8 @@ export const services: Service[] = [
   { id: 'premier-village-phu-quoc', category: 'stay', area: 'Mũi Ông Đội', vi: 'Premier Village Phu Quoc Resort', en: 'Premier Village Phu Quoc Resort', descriptionVi: 'Khu nghỉ dưỡng tại Mũi Ông Đội, phía nam đảo. Ảnh minh họa; giá demo theo phòng/đêm chưa xác minh.', descriptionEn: 'Resort at Ong Doi Cape in southern Phu Quoc. Illustrative image; demo room/night price is unverified.', price: 6500000, priceUnit: 'per-night', lat: 10.002, lon: 104.05, image: '/services/hotel-villa.jpg', imageIsIllustrative: true, rating: 0, reviewCount: 0, reviews: [] },
   { id: 'thue-xe-may', category: 'transport', area: 'Dương Đông & Toàn đảo', vi: 'Thuê xe máy tay ga giao miễn phí resort', en: 'Scooter rental with free resort delivery', descriptionVi: 'Xe Vision, Air Blade bảo dưỡng định kỳ, kèm 2 nón bảo hiểm sạch sẽ, áo mưa và bản đồ đường sá Phú Quốc.', descriptionEn: 'Vision & Air Blade scooters, including 2 clean helmets, raincoats, and Phu Quoc island road map.', price: 120000, priceUnit: 'per-item', lat: 10.211, lon: 103.962, image: '/island-transfer.png', rating: 4.9, reviewCount: 88, reviews: [{ rating: 5, commentVi: 'Xe mới, giao nhanh tận khách sạn.', commentEn: 'New scooter, delivered promptly to hotel.' }] },
   { id: 'cap-treo-hon-thom', category: 'tour', area: 'An Thới', vi: 'Vé cáp treo Hòn Thơm & Công viên nước', en: 'Hon Thom Cable Car & Water Park', descriptionVi: 'Cáp treo 2 chiều vượt biển dài nhất thế giới kèm vé vui chơi công viên nước Aquatopia.', descriptionEn: '2-way world record sea cable car plus entry to Aquatopia water park.', price: 650000, priceUnit: 'per-person', lat: 10.021, lon: 104.012, image: '/services/tour-cano.jpg', rating: 4.9, reviewCount: 512, reviews: [{ rating: 5, commentVi: 'Cảnh từ cáp treo ngoạn mục, công viên nước chơi vui.', commentEn: 'Spectacular cable car views, great water park.' }] },
+  { id: 'sunset-sanato-phu-quoc', category: 'tour', area: 'Bãi Trường', vi: 'Check-in hoàng hôn Sunset Sanato', en: 'Sunset Sanato sunset check-in', descriptionVi: 'Khu check-in ven biển Bãi Trường, đông nhất vào khung giờ hoàng hôn. Giá và khung giờ trong bản demo chỉ mang tính minh họa.', descriptionEn: 'A beachfront check-in spot at Bai Truong, busiest around sunset. Demo price and hours are illustrative only.', price: 100000, priceUnit: 'per-person', lat: 10.165, lon: 103.966, image: '/island-hero.png', imageIsIllustrative: true, rating: 0, reviewCount: 0, reviews: [] },
+  { id: 'cau-muc-dem-an-thoi', category: 'tour', area: 'An Thới', vi: 'Tàu câu mực đêm & cháo mực trên biển', en: 'Night squid fishing & squid porridge', descriptionVi: 'Ra khơi buổi tối cùng ngư dân địa phương. Giá, giờ tàu chạy và thực đơn trong bản demo là minh họa, chưa xác minh.', descriptionEn: 'An evening boat trip with local fishermen. Demo price, departure times and menu are illustrative and unverified.', price: 350000, priceUnit: 'per-person', lat: 10.027, lon: 104.017, image: '/services/tour-cano.jpg', imageIsIllustrative: true, rating: 0, reviewCount: 0, reviews: [] },
 ];
 
 export const serviceIds = services.map((service) => service.id);
@@ -63,3 +94,278 @@ export function priceUnitLabel(unit: PriceUnit, lang: 'vi' | 'en'): string {
   };
   return labels[lang][unit];
 }
+
+/**
+ * Detail data lives beside the catalog instead of inline on every listing row so
+ * the rows above stay readable.
+ *
+ * Everything marked `illustrative: true` is written for the demo. Opening hours,
+ * seating, phone numbers and dish lists were NOT confirmed with the providers, so
+ * the UI marks those rows and never presents them as verified facts.
+ */
+export const serviceDetails: Record<string, ServiceDetail> = {
+  // ---------- Nhà hàng ----------
+  'com-nha-phu-quoc': {
+    facts: [
+      { labelVi: 'Giờ mở cửa', labelEn: 'Opening hours', valueVi: '10:30 – 21:30', valueEn: '10:30 – 21:30', illustrative: true },
+      { labelVi: 'Khoảng giá mỗi khách', labelEn: 'Price per guest', valueVi: '120.000 – 250.000 ₫', valueEn: '120,000 – 250,000 ₫', illustrative: true },
+      { labelVi: 'Sức chứa', labelEn: 'Seating', valueVi: '~40 chỗ', valueEn: '~40 seats', illustrative: true },
+      { labelVi: 'Đặt bàn trước', labelEn: 'Reservation lead time', valueVi: 'Nên đặt trước 2 giờ', valueEn: 'Book about 2 hours ahead', illustrative: true },
+      { labelVi: 'Điện thoại', labelEn: 'Phone', valueVi: '0297 399 1188', valueEn: '0297 399 1188', illustrative: true },
+    ],
+    chipsLabelVi: 'Tiện ích', chipsLabelEn: 'Amenities',
+    chipsVi: ['Máy lạnh', 'Giữ xe miễn phí', 'Nhận đoàn nhỏ', 'Có món chay'],
+    chipsEn: ['Air conditioning', 'Free parking', 'Small groups', 'Vegetarian options'],
+    listLabelVi: 'Món nên thử', listLabelEn: 'Dishes to try',
+    listVi: ['Cá bớp kho tộ', 'Mực hấp gừng', 'Canh chua cá bớp', 'Rau rừng xào tỏi'],
+    listEn: ['Clay-pot cobia', 'Steamed squid with ginger', 'Cobia sour soup', 'Stir-fried wild greens'],
+  },
+  'hai-san-bai-truong': {
+    facts: [
+      { labelVi: 'Giờ mở cửa', labelEn: 'Opening hours', valueVi: '11:00 – 22:00', valueEn: '11:00 – 22:00', illustrative: true },
+      { labelVi: 'Khoảng giá mỗi khách', labelEn: 'Price per guest', valueVi: '180.000 – 400.000 ₫', valueEn: '180,000 – 400,000 ₫', illustrative: true },
+      { labelVi: 'Sức chứa', labelEn: 'Seating', valueVi: '~120 chỗ', valueEn: '~120 seats', illustrative: true },
+      { labelVi: 'Đặt bàn trước', labelEn: 'Reservation lead time', valueVi: 'Nên đặt trước 1 ngày', valueEn: 'Book about a day ahead', illustrative: true },
+      { labelVi: 'Điện thoại', labelEn: 'Phone', valueVi: '0297 399 2266', valueEn: '0297 399 2266', illustrative: true },
+    ],
+    chipsLabelVi: 'Tiện ích', chipsLabelEn: 'Amenities',
+    chipsVi: ['View biển', 'Bàn ngoài trời', 'Giữ xe', 'Nhận đoàn lớn'],
+    chipsEn: ['Sea view', 'Outdoor seating', 'Parking', 'Large groups'],
+    listLabelVi: 'Món nên thử', listLabelEn: 'Dishes to try',
+    listVi: ['Ghẹ Hàm Ninh hấp', 'Tôm sú nướng muối ớt', 'Mực nhảy nướng', 'Sò huyết cháy tỏi'],
+    listEn: ['Steamed Ham Ninh crab', 'Grilled tiger prawns', 'Grilled jumping squid', 'Blood cockles with garlic'],
+  },
+  'nha-hang-ra-khoi': {
+    facts: [
+      { labelVi: 'Giờ mở cửa', labelEn: 'Opening hours', valueVi: '10:00 – 22:30', valueEn: '10:00 – 22:30', illustrative: true },
+      { labelVi: 'Khoảng giá mỗi khách', labelEn: 'Price per guest', valueVi: '200.000 – 450.000 ₫', valueEn: '200,000 – 450,000 ₫', illustrative: true },
+      { labelVi: 'Sức chứa', labelEn: 'Seating', valueVi: '~150 chỗ', valueEn: '~150 seats', illustrative: true },
+      { labelVi: 'Đặt bàn trước', labelEn: 'Reservation lead time', valueVi: 'Không bắt buộc; cuối tuần nên đặt', valueEn: 'Not required; weekends recommended', illustrative: true },
+      { labelVi: 'Điện thoại', labelEn: 'Phone', valueVi: '0297 384 6138', valueEn: '0297 384 6138', illustrative: true },
+    ],
+    chipsLabelVi: 'Tiện ích', chipsLabelEn: 'Amenities',
+    chipsVi: ['Hồ hải sản sống', 'Cân tại chỗ', 'Máy lạnh', 'Giữ xe'],
+    chipsEn: ['Live seafood tank', 'On-site scale', 'Air conditioning', 'Parking'],
+    listLabelVi: 'Món nên thử', listLabelEn: 'Dishes to try',
+    listVi: ['Hải sản chọn tại hồ', 'Cá mú hấp Hồng Kông', 'Tôm hùm nướng', 'Cơm chiên hải sản'],
+    listEn: ['Seafood picked from the tank', 'Steamed grouper, Hong Kong style', 'Grilled lobster', 'Seafood fried rice'],
+  },
+  'nha-hang-xin-chao': {
+    facts: [
+      { labelVi: 'Giờ mở cửa', labelEn: 'Opening hours', valueVi: '10:00 – 23:00', valueEn: '10:00 – 23:00', illustrative: true },
+      { labelVi: 'Khoảng giá mỗi khách', labelEn: 'Price per guest', valueVi: '200.000 – 500.000 ₫', valueEn: '200,000 – 500,000 ₫', illustrative: true },
+      { labelVi: 'Sức chứa', labelEn: 'Seating', valueVi: '~200 chỗ, 2 tầng', valueEn: '~200 seats over 2 floors', illustrative: true },
+      { labelVi: 'Đặt bàn trước', labelEn: 'Reservation lead time', valueVi: 'Nên đặt trước 1 ngày', valueEn: 'Book about a day ahead', illustrative: true },
+      { labelVi: 'Điện thoại', labelEn: 'Phone', valueVi: '0297 384 7288', valueEn: '0297 384 7288', illustrative: true },
+    ],
+    chipsLabelVi: 'Tiện ích', chipsLabelEn: 'Amenities',
+    chipsVi: ['View biển trực diện', 'Sân thượng', 'Cocktail', 'Giữ xe'],
+    chipsEn: ['Direct sea view', 'Rooftop', 'Cocktails', 'Parking'],
+    listLabelVi: 'Món nên thử', listLabelEn: 'Dishes to try',
+    listVi: ['Cocktail hoàng hôn', 'Hải sản nướng than', 'Bò lúc lắc', 'Bánh xèo hải sản'],
+    listEn: ['Sunset cocktail', 'Charcoal-grilled seafood', 'Shaking beef', 'Seafood banh xeo'],
+  },
+  'nha-hang-song-xanh': {
+    facts: [
+      { labelVi: 'Giờ mở cửa', labelEn: 'Opening hours', valueVi: '09:00 – 22:00', valueEn: '09:00 – 22:00', illustrative: true },
+      { labelVi: 'Khoảng giá mỗi khách', labelEn: 'Price per guest', valueVi: '150.000 – 350.000 ₫', valueEn: '150,000 – 350,000 ₫', illustrative: true },
+      { labelVi: 'Sức chứa', labelEn: 'Seating', valueVi: '~90 chỗ', valueEn: '~90 seats', illustrative: true },
+      { labelVi: 'Đặt bàn trước', labelEn: 'Reservation lead time', valueVi: 'Nên đặt trước 4 giờ', valueEn: 'Book about 4 hours ahead', illustrative: true },
+      { labelVi: 'Điện thoại', labelEn: 'Phone', valueVi: '0297 399 5050', valueEn: '0297 399 5050', illustrative: true },
+    ],
+    chipsLabelVi: 'Tiện ích', chipsLabelEn: 'Amenities',
+    chipsVi: ['Ven sông', 'Sân vườn', 'Có món chay', 'Giữ xe'],
+    chipsEn: ['Riverside', 'Garden seating', 'Vegetarian options', 'Parking'],
+    listLabelVi: 'Món nên thử', listLabelEn: 'Dishes to try',
+    listVi: ['Lẩu cá bớp', 'Gỏi cá trích', 'Mực chiên nước mắm', 'Chè chuối'],
+    listEn: ['Cobia hotpot', 'Herring salad', 'Squid in fish sauce', 'Banana dessert'],
+  },
+  'bun-quay-kien-xay': {
+    facts: [
+      { labelVi: 'Giờ mở cửa', labelEn: 'Opening hours', valueVi: '06:00 – 21:00', valueEn: '06:00 – 21:00', illustrative: true },
+      { labelVi: 'Khoảng giá mỗi khách', labelEn: 'Price per guest', valueVi: '60.000 – 120.000 ₫', valueEn: '60,000 – 120,000 ₫', illustrative: true },
+      { labelVi: 'Sức chứa', labelEn: 'Seating', valueVi: '~60 chỗ', valueEn: '~60 seats', illustrative: true },
+      { labelVi: 'Đặt bàn trước', labelEn: 'Reservation lead time', valueVi: 'Không nhận đặt bàn', valueEn: 'Walk-in only', illustrative: true },
+      { labelVi: 'Điện thoại', labelEn: 'Phone', valueVi: '0297 399 3456', valueEn: '0297 399 3456', illustrative: true },
+    ],
+    chipsLabelVi: 'Tiện ích', chipsLabelEn: 'Amenities',
+    chipsVi: ['Nước chấm pha tại bàn', 'Mở sớm', 'Bán mang về', 'Giữ xe'],
+    chipsEn: ['DIY dipping sauce', 'Opens early', 'Takeaway', 'Parking'],
+    listLabelVi: 'Món nên thử', listLabelEn: 'Dishes to try',
+    listVi: ['Bún quậy tôm', 'Bún quậy mực', 'Chả giò', 'Nước mắm pha theo ý'],
+    listEn: ['Bun quay with prawn', 'Bun quay with squid', 'Fried spring rolls', 'Custom dipping sauce'],
+  },
+
+  // ---------- Lưu trú ----------
+  'luu-tru-bai-truong': {
+    facts: [
+      { labelVi: 'Nhận phòng', labelEn: 'Check-in', valueVi: 'Từ 14:00', valueEn: 'From 14:00', illustrative: true },
+      { labelVi: 'Trả phòng', labelEn: 'Check-out', valueVi: 'Trước 12:00', valueEn: 'Before 12:00', illustrative: true },
+      { labelVi: 'Hạng phòng', labelEn: 'Room types', valueVi: 'Standard, Deluxe hướng biển, Family', valueEn: 'Standard, Sea-view Deluxe, Family', illustrative: true },
+      { labelVi: 'Đặt trước', labelEn: 'Booking lead time', valueVi: 'Nên đặt trước 3 ngày', valueEn: 'Book about 3 days ahead', illustrative: true },
+    ],
+    chipsLabelVi: 'Tiện ích', chipsLabelEn: 'Amenities',
+    chipsVi: ['Hồ bơi', 'WiFi', 'Bãi đỗ xe', 'Ăn sáng'],
+    chipsEn: ['Pool', 'WiFi', 'Parking', 'Breakfast'],
+  },
+  'khach-san-duong-dong': {
+    facts: [
+      { labelVi: 'Nhận phòng', labelEn: 'Check-in', valueVi: 'Từ 14:00', valueEn: 'From 14:00', illustrative: true },
+      { labelVi: 'Trả phòng', labelEn: 'Check-out', valueVi: 'Trước 12:00', valueEn: 'Before 12:00', illustrative: true },
+      { labelVi: 'Hạng phòng', labelEn: 'Room types', valueVi: 'Standard, Superior', valueEn: 'Standard, Superior', illustrative: true },
+      { labelVi: 'Đặt trước', labelEn: 'Booking lead time', valueVi: 'Nên đặt trước 2 ngày', valueEn: 'Book about 2 days ahead', illustrative: true },
+    ],
+    chipsLabelVi: 'Tiện ích', chipsLabelEn: 'Amenities',
+    chipsVi: ['WiFi', 'Máy lạnh', 'Thuê xe máy', 'Gần chợ đêm'],
+    chipsEn: ['WiFi', 'Air conditioning', 'Scooter rental', 'Near night market'],
+  },
+  'seashells-phu-quoc': {
+    facts: [
+      { labelVi: 'Nhận phòng', labelEn: 'Check-in', valueVi: 'Từ 15:00', valueEn: 'From 15:00', illustrative: true },
+      { labelVi: 'Trả phòng', labelEn: 'Check-out', valueVi: 'Trước 12:00', valueEn: 'Before 12:00', illustrative: true },
+      { labelVi: 'Hạng phòng', labelEn: 'Room types', valueVi: 'Deluxe, Suite, Panorama', valueEn: 'Deluxe, Suite, Panorama', illustrative: true },
+      { labelVi: 'Đặt trước', labelEn: 'Booking lead time', valueVi: 'Nên đặt trước 7 ngày', valueEn: 'Book about 7 days ahead', illustrative: true },
+    ],
+    chipsLabelVi: 'Tiện ích', chipsLabelEn: 'Amenities',
+    chipsVi: ['Hồ bơi vô cực', 'Spa', 'Phòng gym', 'Bãi biển riêng'],
+    chipsEn: ['Infinity pool', 'Spa', 'Gym', 'Private beach'],
+  },
+  'la-veranda-phu-quoc': {
+    facts: [
+      { labelVi: 'Nhận phòng', labelEn: 'Check-in', valueVi: 'Từ 14:00', valueEn: 'From 14:00', illustrative: true },
+      { labelVi: 'Trả phòng', labelEn: 'Check-out', valueVi: 'Trước 12:00', valueEn: 'Before 12:00', illustrative: true },
+      { labelVi: 'Hạng phòng', labelEn: 'Room types', valueVi: 'Garden, Ocean, Villa', valueEn: 'Garden, Ocean, Villa', illustrative: true },
+      { labelVi: 'Đặt trước', labelEn: 'Booking lead time', valueVi: 'Nên đặt trước 7 ngày', valueEn: 'Book about 7 days ahead', illustrative: true },
+    ],
+    chipsLabelVi: 'Tiện ích', chipsLabelEn: 'Amenities',
+    chipsVi: ['Bãi biển riêng', 'Spa', 'Nhà hàng', 'Xe đưa đón sân bay'],
+    chipsEn: ['Private beach', 'Spa', 'Restaurant', 'Airport transfer'],
+  },
+  'premier-village-phu-quoc': {
+    facts: [
+      { labelVi: 'Nhận phòng', labelEn: 'Check-in', valueVi: 'Từ 15:00', valueEn: 'From 15:00', illustrative: true },
+      { labelVi: 'Trả phòng', labelEn: 'Check-out', valueVi: 'Trước 12:00', valueEn: 'Before 12:00', illustrative: true },
+      { labelVi: 'Hạng phòng', labelEn: 'Room types', valueVi: 'Villa 1 phòng ngủ, Villa 2 phòng ngủ, Villa sát biển', valueEn: '1-bedroom Villa, 2-bedroom Villa, Beachfront Villa', illustrative: true },
+      { labelVi: 'Đặt trước', labelEn: 'Booking lead time', valueVi: 'Nên đặt trước 10 ngày', valueEn: 'Book about 10 days ahead', illustrative: true },
+    ],
+    chipsLabelVi: 'Tiện ích', chipsLabelEn: 'Amenities',
+    chipsVi: ['Hồ bơi riêng', 'Golf', 'Spa', 'Bãi biển riêng'],
+    chipsEn: ['Private pool', 'Golf', 'Spa', 'Private beach'],
+  },
+
+  // ---------- Tour & trải nghiệm ----------
+  'cano-an-thoi': {
+    facts: [
+      { labelVi: 'Giờ khởi hành', labelEn: 'Departure', valueVi: '08:00 và 13:00', valueEn: '08:00 and 13:00', illustrative: true },
+      { labelVi: 'Thời lượng', labelEn: 'Duration', valueVi: 'Khoảng 6 giờ', valueEn: 'About 6 hours', illustrative: true },
+      { labelVi: 'Điểm tập trung', labelEn: 'Meeting point', valueVi: 'Cảng An Thới', valueEn: 'An Thoi harbour', illustrative: true },
+    ],
+    listLabelVi: 'Bao gồm', listLabelEn: 'Included',
+    listVi: ['Vé cano', 'Áo phao', 'Ăn trưa trên đảo', 'Ống thở và kính lặn'],
+    listEn: ['Boat ticket', 'Life jacket', 'Lunch on the island', 'Snorkel and mask'],
+  },
+  'bien-bai-sao': {
+    facts: [
+      { labelVi: 'Giờ khởi hành', labelEn: 'Departure', valueVi: '09:00', valueEn: '09:00', illustrative: true },
+      { labelVi: 'Thời lượng', labelEn: 'Duration', valueVi: 'Khoảng 4 giờ', valueEn: 'About 4 hours', illustrative: true },
+      { labelVi: 'Điểm tập trung', labelEn: 'Meeting point', valueVi: 'Bãi Sao', valueEn: 'Sao Beach', illustrative: true },
+    ],
+    listLabelVi: 'Bao gồm', listLabelEn: 'Included',
+    listVi: ['Ghế nằm', 'Dù che', 'Nước uống', 'Khăn tắm'],
+    listEn: ['Sun lounger', 'Parasol', 'Drinking water', 'Towel'],
+  },
+  'cap-treo-hon-thom': {
+    facts: [
+      { labelVi: 'Giờ hoạt động', labelEn: 'Operating hours', valueVi: '09:00 – 17:00', valueEn: '09:00 – 17:00', illustrative: true },
+      { labelVi: 'Thời lượng', labelEn: 'Duration', valueVi: '5 – 6 giờ', valueEn: '5 – 6 hours', illustrative: true },
+      { labelVi: 'Điểm tập trung', labelEn: 'Meeting point', valueVi: 'Ga An Thới', valueEn: 'An Thoi station', illustrative: true },
+    ],
+    listLabelVi: 'Bao gồm', listLabelEn: 'Included',
+    listVi: ['Vé cáp treo 2 chiều', 'Vé công viên nước Aquatopia', 'Xe điện trong khu'],
+    listEn: ['Return cable car ticket', 'Aquatopia water park entry', 'Shuttle within the complex'],
+  },
+
+  'sunset-sanato-phu-quoc': {
+    facts: [
+      { labelVi: 'Giờ mở cửa', labelEn: 'Opening hours', valueVi: '07:00 – 21:00', valueEn: '07:00 – 21:00', illustrative: true },
+      { labelVi: 'Giờ hoàng hôn đẹp nhất', labelEn: 'Best sunset window', valueVi: '17:15 – 18:15', valueEn: '17:15 – 18:15', illustrative: true },
+      { labelVi: 'Thời lượng tham quan', labelEn: 'Suggested visit', valueVi: '1 – 2 giờ', valueEn: '1 – 2 hours', illustrative: true },
+    ],
+    listLabelVi: 'Bao gồm', listLabelEn: 'Included',
+    listVi: ['Vé vào cổng', 'Một đồ uống tại quầy bar ven biển'],
+    listEn: ['Entrance ticket', 'One drink at the beach bar'],
+  },
+
+  'cau-muc-dem-an-thoi': {
+    facts: [
+      { labelVi: 'Giờ khởi hành', labelEn: 'Departure', valueVi: '17:30 hằng ngày', valueEn: '17:30 daily', illustrative: true },
+      { labelVi: 'Thời lượng', labelEn: 'Duration', valueVi: 'Khoảng 4 giờ', valueEn: 'About 4 hours', illustrative: true },
+      { labelVi: 'Điểm tập trung', labelEn: 'Meeting point', valueVi: 'Cảng An Thới', valueEn: 'An Thoi harbour', illustrative: true },
+    ],
+    listLabelVi: 'Bao gồm', listLabelEn: 'Included',
+    listVi: ['Cần câu và mồi', 'Cháo mực nóng trên tàu', 'Áo phao'],
+    listEn: ['Rod and bait', 'Hot squid porridge on board', 'Life jacket'],
+  },
+
+  // ---------- Di chuyển ----------
+  'xe-san-bay': {
+    facts: [
+      { labelVi: 'Loại xe', labelEn: 'Vehicle', valueVi: 'Sedan 4 chỗ hoặc SUV 7 chỗ', valueEn: '4-seat sedan or 7-seat SUV', illustrative: true },
+      { labelVi: 'Sức chứa', labelEn: 'Capacity', valueVi: '3 – 5 khách kèm hành lý', valueEn: '3 – 5 guests with luggage', illustrative: true },
+      { labelVi: 'Chờ tại sân bay', labelEn: 'Airport waiting', valueVi: '60 phút miễn phí', valueEn: '60 minutes free', illustrative: true },
+    ],
+    listLabelVi: 'Bao gồm', listLabelEn: 'Included',
+    listVi: ['Tài xế đón tại ga đến', 'Biển tên', 'Nước uống'],
+    listEn: ['Driver at arrivals', 'Name board', 'Drinking water'],
+  },
+  'thue-xe-may': {
+    facts: [
+      { labelVi: 'Loại xe', labelEn: 'Vehicle', valueVi: 'Vision hoặc Air Blade', valueEn: 'Vision or Air Blade', illustrative: true },
+      { labelVi: 'Sức chứa', labelEn: 'Capacity', valueVi: '2 người', valueEn: '2 people', illustrative: true },
+      { labelVi: 'Giao xe', labelEn: 'Delivery', valueVi: 'Tại khách sạn trong 30 phút', valueEn: 'To your hotel within 30 minutes', illustrative: true },
+    ],
+    listLabelVi: 'Bao gồm', listLabelEn: 'Included',
+    listVi: ['2 nón bảo hiểm', 'Áo mưa', 'Bản đồ đường sá Phú Quốc'],
+    listEn: ['2 helmets', 'Raincoat', 'Phu Quoc road map'],
+  },
+
+  // ---------- Wellness ----------
+  'spa-duong-dong': {
+    facts: [
+      { labelVi: 'Thời lượng', labelEn: 'Duration', valueVi: '60 hoặc 90 phút', valueEn: '60 or 90 minutes', illustrative: true },
+      { labelVi: 'Giờ mở cửa', labelEn: 'Opening hours', valueVi: '09:00 – 21:00', valueEn: '09:00 – 21:00', illustrative: true },
+      { labelVi: 'Đặt trước', labelEn: 'Booking lead time', valueVi: 'Nên đặt trước 3 giờ', valueEn: 'Book about 3 hours ahead', illustrative: true },
+    ],
+    chipsLabelVi: 'Phù hợp', chipsLabelEn: 'Good for',
+    chipsVi: ['Phòng đôi', 'Xông hơi', 'Trà thảo mộc'],
+    chipsEn: ['Couples room', 'Steam room', 'Herbal tea'],
+  },
+
+  // ---------- Giặt là ----------
+  'giat-la-trung-tam': {
+    facts: [
+      { labelVi: 'Thời gian xử lý', labelEn: 'Turnaround', valueVi: '6 – 8 giờ', valueEn: '6 – 8 hours', illustrative: true },
+      { labelVi: 'Giờ nhận đồ', labelEn: 'Drop-off hours', valueVi: '07:00 – 19:00', valueEn: '07:00 – 19:00', illustrative: true },
+      { labelVi: 'Hình thức', labelEn: 'Service mode', valueVi: 'Nhận và trả tại tiệm', valueEn: 'Drop off and collect in store', illustrative: true },
+    ],
+  },
+  'nightgo-laundry': {
+    facts: [
+      { labelVi: 'Thời gian xử lý', labelEn: 'Turnaround', valueVi: '3 – 4 giờ', valueEn: '3 – 4 hours', illustrative: true },
+      { labelVi: 'Giờ nhận đồ', labelEn: 'Drop-off hours', valueVi: '06:00 – 22:00', valueEn: '06:00 – 22:00', illustrative: true },
+      { labelVi: 'Hình thức', labelEn: 'Service mode', valueVi: 'Nhận tại hẻm 124 Trần Hưng Đạo', valueEn: 'Drop off at Alley 124 Tran Hung Dao', illustrative: true },
+    ],
+  },
+};
+
+export const detailFor = (id: string): ServiceDetail | undefined => serviceDetails[id];
+
+/** Panel heading per category, so each service shows its own kind of detail. */
+export const categoryDetailLabel: Record<ServiceCategory, { vi: string; en: string }> = {
+  restaurant: { vi: 'Thông tin nhà hàng', en: 'Restaurant details' },
+  stay: { vi: 'Thông tin lưu trú', en: 'Stay details' },
+  tour: { vi: 'Thông tin tour', en: 'Tour details' },
+  transport: { vi: 'Thông tin di chuyển', en: 'Transport details' },
+  wellness: { vi: 'Thông tin liệu trình', en: 'Treatment details' },
+  laundry: { vi: 'Thông tin giặt là', en: 'Laundry details' },
+};
