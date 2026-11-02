@@ -4,6 +4,13 @@
 
 Đây là khung codebase. Không coi placeholder là nghiệp vụ đã triển khai. Không tự thêm payment, AI planner, booking workflow hay provider integration khi chưa có yêu cầu và quyết định sản phẩm tương ứng.
 
+Trạng thái thật của từng phần nằm ở bảng đầu `README.md`. Hai điểm dễ nhầm nhất:
+
+- Public web **chưa** gọi backend; dữ liệu dịch vụ và "yêu cầu đặt chỗ" vẫn nằm trong `localStorage`.
+- `frontend/zalo-mini` và `frontend/operations-portal` chỉ là shell, không có màn hình nghiệp vụ.
+
+Khoảng trống đã rà soát: `Docs/BACKLOG.md`. Quyết định về trợ lý AI: `Docs/ADR-002-ai-assistant-placement.md`.
+
 ## Kiến trúc
 - Monorepo dùng pnpm workspace và Turborepo.
 - Ứng dụng giao diện nằm trong `frontend/`; backend service nằm trong `backend/`; thư viện dùng chung nằm trong `packages/`.
@@ -23,7 +30,13 @@
 
 ## Quy trình thay đổi
 
-- Thay đổi API phải cập nhật OpenAPI và ghi chú tương thích client.
-- Thay đổi schema phải nằm trong service sở hữu dữ liệu.
-- Trước khi bàn giao, chạy format/lint/typecheck/build phù hợp với phạm vi và nêu rõ lệnh nào chưa chạy.
+- Thay đổi API phải cập nhật OpenAPI và ghi chú tương thích client. Nếu endpoint đang chạy mà chưa có trong `openapi.yaml`, bổ sung cùng PR.
+- Thay đổi schema phải nằm trong service sở hữu dữ liệu, kèm migration trong `backend/<service>/prisma/migrations`.
+- Trước khi bàn giao, chạy trong phạm vi đã sửa:
+  - `pnpm typecheck`
+  - `pnpm --filter <package> build`
+  - `pnpm --filter <package> test` (supply/booking có `pretest: pnpm build`)
+  - `pnpm prisma:validate` nếu chạm schema
+  - Lint/format **chưa có cấu hình** — nêu rõ trong mô tả PR rằng bước này chưa chạy được, đừng giả định nó đã chạy.
 - Tài liệu sản phẩm và quyết định nằm trong `PROJECT_PLAN.md` hoặc ADR; cập nhật khi quyết định nền tảng thay đổi.
+- Chuỗi hiển thị mới cho trợ lý AI, toast, header đặt trong `frontend/public-web/lib/i18n.ts`, không thêm ternary ngôn ngữ rải rác.

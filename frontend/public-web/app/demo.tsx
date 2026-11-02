@@ -1,10 +1,12 @@
 'use client';
 
 import { useEffect, useMemo, useState } from 'react';
+import Image from 'next/image';
 import HeaderSection from '../components/landing/HeaderSection';
 import FooterSection from '../components/landing/FooterSection';
 import ServicesCatalogView, { type CatalogServiceItem } from '../components/landing/ServicesCatalogView';
 import ServiceDetailPanel from '../components/booking/ServiceDetailPanel';
+import { useToast } from '../components/ui/Toast';
 import HomeLanding from './home-landing';
 import { detailFor, estimateServiceCost, priceUnitLabel, services, type Lang, type Service } from './catalog';
 import AssistantWorkspace, { type Trip } from './assistant-workspace';
@@ -12,6 +14,26 @@ import type { AssistantReply, ChatMessage, TripPreferences } from './api/assista
 
 type View = 'home' | 'services' | 'itinerary' | 'requests';
 type Request = { code: string; serviceId: string; date: string; guests: number; total: number; time?: string };
+
+/** Fixed demo package shown by the "book the whole tour" modal. */
+const FULL_TOUR_PACKAGE = {
+  code: 'PQ-4PAX-3N2D',
+  guests: 4,
+  totalVnd: 11_840_000,
+  budgetVnd: 12_000_000,
+} as const;
+
+/** ISO date in the traveller's own timezone (not UTC, so "today" is not off by one). */
+const isoDate = (date: Date): string =>
+  `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}-${String(date.getDate()).padStart(2, '0')}`;
+
+const tomorrowIso = (): string => {
+  const date = new Date();
+  date.setDate(date.getDate() + 1);
+  return isoDate(date);
+};
+
+const todayIso = (): string => isoDate(new Date());
 
 const formatMoney = (n: number) => new Intl.NumberFormat('vi-VN').format(n) + ' ₫';
 const name = (s: Service, lang: Lang) => lang === 'vi' ? s.vi : s.en;
@@ -50,10 +72,11 @@ const readJson = <T,>(key: string, fallback: T): T => {
 };
 
 export default function Demo() {
+  const toast = useToast();
   const [lang, setLang] = useState<Lang>('vi');
   const [view, setView] = useState<View>('home');
   const [selected, setSelected] = useState<Service | null>(null);
-  const [date, setDate] = useState('2026-05-15');
+  const [date, setDate] = useState<string>(tomorrowIso);
   const [arrivalTime, setArrivalTime] = useState('19:00');
   const [guests, setGuests] = useState(4);
   const [assistantSeed, setAssistantSeed] = useState('');
@@ -94,6 +117,10 @@ export default function Demo() {
     window.addEventListener('popstate', onPop);
     return () => window.removeEventListener('popstate', onPop);
   }, []);
+
+  useEffect(() => {
+    document.documentElement.lang = lang;
+  }, [lang]);
 
   useEffect(() => {
     let cancelled = false;
@@ -187,7 +214,11 @@ export default function Demo() {
   const handleConfirmFullTourBooking = (e: React.FormEvent) => {
     e.preventDefault();
     const tourCode = 'TOUR-PQ-' + Math.floor(100000 + Math.random() * 900000);
-    alert(`🎉 Giữ chỗ trọn gói thành công!\nMã đặt tour của bạn: ${tourCode}\nTổng chi phí: 11.840.000 đ (4 khách)\nĐội ngũ GOPU sẽ liên hệ xác nhận chuyến bay và chuẩn bị xe đón.`);
+    toast(
+      lang === 'vi'
+        ? `Đã giữ chỗ trọn gói.\nMã đặt tour: ${tourCode}\nTổng chi phí: ${formatMoney(FULL_TOUR_PACKAGE.totalVnd)} (${FULL_TOUR_PACKAGE.guests} khách).\nĐội ngũ GOPU sẽ liên hệ xác nhận chuyến bay và xe đón.`
+        : `Package held.\nTour code: ${tourCode}\nTotal: ${formatMoney(FULL_TOUR_PACKAGE.totalVnd)} (${FULL_TOUR_PACKAGE.guests} guests).\nThe GOPU team will confirm your flight and pickup.`
+    );
     setFullTourBookingModal(false);
   };
 
@@ -428,10 +459,12 @@ export default function Demo() {
                 {/* Header Image if present */}
                 {selected.image && (
                   <div className="relative h-44 -mx-6 sm:-mx-8 -mt-6 sm:-mt-8 mb-4 overflow-hidden rounded-t-3xl bg-gray-100">
-                    <img
+                    <Image
                       src={selected.image}
                       alt={name(selected, lang)}
-                      className="w-full h-full object-cover"
+                      fill
+                      sizes="(max-width: 640px) 100vw, 480px"
+                      className="object-cover"
                     />
                     <div className="absolute top-4 left-4 px-3 py-1 rounded-full bg-white/95 backdrop-blur-sm text-xs font-bold tracking-normal text-gray-800 shadow-xs">
                       📍 {selected.area}
@@ -568,16 +601,16 @@ export default function Demo() {
                 Phú Quốc 3N2Đ: Thiên Đường Biển Đảo &amp; Hải Sản
               </h2>
               <p className="text-xs text-gray-500 mb-4">
-                Mã tour: PQ-4PAX-3N2D • Đoàn 4 khách • Xe riêng &amp; Cano VIP
+                Mã tour: {FULL_TOUR_PACKAGE.code} • Đoàn {FULL_TOUR_PACKAGE.guests} khách • Xe riêng &amp; Cano VIP
               </p>
 
               <div className="p-4 bg-emerald-50 rounded-2xl border border-emerald-100 mb-4">
                 <div className="flex items-baseline justify-between text-xs mb-1">
                   <span className="text-gray-600 font-semibold">Tổng chi phí trọn gói:</span>
-                  <span className="text-xl font-extrabold text-[#087f78]">11.840.000 đ</span>
+                  <span className="text-xl font-extrabold text-[#087f78]">{formatMoney(FULL_TOUR_PACKAGE.totalVnd)}</span>
                 </div>
                 <p className="text-xs text-emerald-800">
-                  ✓ Tiết kiệm 160.000 đ so với ngân sách ban đầu (12.000.000 đ)
+                  ✓ Tiết kiệm {formatMoney(FULL_TOUR_PACKAGE.budgetVnd - FULL_TOUR_PACKAGE.totalVnd)} so với ngân sách ban đầu ({formatMoney(FULL_TOUR_PACKAGE.budgetVnd)})
                 </p>
               </div>
 
@@ -606,7 +639,8 @@ export default function Demo() {
                     <input
                       required
                       type="date"
-                      defaultValue="2026-05-15"
+                      defaultValue={tomorrowIso()}
+                      min={todayIso()}
                       className="w-full px-3 py-2 rounded-xl border border-gray-200 bg-gray-50 text-xs font-semibold"
                     />
                   </div>

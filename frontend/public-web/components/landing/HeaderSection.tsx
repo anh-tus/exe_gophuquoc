@@ -3,6 +3,7 @@
 import React, { useState } from 'react';
 import Image from 'next/image';
 import Icon from '../ui/Icon';
+import { useToast } from '../ui/Toast';
 
 interface HeaderProps {
   currentTab: string;
@@ -18,6 +19,7 @@ export default function HeaderSection({
   onToggleLang,
 }: HeaderProps) {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const toast = useToast();
 
   const navItems = [
     { id: 'home', labelVi: 'Trang chủ', labelEn: 'Home' },
@@ -120,7 +122,11 @@ export default function HeaderSection({
 
           {/* User Profile Avatar */}
           <button
-            onClick={() => alert('Thông tin tài khoản GOPU')}
+            type="button"
+            onClick={() =>
+              toast(lang === 'vi' ? 'Tài khoản GOPU sẽ khả dụng khi bật đăng nhập.' : 'GOPU accounts arrive with sign-in.')
+            }
+            aria-label={lang === 'vi' ? 'Tài khoản GOPU' : 'GOPU account'}
             className="w-11 h-11 rounded-full bg-emerald-700 text-white flex items-center justify-center font-bold text-xs shadow-sm hover:ring-2 hover:ring-emerald-400 transition-all flex-shrink-0"
           >
             <Icon name="user" className="h-4 w-4" />

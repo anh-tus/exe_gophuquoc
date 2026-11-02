@@ -1,8 +1,11 @@
 'use client';
 
 import { useState } from 'react';
+import Image from 'next/image';
 import { type Lang, type Service, type ServiceCategory, services } from './catalog';
 import Icon, { type IconName } from '../components/ui/Icon';
+import MiniChatWidget from '../components/landing/MiniChatWidget';
+import { useToast } from '../components/ui/Toast';
 import type { AssistantReply, ChatMessage } from './api/assistant/logic';
 
 type Props = {
@@ -13,14 +16,6 @@ type Props = {
   onSelectService: (service: Service) => void;
   onOpenAssistant: (prompt?: string) => void;
   onPlanCreated: (reply: Extract<AssistantReply, { kind: 'itinerary' }>, messages: ChatMessage[]) => void;
-};
-
-type MiniChatMessage = {
-  id: string;
-  role: 'user' | 'assistant';
-  text: string;
-  hasPlanLink?: boolean;
-  userPrompt?: string;
 };
 
 const formatVND = (n: number) => new Intl.NumberFormat('vi-VN').format(n) + ' đ';
@@ -34,18 +29,9 @@ export default function HomeLanding({
   onOpenAssistant,
   onPlanCreated,
 }: Props) {
+  const toast = useToast();
   const [searchQuery, setSearchQuery] = useState('');
   const [activeFilter, setActiveFilter] = useState<'all' | 'tour' | 'stay' | 'transport'>('all');
-  const [isChatOpen, setIsChatOpen] = useState(false);
-  const [chatPrompt, setChatPrompt] = useState('');
-  const [isSubmitting, setIsSubmitting] = useState(false);
-  const [chatMessages, setChatMessages] = useState<MiniChatMessage[]>([
-    {
-      id: 'welcome',
-      role: 'assistant',
-      text: '👋 Chào bạn! Mình là GOPU AI. Bạn có thắc mắc gì về Phú Quốc không (thời tiết, món ăn ngon, điểm check-in...)? Cứ trò chuyện tự nhiên với mình nhé, khi nào bạn bảo lên lịch trình thì mình mới tạo kế hoạch chi tiết cho bạn!',
-    },
-  ]);
 
   const quickChips = [
     'Tour cano 4 đảo',
@@ -348,63 +334,6 @@ export default function HomeLanding({
     }
   };
 
-  const handleSendMiniMessage = async (textToSend: string) => {
-    const trimmed = textToSend.trim();
-    if (!trimmed || isSubmitting) return;
-
-    const userMsg: MiniChatMessage = {
-      id: 'usr-' + Date.now(),
-      role: 'user',
-      text: trimmed,
-    };
-
-    const nextList = [...chatMessages, userMsg];
-    setChatMessages(nextList);
-    setChatPrompt('');
-    setIsSubmitting(true);
-
-    try {
-      const res = await fetch('/api/assistant/chat', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          lang,
-          messages: nextList.map((m) => ({ role: m.role, text: m.text })),
-        }),
-      });
-
-      const data = await res.json() as AssistantReply & { code?: string };
-      if (!res.ok || !data?.message) throw new Error(data?.code || 'Gemini chưa trả lời được. Hãy thử lại.');
-      const assistantMsg: MiniChatMessage = { id: 'ai-' + Date.now(), role: 'assistant', text: data.message };
-      setChatMessages([...nextList, assistantMsg]);
-      if (data.kind === 'itinerary') {
-        setIsChatOpen(false);
-        onPlanCreated(data, [...nextList, assistantMsg].map(({ role, text }) => ({ role, text })));
-      }
-    } catch (error) {
-      setChatMessages((prev) => [
-        ...prev,
-        {
-          id: 'ai-' + Date.now(),
-          role: 'assistant',
-          text: `Chưa kết nối được GOPU AI (${error instanceof Error ? error.message : 'lỗi mạng'}). Tin nhắn của bạn vẫn ở đây để thử lại.`,
-        },
-      ]);
-    } finally {
-      setIsSubmitting(false);
-    }
-  };
-
-  const handleResetChat = () => {
-    setChatMessages([
-      {
-        id: 'welcome',
-        role: 'assistant',
-        text: '👋 Chào bạn! Mình là GOPU AI. Bạn có thắc mắc gì về Phú Quốc không (thời tiết, món ăn ngon, điểm check-in...)? Cứ trò chuyện tự nhiên với mình nhé, khi nào bạn bảo lên lịch trình thì mình mới tạo kế hoạch chi tiết cho bạn!',
-      },
-    ]);
-  };
-
   return (
     <main className="min-h-screen bg-[#fcfdfd] text-gray-900 pb-16">
       {/* SECTION 1: HERO & SEARCH */}
@@ -655,10 +584,12 @@ export default function HomeLanding({
                 <div>
                   {/* Image with Tag & Rating */}
                   <div className="relative h-40 w-full overflow-hidden bg-gray-100">
-                    <img
+                    <Image
                       src={item.image}
                       alt={item.title}
-                      className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                      fill
+                      sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 20vw"
+                      className="object-cover group-hover:scale-105 transition-transform duration-300"
                     />
                     <div className="absolute top-2 left-2 px-2 py-0.5 rounded-md bg-white/90 backdrop-blur-sm text-xs font-bold text-gray-800 shadow-xs">
                       {item.tag}
@@ -779,10 +710,12 @@ export default function HomeLanding({
                 <div>
                   {/* Image */}
                   <div className="relative h-48 w-full overflow-hidden bg-gray-100">
-                    <img
+                    <Image
                       src={card.image}
                       alt={card.title}
-                      className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                      fill
+                      sizes="(max-width: 768px) 100vw, (max-width: 1024px) 50vw, 33vw"
+                      className="object-cover group-hover:scale-105 transition-transform duration-300"
                     />
                     <div className="absolute top-3 left-3 px-2.5 py-1 rounded-md bg-white/95 backdrop-blur-sm text-xs font-bold text-gray-800 shadow-xs">
                       {card.tag}
@@ -1056,7 +989,14 @@ export default function HomeLanding({
                 </span>
               </span>
               <button
-                onClick={() => alert('Đang tải tài liệu Quy chuẩn giá Phú Quốc Mùa 2026 (PDF)...')}
+                type="button"
+                onClick={() =>
+                  toast(
+                    lang === 'vi'
+                      ? 'Bảng quy chuẩn giá PDF chưa được phát hành trong bản demo này.'
+                      : 'The price-standard PDF is not published in this demo yet.'
+                  )
+                }
                 className="min-h-11 inline-flex items-center text-[#087f78] hover:underline font-medium"
               >
                 <Icon name="doc" className="h-4 w-4" /> Tải bảng quy chuẩn giá toàn đảo PDF (Mùa 2026)
@@ -1129,197 +1069,7 @@ export default function HomeLanding({
         </div>
       </section>
 
-      {/* FLOATING CHAT WIDGET: CHAT VỚI GOPU AI */}
-      <div className="fixed bottom-[calc(1.5rem+env(safe-area-inset-bottom))] right-4 sm:right-6 z-40 flex flex-col items-end">
-        {/* Popover Mini Chatbox khi mở */}
-        {isChatOpen && (
-          <div className="mb-3 w-[calc(100vw-2rem)] max-w-96 bg-white rounded-3xl shadow-2xl border border-gray-100 overflow-hidden animate-fadeIn flex flex-col max-h-[500px]">
-            {/* Header */}
-            <div className="bg-gradient-to-r from-[#087f78] to-[#064e43] text-white p-3.5 flex items-center justify-between shrink-0">
-              <div className="flex items-center gap-2.5">
-                <div className="w-8 h-8 rounded-full bg-white/15 flex items-center justify-center text-amber-300 text-sm">
-                  ✨
-                </div>
-                <div>
-                  <h4 className="text-xs font-extrabold text-white leading-tight">GOPU Smart Concierge</h4>
-                  <p className="text-xs text-emerald-100/90">Trợ lý du lịch kết nối Gemini AI 24/7</p>
-                </div>
-              </div>
-              <div className="flex items-center gap-1">
-                <button
-                  onClick={handleResetChat}
-                  title="Bắt đầu lại hội thoại"
-                  className="w-7 h-7 rounded-full bg-white/10 hover:bg-white/20 text-white flex items-center justify-center text-xs transition-colors"
-                >
-                  ↺
-                </button>
-                <button
-                  onClick={() => {
-                    setIsChatOpen(false);
-                    onOpenAssistant();
-                  }}
-                  title="Mở toàn màn hình AI Planner"
-                  className="w-7 h-7 rounded-full bg-white/10 hover:bg-white/20 text-white flex items-center justify-center text-xs transition-colors"
-                >
-                  ⤢
-                </button>
-                <button
-                  onClick={() => setIsChatOpen(false)}
-                  title="Đóng chat"
-                  className="w-7 h-7 rounded-full bg-white/10 hover:bg-white/20 text-white flex items-center justify-center text-xs transition-colors"
-                >
-                  ✕
-                </button>
-              </div>
-            </div>
-
-            {/* Messages Scroll Area */}
-            <div className="p-3.5 bg-[#fcfdfd] text-xs overflow-y-auto flex-1 flex flex-col gap-3 min-h-[220px]">
-              {chatMessages.map((msg) => (
-                <div
-                  key={msg.id}
-                  className={`flex flex-col ${msg.role === 'user' ? 'items-end' : 'items-start'}`}
-                >
-                  {/* Bubble */}
-                  <div
-                    className={`max-w-[88%] p-3 rounded-2xl text-xs leading-relaxed ${
-                      msg.role === 'user'
-                        ? 'bg-[#087f78] text-white rounded-br-xs shadow-xs'
-                        : 'bg-white text-gray-800 border border-gray-100 rounded-bl-xs shadow-xs'
-                    }`}
-                  >
-                    <div className="whitespace-pre-wrap">{msg.text}</div>
-
-                    {/* Action Card to Planner if itinerary prepared */}
-                    {msg.hasPlanLink && (
-                      <div className="mt-3 p-3 rounded-xl bg-gradient-to-br from-emerald-50 to-teal-50 border border-emerald-200 text-left">
-                        <div className="flex items-center gap-1.5 font-bold text-xs text-gray-900 mb-1">
-                          <span className="text-emerald-700">🗺️</span>
-                          <span className="text-emerald-900">Kế hoạch chi tiết đã sẵn sàng!</span>
-                        </div>
-                        <p className="text-sm text-gray-600 mb-2 leading-[1.6]">
-                          Xem timeline chi tiết từng giờ, bản đồ vệ tinh & bảng dự toán ngân sách minh bạch.
-                        </p>
-                        <button
-                          onClick={() => {
-                            setIsChatOpen(false);
-                            onOpenAssistant();
-                          }}
-                          className="w-full py-2 px-3 rounded-xl bg-[#087f78] hover:bg-[#066862] text-white font-bold text-xs flex items-center justify-center gap-1.5 shadow-xs transition-colors"
-                        >
-                          <span>Xem toàn bộ lịch trình trên GOPU AI</span>
-                          <span>→</span>
-                        </button>
-                      </div>
-                    )}
-                  </div>
-                  <span className="text-xs text-gray-500 mt-1 px-1">
-                    {msg.role === 'user' ? 'Bạn' : 'GOPU AI'}
-                  </span>
-                </div>
-              ))}
-
-              {/* Submitting Loading State */}
-              {isSubmitting && (
-                <div className="flex flex-col items-start animate-fadeIn">
-                  <div className="bg-white text-gray-600 border border-gray-100 rounded-2xl rounded-bl-xs p-3 text-xs flex items-center gap-2 shadow-xs">
-                    <span className="inline-block w-2 h-2 rounded-full bg-[#087f78] animate-bounce" />
-                    <span className="inline-block w-2 h-2 rounded-full bg-[#087f78] animate-bounce [animation-delay:0.2s]" />
-                    <span className="inline-block w-2 h-2 rounded-full bg-[#087f78] animate-bounce [animation-delay:0.4s]" />
-                    <span className="text-xs font-medium text-gray-500">GOPU AI đang phân tích dữ liệu & lên lịch...</span>
-                  </div>
-                </div>
-              )}
-
-              {/* Quick suggestion chips if just 1 message */}
-              {chatMessages.length === 1 && !isSubmitting && (
-                <div className="mt-1 pt-1">
-                  <div className="text-xs font-bold text-gray-500 mb-1.5">Gợi ý câu hỏi nhanh:</div>
-                  <div className="flex flex-col gap-1.5">
-                    {[
-                      'Thời tiết Phú Quốc mùa này thế nào?',
-                      'Quán hải sản nào ngon ở Dương Đông?',
-                      'Lên lịch trình 3N2Đ cho gia đình 4 người',
-                    ].map((sug, idx) => (
-                      <button
-                        key={idx}
-                        onClick={() => handleSendMiniMessage(sug)}
-                        className="text-left px-3 py-2 rounded-xl bg-white hover:bg-teal-50 border border-gray-200/80 hover:border-teal-300 text-gray-700 hover:text-[#087f78] transition-colors text-xs"
-                      >
-                        💡 {sug}
-                      </button>
-                    ))}
-                  </div>
-                </div>
-              )}
-            </div>
-
-            {/* Input Footer */}
-            <form
-              onSubmit={(e) => {
-                e.preventDefault();
-                handleSendMiniMessage(chatPrompt);
-              }}
-              className="p-3 bg-white border-t border-gray-100 flex items-center gap-2 shrink-0"
-            >
-              <input
-                type="text"
-                value={chatPrompt}
-                onChange={(e) => setChatPrompt(e.target.value)}
-                placeholder="Nhắn tin trò chuyện hoặc bảo AI lên lịch trình..."
-                disabled={isSubmitting}
-                className="flex-1 px-3 py-2 rounded-xl border border-gray-200 bg-gray-50 text-xs focus:outline-none focus:border-[#087f78] focus:bg-white"
-              />
-              <button
-                type="submit"
-                disabled={!chatPrompt.trim() || isSubmitting}
-                className="px-3.5 py-2 rounded-xl bg-[#087f78] disabled:opacity-40 text-white font-bold text-xs hover:bg-[#066862] transition-colors shadow-xs"
-              >
-                Gửi
-              </button>
-            </form>
-          </div>
-        )}
-
-        {/* Nút Floating Pill khớp chính xác hình ảnh người dùng */}
-        <button
-          onClick={() => setIsChatOpen(!isChatOpen)}
-          aria-label={isChatOpen ? 'Đóng cửa sổ chat GOPU AI' : 'Mở chat với GOPU AI'}
-          aria-expanded={isChatOpen}
-          className="rounded-full bg-[#087f78] hover:bg-[#066862] active:scale-95 text-white p-3 sm:px-5 sm:py-2.5 shadow-2xl shadow-teal-950/30 flex items-center gap-3 border border-white/20 transition-all hover:scale-105 group"
-        >
-          {/* Custom Stars Icon matching uploaded image */}
-          <div className="relative w-5 h-5 flex items-center justify-center shrink-0">
-            {/* Big 4-point star */}
-            <svg
-              className="w-5 h-5 text-amber-300 drop-shadow-xs"
-              viewBox="0 0 24 24"
-              fill="currentColor"
-            >
-              <path d="M12 0L14.4 9.6L24 12L14.4 14.4L12 24L9.6 14.4L0 12L9.6 9.6L12 0Z" />
-            </svg>
-            {/* Small 4-point star offset */}
-            <svg
-              className="w-2.5 h-2.5 text-orange-400 absolute -top-1 -left-1 drop-shadow-xs"
-              viewBox="0 0 24 24"
-              fill="currentColor"
-            >
-              <path d="M12 0L14.4 9.6L24 12L14.4 14.4L12 24L9.6 14.4L0 12L9.6 9.6L12 0Z" />
-            </svg>
-          </div>
-
-          {/* Text Container: 2 rows — icon-only on phones so the pill stops
-              covering the card it sits on top of. */}
-          <div className="text-left hidden sm:block">
-            <div className="font-extrabold text-sm text-white leading-tight tracking-tight">
-              Chat với GOPU AI
-            </div>
-            <div className="text-xs text-emerald-100/90 font-medium leading-tight mt-0.5">
-              Tạo lịch trình tự động 24/7
-            </div>
-          </div>
-        </button>
-      </div>
+      <MiniChatWidget lang={lang} onOpenAssistant={() => onOpenAssistant()} onPlanCreated={onPlanCreated} />
     </main>
   );
 }

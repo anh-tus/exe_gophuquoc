@@ -6,6 +6,7 @@
     "build": "nest build",
     "dev": "nest start --watch",
     "start": "node dist/main.js",
+    "pretest": "pnpm build",
     "test": "node --test test/*.test.cjs",
     "typecheck": "tsc --noEmit",
     "prisma:validate": "prisma validate --schema prisma/schema.prisma",

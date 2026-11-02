@@ -1,30 +1,48 @@
 # GOPU — Go Phu Quoc, Go Paradise!
 
-Monorepo cho đồ án EXE. **GOPU** lấy Phú Quốc làm điểm khởi đầu; định hướng dài hạn là mở rộng thương hiệu đến những điểm đến du lịch khác. MVP hiện tại vẫn chỉ phục vụ Phú Quốc. Logo gốc nằm tại `frontend/public-web/public/brand/gopu-logo.png`.
+Monorepo cho đồ án EXE. **GOPU** lấy Phú Quốc làm điểm khởi đầu; định hướng dài hạn là mở rộng thương hiệu đến những điểm du lịch khác. MVP hiện tại chỉ phục vụ Phú Quốc. Logo gốc: `frontend/public-web/public/brand/gopu-logo.png`.
 
-Nhóm ưu tiên phát triển `frontend/public-web` trước. Public web hiện có demo customer song ngữ gồm trang chủ, danh sách dịch vụ, yêu cầu demo và lịch trình mẫu. Giá, dịch vụ, yêu cầu và lịch trình đều là dữ liệu minh họa lưu trong trình duyệt; không có đặt chỗ, giữ tồn, thanh toán hoặc AI thật. Bản đồ OpenStreetMap và dự báo Open-Meteo dùng dữ liệu trực tiếp, kèm nguồn và trạng thái lỗi. Hai ảnh đảo được tạo riêng cho demo và chỉ mang tính minh họa. Quy tắc thiết kế nằm tại `frontend/public-web/DESIGN.md`.
+Tài liệu cần đọc trước khi code: [`PROJECT_PLAN.md`](./PROJECT_PLAN.md) (phạm vi, nghiệp vụ, roadmap), [`AGENTS.md`](./AGENTS.md) (quy ước kiến trúc), [`Docs/`](./Docs) (ADR và backlog).
 
-Docker Compose có thể khởi động public web, ba backend starter và PostgreSQL cùng lúc; **chưa triển khai nghiệp vụ marketplace/booking, thanh toán, AI hay tích hợp nhà cung cấp**.
+## Trạng thái hiện tại
+
+Đọc bảng này trước khi tin vào bất kỳ màn hình nào. "Demo" nghĩa là dữ liệu nằm trong trình duyệt, không có backend phía sau.
+
+| Phần | Trạng thái | Ghi chú |
+| --- | --- | --- |
+| `frontend/public-web` | **Đã có UI + AI chat** | Trang chủ, danh mục 21 dịch vụ, chi tiết dịch vụ, wizard lịch trình, chat GOPU AI (Gemini), thời tiết Open-Meteo, tỷ giá USD/VND |
+| Dữ liệu dịch vụ trên web | **Demo** | `app/catalog.ts` + `localStorage`; **chưa gọi** Identity/Supply/Booking |
+| Đặt chỗ trên web | **Demo** | Tạo "yêu cầu" trong `localStorage`, không giữ tồn, không thanh toán |
+| `backend/identity-service` | **Đã có** | Firebase ID token → JWT nội bộ, `GET/PATCH /v1/auth/me`, Prisma + migration |
+| `backend/supply-service` | **Đã có** | Listing/offering/slot, hold 15 phút có idempotency + transaction Serializable, admin CRUD bằng key |
+| `backend/booking-service` | **Một phần** | Instant/request booking, huỷ + tính % hoàn cọc, review, SEPay **sandbox**; thiếu worker hết hạn hold, outbox publisher, partner accept/reject |
+| `frontend/zalo-mini` | **Shell** | Chỉ `main.tsx` + CSS, chưa có màn hình |
+| `frontend/operations-portal` | **Shell** | Chỉ `main.tsx`, chưa có màn hình |
+| Thanh toán production | **Chưa bật** | Legal gate chưa xong; SEPay chỉ chạy sandbox, `PAYMENT_PRIVATE_STORAGE_URL` trống thì endpoint fail closed |
+| CI, lint, format | **Chưa có** | Không `.github/`, không ESLint/Prettier. Xem `Docs/BACKLOG.md` |
+| Outbox, notification, weather risk, partner portal | **Chưa có** | Xem `Docs/BACKLOG.md` |
+
+Các khoảng trống P0/P1 đã rà soát được ghi ở [`Docs/BACKLOG.md`](./Docs/BACKLOG.md) kèm thứ tự ưu tiên.
 
 ## Yêu cầu
 
 - Node.js 20.19+ và pnpm 9.15.9 (qua Corepack) nếu chạy trực tiếp trên máy.
-- Docker Desktop với Docker Engine đang chạy nếu dùng Docker Compose.
+- Docker Desktop đang chạy nếu dùng Docker Compose.
 
 ## Chạy toàn bộ stack bằng Docker
 
-Từ thư mục gốc, tạo `.env` từ `.env.example` nếu chưa có và đặt mật khẩu riêng cho `POSTGRES_PASSWORD`. Giữ file `.env` ngoài Git. Sau đó chạy:
+Tạo `.env` từ `.env.example` rồi đặt mật khẩu riêng cho `POSTGRES_PASSWORD` (ký tự an toàn cho URL). Giữ `.env` ngoài Git.
 
 ```powershell
 docker compose up --build -d
 docker compose ps
 ```
 
-Mở http://localhost:3000. Kiểm tra log bằng `docker compose logs -f`; dừng bằng `docker compose down`. Lệnh dừng giữ nguyên Docker volume `postgres-data` để dữ liệu còn sau lần chạy tiếp theo.
+Mở http://localhost:3000. Xem log bằng `docker compose logs -f`; dừng bằng `docker compose down` (volume `postgres-data` được giữ lại).
 
-Compose khởi động public web, Identity, Supply, Booking và PostgreSQL. Zalo Mini App cùng operations portal chưa được đưa vào Compose. Database Docker là `trip_trip` với ba schema `identity`, `supply`, `booking`. PostgreSQL trên máy của bạn tại cổng 5432 vẫn tách biệt; database Docker được mở riêng tại `127.0.0.1:5433` để có thể xem bằng pgAdmin. Mật khẩu kết nối là `POSTGRES_PASSWORD` trong `.env` local.
+Compose chạy public web, Identity, Supply, Booking và PostgreSQL. Zalo Mini App và operations portal **chưa** nằm trong Compose. Database Docker là `trip_trip` với ba schema `identity`, `supply`, `booking`, mở tại `127.0.0.1:5433` để xem bằng pgAdmin; PostgreSQL trên máy bạn ở cổng 5432 vẫn tách biệt.
 
-Script `docker/postgres/init/001-schemas.sql` chỉ tạo ba schema khi volume database mới được khởi tạo. Compose không chạy Prisma migration và không sao chép dữ liệu từ PostgreSQL trên máy. Backend nhận URL kết nối đến service `postgres`, nhưng mã starter chưa thực sự truy vấn database.
+`docker/postgres/init/001-schemas.sql` chỉ tạo schema khi volume mới được khởi tạo. **Compose không chạy Prisma migration** — chạy migration thủ công vào database dev đã chọn (xem bên dưới).
 
 ## Chạy trực tiếp trên máy
 
@@ -33,8 +51,6 @@ corepack enable
 pnpm install
 pnpm dev:web
 ```
-
-`pnpm dev:web` chạy public web tại http://localhost:3000. Các lệnh `pnpm dev:zalo`, `pnpm dev:portal`, `pnpm dev:services` chạy từng phần còn lại; `pnpm dev` chạy tất cả ứng dụng có script dev. Tránh chạy public web trực tiếp và container cùng lúc trên cổng 3000.
 
 | Ứng dụng | Mặc định |
 | --- | --- |
@@ -45,66 +61,87 @@ pnpm dev:web
 | Supply API | http://localhost:3102/v1/health |
 | Booking API | http://localhost:3103/v1/health |
 
-Các màn hình frontend hiện chỉ là placeholder. Health endpoint của backend chỉ xác nhận service khởi động được, không đại diện cho khả năng truy vấn database hay phụ thuộc ngoài. Trong Docker, Compose chờ PostgreSQL báo healthy trước khi khởi động ba backend.
+`pnpm dev:web`, `pnpm dev:zalo`, `pnpm dev:portal`, `pnpm dev:services`, hoặc `pnpm dev` cho tất cả. Đừng chạy public web trực tiếp và container cùng lúc trên cổng 3000.
 
-## PostgreSQL trên máy cho backend chạy trực tiếp
+Backend chạy trực tiếp **không tự nạp** `.env` ở gốc repo. Khi cần chạy service ngoài Docker, export biến môi trường trong shell hoặc dùng `dotenv-cli`; đừng sửa code để đọc file `.env` riêng.
 
-Nếu đã tạo database `trip_trip` với ba schema như trong `.env.example`, cấu trúc local hiện tại là:
+Health endpoint chỉ xác nhận process sống, **không** kiểm tra database hay dependency ngoài.
 
-| Service | Schema sở hữu | Biến môi trường |
+## Biến môi trường
+
+Toàn bộ danh sách ở [`.env.example`](./.env.example). Nhóm chính:
+
+| Nhóm | Biến |
+| --- | --- |
+| Database local | `IDENTITY_DATABASE_URL`, `SUPPLY_DATABASE_URL`, `BOOKING_DATABASE_URL` |
+| Auth | `FIREBASE_PROJECT_ID`, `GOOGLE_APPLICATION_CREDENTIALS`, `IDENTITY_JWT_SECRET` (≥ 32 byte) |
+| Gọi nội bộ giữa service | `IDENTITY_SERVICE_URL`, `SUPPLY_SERVICE_URL`, `INTERNAL_SERVICE_KEY`, `SUPPLY_SERVICE_KEY`, `SUPPLY_ADMIN_KEY` |
+| SEPay sandbox | `SEPAY_MODE`, `SEPAY_SANDBOX_MERCHANT_ID`, `SEPAY_SANDBOX_SECRET_KEY`, `SEPAY_SANDBOX_IPN_SECRET`, `PUBLIC_WEB_ORIGIN` |
+| AI (chỉ server) | `GEMINI_API_KEY`, `GEMINI_MODEL`, `GEMINI_FALLBACK_MODEL` — đặt trong `frontend/public-web/.env.local` |
+| Frontend | `NEXT_PUBLIC_IDENTITY_API_URL`, `NEXT_PUBLIC_SUPPLY_API_URL`, `NEXT_PUBLIC_BOOKING_API_URL`, `NEXT_PUBLIC_FIREBASE_*` |
+
+`GEMINI_API_KEY` tuyệt đối không đặt sau tiền tố `NEXT_PUBLIC_` và không commit.
+
+## Database và migration
+
+Local: một database `trip_trip`, ba schema, mỗi service chỉ nhận URL tới schema của mình.
+
+| Service | Schema | Biến |
 | --- | --- | --- |
 | Identity | `identity` | `IDENTITY_DATABASE_URL` |
 | Supply | `supply` | `SUPPLY_DATABASE_URL` |
 | Booking | `booking` | `BOOKING_DATABASE_URL` |
 
-Nếu chạy backend trực tiếp trên máy thay vì qua Compose, dùng ba `*_DATABASE_URL` trong `.env.example` với mật khẩu PostgreSQL local của bạn tại cổng 5432. Mật khẩu này có thể khác `POSTGRES_PASSWORD` của Docker. File `.env` đã được Git bỏ qua; không đưa mật khẩu vào README hoặc commit. Tên database là **`trip_trip`** (có dấu gạch dưới), đúng với ảnh pgAdmin.
+Migration đã có sẵn trong `backend/*/prisma/migrations`. Chỉ chạy với database local/dev đã xác nhận tên:
 
-Ba Prisma schema đã khai báo URL tương ứng nhưng chưa có model nghiệp vụ; backend chạy trực tiếp trên máy cũng chưa tự nạp file `.env` ở gốc repo. Khi bắt đầu triển khai backend, hãy cấu hình cách nạp biến môi trường, kiểm tra kết nối và xác nhận database local/dev đích trước khi chạy bất kỳ migration nào.
+```powershell
+pnpm --filter @pqlc/identity-service exec prisma migrate dev --schema prisma/schema.prisma
+pnpm --filter @pqlc/supply-service exec prisma migrate dev --schema prisma/schema.prisma
+pnpm --filter @pqlc/booking-service exec prisma migrate dev --schema prisma/schema.prisma
+```
 
-## Mã nguồn trên GitHub
+Không chạy migration production từ máy phát triển. Kiểm tra schema không cần kết nối DB: `pnpm prisma:validate`.
 
-Repository: [anh-tus/exe_gophuquoc](https://github.com/anh-tus/exe_gophuquoc), nhánh chính `main`. Để lấy mã nguồn trên máy khác:
+## Kiểm tra trước khi bàn giao
+
+```powershell
+pnpm typecheck                # tất cả package
+pnpm build                    # build toàn monorepo
+pnpm prisma:validate          # validate 3 schema
+
+pnpm --filter @pqlc/public-web test
+pnpm --filter @pqlc/identity-service test
+pnpm --filter @pqlc/supply-service test    # có pretest: build trước khi chạy
+pnpm --filter @pqlc/booking-service test   # có pretest: build trước khi chạy
+```
+
+Backend test chạy trên `dist/` nên cần build trước — các package đã có `pretest` lo việc này. Lint và format **chưa** có cấu hình; nếu bạn thêm ESLint/Prettier, cập nhật luôn mục này và `turbo.json` (task `lint` đã khai báo nhưng chưa package nào implement).
+
+## Bản đồ tài liệu
+
+| Tài liệu | Nội dung |
+| --- | --- |
+| `PROJECT_PLAN.md` | Phạm vi MVP, nghiệp vụ, KPI, roadmap 16 tuần, rủi ro |
+| `AGENTS.md` | Quy ước kiến trúc, ranh giới service/database, quy trình thay đổi |
+| `Docs/ADR-001-customer-booking.md` | Ranh giới booking, state machine, thanh toán sandbox |
+| `Docs/ADR-002-ai-assistant-placement.md` | Vì sao trợ lý AI đang nằm ở Next.js route thay vì booking-service |
+| `Docs/BACKLOG.md` | Các khoảng trống đã rà soát (P0/P1) và thứ tự ưu tiên |
+| `frontend/public-web/DESIGN.md` | Màu, typography, quy tắc thị giác của public web |
+| `frontend/public-web/PRODUCT.md` | Người dùng, nguyên tắc nội dung (không trình bày dữ liệu chưa xác minh như dữ liệu thật) |
+
+## Nguyên tắc
+
+- Mỗi service sở hữu schema riêng; không đọc chéo database, chỉ trao đổi qua API/event.
+- OpenAPI ở `packages/api-contracts/openapi.yaml` là nguồn hợp đồng. Hiện **chưa** khớp hoàn toàn với code (thiếu `/holds/{id}/extend`, IPN, `/admin/*`) — xem backlog.
+- Không commit `.env`, secret, dữ liệu khách hàng hoặc chứng từ thanh toán.
+- Không hiển thị giá/giờ/chỗ chưa xác minh như dữ liệu thật. Dữ liệu minh họa phải được đánh dấu trong UI.
+- AI chỉ đề xuất; không có tool tạo/huỷ/thanh toán booking.
+
+## Mã nguồn
+
+Repository: [anh-tus/exe_gophuquoc](https://github.com/anh-tus/exe_gophuquoc), nhánh chính `main`.
 
 ```powershell
 git clone https://github.com/anh-tus/exe_gophuquoc.git
 cd exe_gophuquoc
 ```
-
-Sau khi cập nhật mã nguồn, tạo commit và đẩy lên nhánh `main` theo quy trình của nhóm. File `.env`, secret, cache và dữ liệu PostgreSQL không được đưa vào Git; mỗi máy tự tạo `.env` từ `.env.example` trước khi chạy Docker Compose.
-
-## Cấu trúc
-
-```text
-frontend/
-  zalo-mini/             React + Vite shell; tích hợp Zalo SDK để sau
-  public-web/             Next.js shell
-  operations-portal/      React + Vite shell
-backend/
-  identity-service/       NestJS + Prisma skeleton
-  supply-service/         NestJS + Prisma skeleton
-  booking-service/        NestJS + Prisma skeleton
-packages/
-  api-contracts/          OpenAPI nguồn hợp đồng API
-  api-clients/            placeholder cho client sinh từ OpenAPI
-  config/                 TypeScript shared config
-  design-tokens/          token trung lập, chưa có design final
-  observability/          placeholder cho logging/correlation
-```
-
-## Nguyên tắc
-
-- Trong môi trường local hiện tại, mỗi backend service sở hữu một schema riêng trong `trip_trip`; không truy cập schema của service khác.
-- OpenAPI là nguồn hợp đồng. Chưa có client runtime hay endpoint nghiệp vụ.
-- Không commit `.env`, secrets, dữ liệu khách hàng hoặc chứng từ thanh toán.
-- Các tích hợp Zalo, SEPay, Firebase, Redis, AI, thời tiết, bản đồ và storage chưa được bật.
-- Trước khi triển khai thật, cần chốt phiên bản SDK Mini App và xác minh quy trình phát hành theo tài liệu Zalo hiện hành.
-
-## Lệnh tiện ích
-
-```powershell
-pnpm build
-pnpm typecheck
-pnpm prisma:validate
-```
-
-Lệnh Prisma yêu cầu cài dependencies; validation schema chưa chạy migration. Lint/format và CI chưa được cấu hình trong starter. Xem [AGENTS.md](./AGENTS.md) và [PROJECT_PLAN.md](./PROJECT_PLAN.md) trước khi thêm nghiệp vụ.

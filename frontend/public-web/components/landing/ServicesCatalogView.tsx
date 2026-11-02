@@ -526,10 +526,17 @@ export default function ServicesCatalogView({
                     <span>Xem tour tại điểm này</span> <span>&gt;</span>
                   </a>
                   <button
-                    onClick={() => alert('Mở vị trí Cảng An Thới trên Google Maps')}
-                    className="text-gray-600 hover:text-gray-900 flex items-center gap-1"
+                    type="button"
+                    onClick={() =>
+                      window.open(
+                        `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(`${selectedPoi.title} Phú Quốc`)}`,
+                        '_blank',
+                        'noopener,noreferrer'
+                      )
+                    }
+                    className="text-gray-600 hover:text-gray-900 flex items-center gap-1 min-h-11"
                   >
-                    <span>🧭</span> <span>Chỉ đường</span>
+                    <span aria-hidden="true">🧭</span> <span>Chỉ đường</span>
                   </button>
                 </div>
               </div>

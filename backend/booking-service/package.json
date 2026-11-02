@@ -9,6 +9,7 @@
     "typecheck": "tsc --noEmit",
     "prisma:validate": "prisma validate --schema prisma/schema.prisma",
     "prisma:generate": "prisma generate --schema prisma/schema.prisma",
+    "pretest": "pnpm build",
     "test": "node --test test/*.cjs"
   },
   "dependencies": {
