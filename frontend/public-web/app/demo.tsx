@@ -8,11 +8,12 @@ import ServicesCatalogView, { type CatalogServiceItem } from '../components/land
 import ServiceDetailPanel from '../components/booking/ServiceDetailPanel';
 import { useToast } from '../components/ui/Toast';
 import HomeLanding from './home-landing';
+import PriceTableView from './price-table-view';
 import { detailFor, estimateServiceCost, priceUnitLabel, services, type Lang, type Service } from './catalog';
 import AssistantWorkspace, { type Trip } from './assistant-workspace';
 import type { AssistantReply, ChatMessage, TripPreferences } from './api/assistant/logic';
 
-type View = 'home' | 'services' | 'itinerary' | 'requests';
+type View = 'home' | 'services' | 'itinerary' | 'requests' | 'price-table';
 type Request = { code: string; serviceId: string; date: string; guests: number; total: number; time?: string };
 
 /** Fixed demo package shown by the "book the whole tour" modal. */
@@ -75,6 +76,8 @@ export default function Demo() {
   const toast = useToast();
   const [lang, setLang] = useState<Lang>('vi');
   const [view, setView] = useState<View>('home');
+  const [catalogSearch, setCatalogSearch] = useState('');
+  const [catalogCategory, setCatalogCategory] = useState<Service['category'] | 'all'>('all');
   const [selected, setSelected] = useState<Service | null>(null);
   const [date, setDate] = useState<string>(tomorrowIso);
   const [arrivalTime, setArrivalTime] = useState('19:00');
@@ -99,7 +102,7 @@ export default function Demo() {
   useEffect(() => {
     const params = new URLSearchParams(location.search);
     const initialView = params.get('view');
-    if (initialView && ['home', 'services', 'itinerary', 'requests'].includes(initialView)) {
+    if (initialView && ['home', 'services', 'itinerary', 'requests', 'price-table'].includes(initialView)) {
       setView(initialView as View);
     }
     if (params.get('lang') === 'en') setLang('en');
@@ -112,7 +115,7 @@ export default function Demo() {
 
     const onPop = () => {
       const p = new URLSearchParams(location.search);
-      setView((['home', 'services', 'itinerary', 'requests'].includes(p.get('view') || '') ? p.get('view') : 'home') as View);
+      setView((['home', 'services', 'itinerary', 'requests', 'price-table'].includes(p.get('view') || '') ? p.get('view') : 'home') as View);
       setLang(p.get('lang') === 'en' ? 'en' : 'vi');
     };
     window.addEventListener('popstate', onPop);
@@ -231,29 +234,30 @@ export default function Demo() {
       {/* 1. Header with full navigation matching Image 1 & 4 */}
       <HeaderSection
         currentTab={view}
-        onSelectTab={(tabId) => {
-          if (tabId === 'price-table') {
-            if (view !== 'home') go('home');
-            window.setTimeout(() => {
-              document.getElementById('price-table')?.scrollIntoView({ behavior: 'smooth' });
-            }, 100);
-          } else {
-            go(tabId as View);
-          }
-        }}
+        onSelectTab={(tabId) => go(tabId as View)}
         lang={lang}
         onToggleLang={(nextL) => go(view, nextL)}
       />
 
       {/* 2. Main Views */}
       <div className="flex-1">
+        {view === 'price-table' && (
+          <main className="max-w-7xl mx-auto w-full px-4 sm:px-6 lg:px-8 py-10">
+            <PriceTableView lang={lang} onSelectService={setSelected} />
+          </main>
+        )}
+
         {/* VIEW 1: HOME LANDING */}
         {view === 'home' && (
           <HomeLanding
             lang={lang}
             weather={weather}
             weatherState={weatherState}
-            onExplore={() => go('services')}
+            onExplore={(category, query) => {
+              setCatalogCategory(category ?? 'all');
+              setCatalogSearch(query ?? '');
+              go('services');
+            }}
             onSelectService={(service) => {
               setSelected(service);
               // Mở xem chi tiết và đặt dịch vụ trực tiếp tại trang chủ, không chuyển sang trang khác
@@ -278,6 +282,8 @@ export default function Demo() {
         {view === 'services' && (
           <ServicesCatalogView
             lang={lang}
+            initialSearch={catalogSearch}
+            initialCategory={catalogCategory}
             onAddServiceToAi={(service: CatalogServiceItem) => {
               setAssistantSeed(lang === 'vi' ? 'Thêm dịch vụ "' + service.title + '" vào lịch trình' : 'Add "' + service.title + '" to my itinerary');
               go('itinerary');
@@ -377,7 +383,7 @@ export default function Demo() {
       </div>
 
       {/* 3. Footer */}
-      <FooterSection lang={lang} />
+      <FooterSection lang={lang} onOpenPriceTable={() => go('price-table')} />
 
       {/* MODAL 1: Single Service Detail & Booking */}
       {selected && (

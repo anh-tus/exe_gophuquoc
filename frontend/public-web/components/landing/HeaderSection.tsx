@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useState } from 'react';
+import Image from 'next/image';
 import { useToast } from '../ui/Toast';
 import { BookmarkSimple, UserCircle, List, X, Sparkle } from '@phosphor-icons/react';
 import { assistantCopy } from '../../lib/i18n';
@@ -61,11 +62,12 @@ export default function HeaderSection({
           onClick={() => onSelectTab('home')}
           className="flex items-center gap-2 text-left focus:outline-none group shrink-0"
         >
+          <span className="relative w-11 h-11 rounded-xl overflow-hidden border border-emerald-100 shrink-0">
+            <Image src="/brand/gopu-logo.png" alt="Logo GoPU" fill sizes="44px" className="object-cover" priority />
+          </span>
           <div>
             <div className="flex items-center gap-1.5">
-              <span className="text-2xl font-extrabold tracking-tight text-[#087f78] leading-none">
-                GOPU<span className="text-emerald-500 font-bold text-xl">.AI</span>
-              </span>
+              <span className="text-2xl font-extrabold tracking-tight text-[#087f78] leading-none">GoPU</span>
               <span className="hidden xl:inline-flex items-center gap-1 text-xs font-bold text-emerald-800 bg-emerald-50 px-2 py-0.5 rounded-full border border-emerald-200">
                 {assistantCopy[lang].headerStatus}
               </span>

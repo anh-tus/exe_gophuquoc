@@ -1,8 +1,9 @@
 'use client';
 
 import React from 'react';
+import Image from 'next/image';
 
-export default function FooterSection({ lang }: { lang: 'vi' | 'en' }) {
+export default function FooterSection({ lang, onOpenPriceTable }: { lang: 'vi' | 'en'; onOpenPriceTable: () => void }) {
   return (
     <footer className="bg-white border-t border-gray-200 text-gray-700 pt-14 pb-8">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -10,10 +11,11 @@ export default function FooterSection({ lang }: { lang: 'vi' | 'en' }) {
           {/* Column 1: Brand & Office (4 cols) */}
           <div className="lg:col-span-4 space-y-4">
             <div className="flex items-center gap-3">
+              <span className="relative w-11 h-11 rounded-xl overflow-hidden border border-emerald-100 shrink-0">
+                <Image src="/brand/gopu-logo.png" alt="Logo GoPU" fill sizes="44px" className="object-cover" />
+              </span>
               <div>
-                <span className="text-xl font-extrabold text-[#087f78]">
-                  GOPU<span className="text-emerald-500 font-bold text-base">.AI</span>
-                </span>
+                <span className="text-xl font-extrabold text-[#087f78]">GoPU</span>
                 <p className="text-xs uppercase font-bold text-gray-500 tracking-wider">
                   Go Phu Quoc, Go Paradise!
                 </p>
@@ -77,7 +79,7 @@ export default function FooterSection({ lang }: { lang: 'vi' | 'en' }) {
             </h4>
             <ul className="text-sm space-y-0.5 text-gray-600">
               <li>
-                <a href="#price-table" className="inline-flex items-center min-h-11 hover:text-[#087f78] transition-colors">
+                <a href={`?view=price-table&lang=${lang}`} onClick={(event) => { event.preventDefault(); onOpenPriceTable(); }} className="inline-flex items-center min-h-11 hover:text-[#087f78] transition-colors">
                   {lang === 'vi' ? 'Bảng giá chuẩn (Chống chặt chém)' : 'Standard prices'}
                 </a>
               </li>
@@ -87,7 +89,7 @@ export default function FooterSection({ lang }: { lang: 'vi' | 'en' }) {
                 </a>
               </li>
               <li>
-                <a href="#price-table" className="inline-flex items-center min-h-11 hover:text-[#087f78] transition-colors">
+                <a href={`?view=price-table&lang=${lang}`} onClick={(event) => { event.preventDefault(); onOpenPriceTable(); }} className="inline-flex items-center min-h-11 hover:text-[#087f78] transition-colors">
                   {lang === 'vi' ? 'Chính sách hủy hoàn & bảo hiểm' : 'Cancellation, refunds & insurance'}
                 </a>
               </li>
@@ -132,7 +134,7 @@ export default function FooterSection({ lang }: { lang: 'vi' | 'en' }) {
 
         {/* Bottom Bar */}
         <div className="pt-8 flex flex-col sm:flex-row items-center justify-between gap-4 text-xs text-gray-500">
-          <p>{lang === 'vi' ? '© 2026 GOPU.AI. Bảo lưu mọi quyền. Đồ án EXE Phú Quốc Local Companion.' : '© 2026 GOPU.AI. All rights reserved. EXE Phu Quoc Local Companion project.'}</p>
+          <p>{lang === 'vi' ? '© 2026 GoPU. Bảo lưu mọi quyền. Đồ án EXE Phú Quốc Local Companion.' : '© 2026 GoPU. All rights reserved. EXE Phu Quoc Local Companion project.'}</p>
           <div className="flex items-center gap-6">
             <span>{lang === 'vi' ? 'Bảo mật thông tin' : 'Privacy'}</span>
             <span>{lang === 'vi' ? 'Điều khoản sử dụng' : 'Terms of use'}</span>

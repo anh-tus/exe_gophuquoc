@@ -3,6 +3,10 @@
 import React, { useState } from 'react';
 import Image from 'next/image';
 import { MagnifyingGlass, Heart, MapPin, Sparkle, ArrowRight } from '@phosphor-icons/react';
+import SelectMenu from '../ui/SelectMenu';
+import { phuQuocMapUrl } from '../../app/map-url';
+import { services, type ServiceCategory } from '../../app/catalog';
+import { filterCatalogServices } from '../../app/catalog-filter';
 
 export interface CatalogServiceItem {
   id: string;
@@ -142,11 +146,54 @@ const EN_SERVICE_DATA: Record<string, Pick<CatalogServiceItem, 'title' | 'catego
   'thue-xe-may': { title: 'Self-drive scooter and motorbike rental with hotel delivery', categoryBadge: 'Self-drive rental', highlightBadge: 'Delivered to you', area: 'Across Phu Quoc Island', description: 'Modern serviced scooters and motorbikes include two helmets, raincoats and one liter of fuel. Free local delivery.', perks: ['No cash deposit', 'Motorbike insurance', '24/7 roadside help'], priceUnit: '/ day' },
 };
 
+const categoryLabels: Record<ServiceCategory, { vi: string; en: string }> = {
+  tour: { vi: 'Tour & trải nghiệm', en: 'Tours & experiences' },
+  restaurant: { vi: 'Ẩm thực & hải sản', en: 'Food & seafood' },
+  stay: { vi: 'Khách sạn & lưu trú', en: 'Hotels & stays' },
+  transport: { vi: 'Di chuyển & thuê xe', en: 'Transfers & rentals' },
+  wellness: { vi: 'Spa & thư giãn', en: 'Wellness' },
+  laundry: { vi: 'Giặt là', en: 'Laundry' },
+};
+
+const areaInEnglish = (area: string) => area
+  .replaceAll('Dương Đông', 'Duong Dong')
+  .replaceAll('Bãi Trường', 'Bai Truong')
+  .replaceAll('Bãi Sao', 'Bai Sao')
+  .replaceAll('An Thới', 'An Thoi')
+  .replaceAll('Sân bay', 'Airport')
+  .replaceAll('Phú Quốc', 'Phu Quoc')
+  .replaceAll('Toàn đảo', 'Island-wide')
+  .replaceAll('Mũi Ông Đội', 'Ong Doi Cape');
+
+const unitInEnglish = (unit: string) => ({
+  '/ đêm': '/ night', '/ xe': '/ vehicle', '/ phần': '/ serving',
+  '/ kg': '/ kg', '/ món': '/ item', '/ người': '/ person', '/ lượt': '/ trip', '/ ngày': '/ day', '/ vé': '/ ticket',
+}[unit] || unit);
+
+const catalogById = new Map(CATALOG_SERVICES.map((item) => [item.id, item]));
+const allCatalogServices: CatalogServiceItem[] = services.map((source) => catalogById.has(source.id) ? { ...catalogById.get(source.id)!, rating: source.rating, reviewsCount: source.reviewCount } : {
+  id: source.id,
+  title: source.vi,
+  categoryBadge: categoryLabels[source.category].vi,
+  area: source.area,
+  rating: source.rating,
+  reviewsCount: source.reviewCount,
+  description: source.descriptionVi,
+  perks: [],
+  price: new Intl.NumberFormat('vi-VN').format(source.price) + ' đ',
+  priceUnit: source.priceUnit === 'per-night' ? '/ đêm' : source.priceUnit === 'per-vehicle' ? '/ xe' : source.priceUnit === 'per-serving' ? '/ phần' : source.priceUnit === 'per-kg' ? '/ kg' : source.priceUnit === 'per-item' ? '/ món' : '/ người',
+  imageUrl: source.image,
+  lat: source.lat,
+  lon: source.lon,
+});
+
 interface ServicesCatalogViewProps {
   onAddServiceToAi: (service: CatalogServiceItem) => void;
   onViewServiceDetail: (service: CatalogServiceItem) => void;
   onOpenAiPlanner: () => void;
   lang: 'vi' | 'en';
+  initialSearch?: string;
+  initialCategory?: ServiceCategory | 'all';
 }
 
 export default function ServicesCatalogView({
@@ -154,13 +201,15 @@ export default function ServicesCatalogView({
   onViewServiceDetail,
   onOpenAiPlanner,
   lang,
+  initialSearch = '',
+  initialCategory = 'all',
 }: ServicesCatalogViewProps) {
-  const [searchTerm, setSearchTerm] = useState('');
-  const [categoryFilter, setCategoryFilter] = useState('all');
+  const [searchTerm, setSearchTerm] = useState(initialSearch);
+  const [categoryFilter, setCategoryFilter] = useState<string>(initialCategory);
   const [areaFilter, setAreaFilter] = useState('all');
   const [priceFilter, setPriceFilter] = useState('all');
   const [ratingFilter, setRatingFilter] = useState('all');
-  const [mapMode, setMapMode] = useState<'map' | 'satellite'>('map');
+  const [sortOrder, setSortOrder] = useState<'popular' | 'price-asc' | 'rating-desc'>('popular');
   const [favorites, setFavorites] = useState<string[]>([]);
   const [selectedPoi, setSelectedPoi] = useState({
     title: 'Cảng An Thới (Nam Đảo)',
@@ -184,20 +233,29 @@ export default function ServicesCatalogView({
   };
 
   const t = (vi: string, en: string) => lang === 'vi' ? vi : en;
-  const filteredServices = CATALOG_SERVICES.filter((item) => {
-    const query = searchTerm.trim().toLowerCase();
-    const english = EN_SERVICE_DATA[item.id];
-    if (query && ![item.title, item.area, english?.title, english?.area].some((text) => text?.toLowerCase().includes(query))) {
-      return false;
-    }
-    if (categoryFilter !== 'all' && item.categoryBadge !== categoryFilter) {
-      return false;
-    }
-    if (areaFilter !== 'all' && !item.area.toLowerCase().includes(areaFilter.toLowerCase())) {
-      return false;
-    }
-    return true;
+  const filteredIds = filterCatalogServices(services.map((source) => {
+    const card = catalogById.get(source.id);
+    const english = EN_SERVICE_DATA[source.id];
+    return {
+      id: source.id, category: source.category, area: card?.area || source.area,
+      price: source.price, rating: source.rating, reviewCount: source.reviewCount,
+      search: [source.vi, source.en, source.descriptionVi, source.descriptionEn,
+        source.area, card?.title || '', card?.area || '', card?.description || '',
+        english?.title || '', english?.area || '', english?.description || '',
+        source.id === 'cano-an-thoi' ? 'tour cano 4 đảo four island canoe' : '',
+        source.id === 'xe-san-bay' ? 'xe riêng sân bay private airport transfer' : '',
+        source.category === 'stay' ? 'khách sạn hotel resort lưu trú' : ''],
+    };
+  }), {
+    query: searchTerm,
+    category: categoryFilter,
+    area: areaFilter,
+    minPrice: priceFilter === '500k-1m' ? 500000 : priceFilter === 'above1m' ? 1000001 : undefined,
+    maxPrice: priceFilter === 'under500k' ? 500000 : priceFilter === '500k-1m' ? 1000000 : undefined,
+    minRating: ratingFilter === 'all' ? undefined : Number(ratingFilter),
+    sort: sortOrder,
   });
+  const filteredServices = filteredIds.map((item) => allCatalogServices.find((card) => card.id === item.id)!).filter(Boolean);
 
   return (
     <div className="bg-[#f8fbfb] min-h-screen py-8">
@@ -231,7 +289,7 @@ export default function ServicesCatalogView({
         </div>
 
         {/* Search & Filter Bar */}
-        <div className="bg-white rounded-2xl p-4 border border-gray-200 shadow-sm mb-8">
+        <div className="relative z-20 bg-white rounded-2xl p-4 border border-gray-200 shadow-sm mb-8">
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-12 gap-3 items-center">
             {/* Search Input (3 cols) */}
             <div className="lg:col-span-3 relative">
@@ -242,77 +300,43 @@ export default function ServicesCatalogView({
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
                 placeholder={t('Tìm theo tên tour, địa điểm, từ khóa...', 'Search tours, places and keywords...')}
-                className="w-full pl-10 pr-4 py-2.5 rounded-xl border border-gray-200 bg-gray-50 text-xs sm:text-sm font-medium focus:outline-none focus:border-[#087f78] focus:bg-white"
+                className="w-full min-h-14 pl-10 pr-4 py-2.5 rounded-xl border border-gray-200 bg-white text-sm font-medium focus:outline-none focus:border-[#087f78]"
               />
             </div>
 
             {/* Category Dropdown (2 cols) */}
-            <div className="lg:col-span-2">
-              <select
-                value={categoryFilter}
-                onChange={(e) => setCategoryFilter(e.target.value)}
-                className="w-full px-3 py-2.5 rounded-xl border border-gray-200 bg-gray-50 text-xs font-bold text-gray-700 focus:outline-none focus:border-[#087f78]"
-              >
-                <option value="all">{t('Tất cả danh mục', 'All categories')}</option>
-                <option value="Tour & trải nghiệm">{t('Tour & trải nghiệm', 'Tours & experiences')}</option>
-                <option value="Tour nghỉ dưỡng">{t('Tour nghỉ dưỡng', 'Relaxation tours')}</option>
-                <option value="Di chuyển">{t('Di chuyển', 'Transport')}</option>
-                <option value="Điểm đến & Show">{t('Điểm đến & Show', 'Attractions & shows')}</option>
-                <option value="Thuê xe tự lái">{t('Thuê xe tự lái', 'Self-drive rental')}</option>
-              </select>
-            </div>
+            <SelectMenu className="lg:col-span-2" label={t('Danh mục', 'Category')} value={categoryFilter} onChange={setCategoryFilter} options={[
+              { value: 'all', label: t('Tất cả danh mục', 'All categories') },
+              ...(Object.keys(categoryLabels) as ServiceCategory[]).map((category) => ({ value: category, label: categoryLabels[category][lang] })),
+            ]} />
 
             {/* Area Dropdown (2 cols) */}
-            <div className="lg:col-span-2">
-              <select
-                value={areaFilter}
-                onChange={(e) => setAreaFilter(e.target.value)}
-                className="w-full px-3 py-2.5 rounded-xl border border-gray-200 bg-gray-50 text-xs font-bold text-gray-700 focus:outline-none focus:border-[#087f78]"
-              >
-                <option value="all">{t('Toàn đảo Phú Quốc', 'Across Phu Quoc Island')}</option>
-                <option value="An Thới">{t('Cảng An Thới (Nam Đảo)', 'An Thoi Port (South Island)')}</option>
-                <option value="Dương Đông">{t('Dương Đông', 'Duong Dong')}</option>
-                <option value="Bãi Sao">{t('Bãi Sao', 'Bai Sao')}</option>
-                <option value="Bãi Trường">{t('Bãi Trường', 'Bai Truong')}</option>
-                <option value="Sân bay">{t('Sân bay PQC', 'PQC Airport')}</option>
-              </select>
-            </div>
+            <SelectMenu className="lg:col-span-2" label={t('Khu vực', 'Area')} value={areaFilter} onChange={setAreaFilter} options={[
+              { value: 'all', label: t('Toàn đảo Phú Quốc', 'Across Phu Quoc Island') },
+              { value: 'An Thới', label: t('Cảng An Thới (Nam Đảo)', 'An Thoi Port (South Island)') },
+              { value: 'Dương Đông', label: t('Dương Đông', 'Duong Dong') },
+              { value: 'Bãi Sao', label: t('Bãi Sao', 'Bai Sao') },
+              { value: 'Bãi Trường', label: t('Bãi Trường', 'Bai Truong') },
+              { value: 'Sân bay', label: t('Sân bay PQC', 'PQC Airport') },
+            ]} />
 
             {/* Price Dropdown (1.5 cols) */}
-            <div className="lg:col-span-2">
-              <select
-                value={priceFilter}
-                onChange={(e) => setPriceFilter(e.target.value)}
-                className="w-full px-2.5 py-2.5 rounded-xl border border-gray-200 bg-gray-50 text-xs font-bold text-gray-700 focus:outline-none focus:border-[#087f78]"
-              >
-                <option value="all">{t('Mọi mức giá', 'All prices')}</option>
-                <option value="under500k">{t('< 500.000 đ', '< 500,000 VND')}</option>
-                <option value="500k-1m">{t('500k - 1 triệu', '500k–1 million VND')}</option>
-                <option value="above1m">&gt; {t('1 triệu', '1 million VND')}</option>
-              </select>
-            </div>
+            <SelectMenu className="lg:col-span-2" label={t('Mức giá', 'Price')} value={priceFilter} onChange={setPriceFilter} options={[
+              { value: 'all', label: t('Mọi mức giá', 'All prices') },
+              { value: 'under500k', label: t('Dưới 500.000 đ', 'Under 500,000 VND') },
+              { value: '500k-1m', label: t('500.000 đ đến 1 triệu', '500k to 1 million VND') },
+              { value: 'above1m', label: t('Trên 1 triệu', 'Over 1 million VND') },
+            ]} />
 
             {/* Rating Dropdown (1.5 cols) */}
-            <div className="lg:col-span-2">
-              <select
-                value={ratingFilter}
-                onChange={(e) => setRatingFilter(e.target.value)}
-                className="w-full px-2.5 py-2.5 rounded-xl border border-gray-200 bg-gray-50 text-xs font-bold text-gray-700 focus:outline-none focus:border-[#087f78]"
-              >
-                <option value="all">{t('Tất cả đánh giá', 'All ratings')}</option>
-                <option value="4.8">4.8 {t('trở lên', 'and above')}</option>
-                <option value="4.5">4.5 {t('trở lên', 'and above')}</option>
-              </select>
-            </div>
+            <SelectMenu className="lg:col-span-2" label={t('Đánh giá', 'Rating')} value={ratingFilter} onChange={setRatingFilter} options={[
+              { value: 'all', label: t('Tất cả đánh giá', 'All ratings') },
+              { value: '4.8', label: `4.8 ${t('trở lên', 'and above')}` },
+              { value: '4.5', label: `4.5 ${t('trở lên', 'and above')}` },
+            ]} />
 
             {/* Filter Action Buttons (1 col) */}
             <div className="lg:col-span-1 flex items-center gap-1.5">
-              <button
-                type="button"
-                className="w-full py-2.5 px-3 rounded-xl bg-[#087f78] hover:bg-[#066862] text-white font-bold text-xs flex items-center justify-center gap-1 shadow-sm whitespace-nowrap"
-              >
-                <span>{t('Lọc', 'Filter')}</span>
-              </button>
               <button
                 type="button"
                 onClick={() => {
@@ -321,9 +345,10 @@ export default function ServicesCatalogView({
                   setAreaFilter('all');
                   setPriceFilter('all');
                   setRatingFilter('all');
+                  setSortOrder('popular');
                 }}
                 title={t('Đặt lại bộ lọc', 'Reset filters')}
-                className="p-2.5 rounded-xl border border-gray-200 text-gray-500 hover:bg-gray-50 text-xs font-bold"
+                className="min-h-14 w-full px-3 rounded-xl border border-gray-200 text-gray-600 hover:bg-emerald-50 hover:text-[#087f78] text-xs font-bold"
               >
                 {t('Đặt lại', 'Reset')}
               </button>
@@ -335,23 +360,25 @@ export default function ServicesCatalogView({
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
           {/* Left Column: Service Cards */}
           <div className="lg:col-span-7 space-y-5">
-            <div className="flex items-center justify-between text-xs text-gray-500 pb-1">
+            <div className="flex flex-wrap items-center justify-between gap-3 text-xs text-gray-500 pb-1">
               <span className="font-bold text-gray-800">
                 {t('Tìm thấy', 'Found')} {filteredServices.length} {t('dịch vụ phù hợp', 'matching services')}
               </span>
-              <div className="flex items-center gap-2">
-                <span>{t('Sắp xếp theo:', 'Sort by:')}</span>
-                <select className="bg-transparent font-bold text-[#087f78] focus:outline-none">
-                  <option>{t('Phổ biến nhất', 'Most popular')}</option>
-                  <option>{t('Giá tăng dần', 'Price: low to high')}</option>
-                  <option>{t('Đánh giá cao nhất', 'Highest rated')}</option>
-                </select>
+              <div className="flex items-center gap-2 min-w-0">
+                <span className="hidden sm:inline">{t('Sắp xếp theo:', 'Sort by:')}</span>
+                <SelectMenu compact className="min-w-44" label={t('Sắp xếp', 'Sort')} value={sortOrder} onChange={(value) => setSortOrder(value as typeof sortOrder)} options={[
+                  { value: 'popular', label: t('Phổ biến nhất', 'Most popular') },
+                  { value: 'price-asc', label: t('Giá tăng dần', 'Price: low to high') },
+                  { value: 'rating-desc', label: t('Đánh giá cao nhất', 'Highest rated') },
+                ]} />
               </div>
             </div>
 
             {filteredServices.map((service) => {
+              const source = services.find((item) => item.id === service.id);
               const display = lang === 'vi' ? service : {
                 ...service,
+                ...(source ? { title: source.en, description: source.descriptionEn, categoryBadge: categoryLabels[source.category].en, area: areaInEnglish(source.area), priceUnit: unitInEnglish(service.priceUnit) } : {}),
                 ...EN_SERVICE_DATA[service.id],
                 price: service.price.replaceAll('.', ',').replace('đ', 'VND'),
                 originalPrice: service.originalPrice?.replaceAll('.', ',').replace('đ', 'VND'),
@@ -400,11 +427,10 @@ export default function ServicesCatalogView({
                         <span className="font-medium flex items-center gap-1">
                           {display.area}
                         </span>
-                        <div className="flex items-center gap-1 font-bold text-gray-800">
-
+                        {service.reviewsCount > 0 && <div className="flex items-center gap-1 font-bold text-gray-800">
                           <span>{service.rating}</span>
                           <span className="text-gray-500 font-normal">({service.reviewsCount})</span>
-                        </div>
+                        </div>}
                       </div>
 
                       {/* Title */}
@@ -473,28 +499,13 @@ export default function ServicesCatalogView({
               );
             })}
 
-            {/* Pagination */}
-            <div className="pt-6 flex items-center justify-center gap-2 text-xs font-bold text-gray-600">
-              <button className="px-3 py-2 rounded-xl border border-gray-200 hover:bg-white bg-gray-50 text-gray-500 cursor-not-allowed">
-                {t('Trang trước', 'Previous')}
-              </button>
-              <button className="w-8 h-8 rounded-xl bg-[#087f78] text-white flex items-center justify-center shadow-sm">
-                1
-              </button>
-              <button className="w-8 h-8 rounded-xl border border-gray-200 hover:bg-white flex items-center justify-center">
-                2
-              </button>
-              <button className="w-8 h-8 rounded-xl border border-gray-200 hover:bg-white flex items-center justify-center">
-                3
-              </button>
-              <span>...</span>
-              <button className="w-8 h-8 rounded-xl border border-gray-200 hover:bg-white flex items-center justify-center">
-                8
-              </button>
-              <button className="px-3 py-2 rounded-xl border border-gray-200 hover:bg-white bg-white shadow-xs">
-                {t('Trang sau', 'Next')}
-              </button>
-            </div>
+            {filteredServices.length === 0 && (
+              <div className="rounded-2xl border border-gray-200 bg-white p-8 text-center">
+                <p className="font-bold text-gray-900">{t('Không tìm thấy dịch vụ phù hợp.', 'No matching services found.')}</p>
+                <p className="text-sm text-gray-500 mt-1">{t('Thử từ khóa khác hoặc đặt lại bộ lọc.', 'Try another search or reset the filters.')}</p>
+                <button type="button" onClick={() => { setSearchTerm(''); setCategoryFilter('all'); setAreaFilter('all'); setPriceFilter('all'); setRatingFilter('all'); }} className="mt-4 min-h-11 px-4 rounded-xl border border-emerald-200 text-[#087f78] font-bold">{t('Đặt lại bộ lọc', 'Reset filters')}</button>
+              </div>
+            )}
           </div>
 
           {/* Right Column: Interactive Island Map & POI Tip */}
@@ -506,20 +517,14 @@ export default function ServicesCatalogView({
 
                   <span>{t('Bản đồ Đảo Ngọc', 'Island map')}</span>
                 </span>
-                <div className="flex items-center gap-1 bg-gray-100 p-0.5 rounded-lg text-xs">
-                  <button
-                    onClick={() => setMapMode('map')}
-                    className={`px-2 py-0.5 rounded-[10px] ${mapMode === 'map' ? 'bg-white shadow-xs text-[#087f78]' : 'text-gray-500'}`}
-                  >
-                    Bản đồ
-                  </button>
-                  <button
-                    onClick={() => setMapMode('satellite')}
-                    className={`px-2 py-0.5 rounded-[10px] ${mapMode === 'satellite' ? 'bg-white shadow-xs text-[#087f78]' : 'text-gray-500'}`}
-                  >
-                    {t('Vệ tinh', 'Satellite')}
-                  </button>
-                </div>
+                <a
+                  href="https://www.google.com/maps/@?api=1&map_action=map&center=10.2%2C103.97&zoom=11&basemap=satellite"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="rounded-lg bg-gray-100 px-3 py-2 text-xs font-bold text-[#087f78] hover:bg-emerald-50"
+                >
+                  {t('Xem vệ tinh ↗', 'Satellite view ↗')}
+                </a>
               </div>
 
               {/* Map Iframe */}
@@ -529,12 +534,16 @@ export default function ServicesCatalogView({
                   width="100%"
                   height="100%"
                   className="border-0"
-                  src="https://www.openstreetmap.org/export/embed.html?bbox=103.80%2C9.95%2C104.15%2C100.45&amp;layer=mapnik&amp;marker=10.027%2C104.017"
+                  src={phuQuocMapUrl()}
+                  referrerPolicy="strict-origin-when-cross-origin"
                 />
                 <div className="absolute top-3 left-3 bg-white/90 backdrop-blur-md px-2.5 py-1 rounded-lg text-xs font-bold text-emerald-800 border border-emerald-200">
                    {t('Đang xem: Cảng An Thới', 'Viewing: An Thoi Port')}
                 </div>
               </div>
+              <a href={phuQuocMapUrl()} target="_blank" rel="noopener noreferrer" className="mt-2 inline-flex min-h-11 items-center text-xs font-bold text-[#087f78] hover:underline">
+                {t('Mở bản đồ trong tab mới', 'Open map in a new tab')}
+              </a>
 
               {/* Selected POI Details Card */}
               <div className="mt-4 p-4 rounded-2xl bg-gray-50 border border-gray-200/80">
