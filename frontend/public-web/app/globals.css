@@ -154,6 +154,7 @@ p{text-wrap:pretty}
 .assistant-workspace .assistant-heading h2{font-size:20px}
 .assistant-workspace .assistant-heading p{font-size:12px}
 .assistant-workspace .assistant-transcript{flex:1;min-height:100px;max-height:none}
+.assistant-choices{display:flex;flex-wrap:wrap;gap:8px;margin:8px 0 12px}.assistant-choices strong{flex-basis:100%;font-size:13px;color:var(--muted)}.assistant-choices .button{white-space:normal;text-align:left;min-height:44px}
 .assistant-plan-panel{min-width:0;overflow:auto;padding:20px;background:#fff;border:1px solid var(--line);border-radius:16px;box-shadow:0 8px 24px #123d3d0b}
 .assistant-plan-header{display:flex;justify-content:space-between;align-items:flex-start;gap:14px;margin-bottom:15px}
 .assistant-plan-header h2{margin:5px 0 0;font-size:24px;letter-spacing:-.03em}

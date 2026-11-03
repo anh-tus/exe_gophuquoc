@@ -3,6 +3,10 @@ services:
     build:
       context: .
       dockerfile: frontend/public-web/Dockerfile
+    environment:
+      GEMINI_API_KEY: ${GEMINI_API_KEY:-}
+      GEMINI_MODEL: ${GEMINI_MODEL:-gemini-flash-lite-latest}
+      GEMINI_FALLBACK_MODEL: ${GEMINI_FALLBACK_MODEL:-gemini-3.1-flash-lite}
     ports:
       - "3000:3000"
     restart: unless-stopped

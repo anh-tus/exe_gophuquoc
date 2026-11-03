@@ -11,7 +11,9 @@ type Props = {
   lang: Lang;
   initialPrompt?: string;
   initialMessages?: ChatMessage[];
+  initialChoices?: string[];
   onMessagesChange?: (messages: ChatMessage[]) => void;
+  onChoicesChange?: (choices: string[]) => void;
   onInitialPromptConsumed: () => void;
   onPlan: (reply: Extract<AssistantReply, { kind: 'itinerary' }>) => void;
   onUseTemplate: (text: string, preferences: TripPreferences) => void;
@@ -74,7 +76,7 @@ export default function AssistantWorkspace(props: Props) {
 
   return <div className={props.chatOnly ? 'assistant-workspace assistant-workspace-chat-only' : 'assistant-workspace'}>
     <div className="assistant-workspace-chat">
-      <AssistantChat lang={props.lang} initialPrompt={props.initialPrompt} initialMessages={props.initialMessages} onMessagesChange={props.onMessagesChange} currentPlan={props.trip?.planDays ? { title: props.trip.planTitle || '', days: props.trip.planDays } : null} onInitialPromptConsumed={props.onInitialPromptConsumed} onConversationStarted={() => setChatStarted(true)} onPlan={acceptPlan} onSearch={setSearchResults} onUseTemplate={props.onUseTemplate} />
+      <AssistantChat lang={props.lang} initialPrompt={props.initialPrompt} initialMessages={props.initialMessages} initialChoices={props.initialChoices} onMessagesChange={props.onMessagesChange} onChoicesChange={props.onChoicesChange} currentPlan={props.trip?.planDays ? { title: props.trip.planTitle || '', days: props.trip.planDays } : null} onInitialPromptConsumed={props.onInitialPromptConsumed} onConversationStarted={() => setChatStarted(true)} onPlan={acceptPlan} onSearch={setSearchResults} onUseTemplate={props.onUseTemplate} />
       {props.chatOnly && searchResults && <ServiceSearchResults message={searchResults.message} recommendations={searchResults.recommendations} lang={props.lang} />}
     </div>
 

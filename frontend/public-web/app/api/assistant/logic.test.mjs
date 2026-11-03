@@ -4,6 +4,14 @@ import { buildVisibleMessages, getDayPeriod, isRetryableGeminiStatus, parseAssis
 
 const catalog = ['cano-an-thoi', 'com-nha-phu-quoc', 'khach-san-duong-dong', 'xe-san-bay', 'spa-duong-dong', 'giat-la-trung-tam', 'hai-san-bai-truong'];
 
+test('clarification offers bounded selectable answers', () => {
+  const base = { kind: 'clarify', message: 'Bạn đi cùng bao nhiêu người?', preferences: { days: 3, guests: null, budgetVnd: null, interest: '' } };
+  const reply = parseAssistantReply(JSON.stringify({ ...base, choices: ['2 người', '4 người', '6 người'] }), catalog);
+  assert.deepEqual(reply?.choices, ['2 người', '4 người', '6 người']);
+  assert.equal(parseAssistantReply(JSON.stringify({ ...base, choices: ['2 người'] }), catalog), null);
+  assert.equal(parseAssistantReply(JSON.stringify({ ...base, choices: ['2 người', '2 người'] }), catalog), null);
+});
+
 test('rejects assistant itineraries that reference services outside the demo catalog', () => {
   const reply = JSON.stringify({
     kind: 'itinerary',

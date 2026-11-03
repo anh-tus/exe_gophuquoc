@@ -7,6 +7,63 @@ servers:
   - url: https://api.example.invalid/v1
     description: Placeholder; replace per environment.
 paths:
+  /api/assistant/chat:
+    servers:
+      - url: http://localhost:3000
+        description: Next.js public web; separate from the /v1 backend services.
+    post:
+      summary: Generate a GOPU AI chat reply or demo itinerary
+      description: A clarification reply includes 2–4 selectable choices. Existing chat, itinerary, and service search replies retain their fields; clients should ignore unknown fields.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [messages, lang]
+              properties:
+                lang: { type: string, enum: [vi, en] }
+                messages:
+                  type: array
+                  items:
+                    type: object
+                    required: [role, text]
+                    properties:
+                      role: { type: string, enum: [user, assistant] }
+                      text: { type: string }
+                currentPlan: { type: [object, 'null'] }
+      responses:
+        '200':
+          description: Structured assistant reply
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [kind, message, preferences]
+                properties:
+                  kind: { type: string, enum: [chat, clarify, itinerary, service_search] }
+                  message: { type: string }
+                  preferences: { type: object }
+                  choices:
+                    type: array
+                    minItems: 2
+                    maxItems: 4
+                    items: { type: string }
+                    description: Required when kind is clarify; absent for other reply kinds.
+                  plan: { type: object }
+                  title: { type: string }
+                  recommendations: { type: array, items: { type: object } }
+                allOf:
+                  - if:
+                      properties:
+                        kind: { const: clarify }
+                    then:
+                      required: [choices]
+        '400': { description: Invalid chat request }
+        '429': { description: Local demo rate limit }
+        '502': { description: Gemini provider or response error }
+        '503': { description: Gemini key missing or provider overloaded }
+        '504': { description: Gemini timeout }
   /auth/session:
     post:
       summary: Exchange a Firebase ID token for a customer session

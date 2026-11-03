@@ -12,7 +12,7 @@ export type AssistantPlan = { title: string; days: Array<{ day: number; activiti
 export type ServiceRecommendation = { serviceId: string; reason: string };
 export type AssistantReply =
   | { kind: 'chat'; message: string; preferences: TripPreferences }
-  | { kind: 'clarify'; message: string; preferences: TripPreferences }
+  | { kind: 'clarify'; message: string; preferences: TripPreferences; choices: string[] }
   | { kind: 'itinerary'; message: string; preferences: TripPreferences; plan: AssistantPlan }
   | { kind: 'service_search'; message: string; preferences: TripPreferences; title: string; recommendations: ServiceRecommendation[] };
 
@@ -99,8 +99,12 @@ export function parseAssistantReply(raw: string, allowedServiceIds: readonly str
     interest: preferences.interest,
   };
 
-  if (value.kind === 'chat' || value.kind === 'clarify') {
-    return { kind: value.kind as 'chat' | 'clarify', message: value.message, preferences: normalizedPreferences };
+  if (value.kind === 'chat') return { kind: 'chat', message: value.message, preferences: normalizedPreferences };
+  if (value.kind === 'clarify') {
+    if (!Array.isArray(value.choices) || value.choices.length < 2 || value.choices.length > 4) return null;
+    const choices = value.choices.map((choice) => typeof choice === 'string' ? choice.trim() : '');
+    if (choices.some((choice) => !choice || choice.length > 100) || new Set(choices).size !== choices.length) return null;
+    return { kind: 'clarify', message: value.message, preferences: normalizedPreferences, choices };
   }
   if (value.kind === 'service_search') {
     if (typeof value.title !== 'string' || !value.title.trim() || value.title.length > 120 || !Array.isArray(value.recommendations) || value.recommendations.length > 8) return null;

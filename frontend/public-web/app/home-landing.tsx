@@ -14,7 +14,7 @@ type Props = {
   weatherState: 'loading' | 'ready' | 'error';
   onExplore: (category?: ServiceCategory, query?: string) => void;
   onSelectService: (service: Service) => void;
-  onOpenAssistant: (prompt?: string) => void;
+  onOpenAssistant: (prompt?: string, messages?: ChatMessage[], choices?: string[]) => void;
   onPlanCreated: (reply: Extract<AssistantReply, { kind: 'itinerary' }>, messages: ChatMessage[]) => void;
 };
 
@@ -1069,7 +1069,7 @@ export default function HomeLanding({
         </div>
       </section>
 
-      <MiniChatWidget lang={lang} onOpenAssistant={() => onOpenAssistant()} onPlanCreated={onPlanCreated} />
+      <MiniChatWidget lang={lang} onOpenAssistant={(messages, choices) => onOpenAssistant(undefined, messages, choices)} onPlanCreated={onPlanCreated} />
     </main>
   );
 }

@@ -16,13 +16,16 @@ type Props = {
   onSearch: (reply: Extract<AssistantReply, { kind: 'service_search' }>) => void;
   onUseTemplate: (text: string, preferences: TripPreferences) => void;
   initialMessages?: ChatMessage[];
+  initialChoices?: string[];
   onMessagesChange?: (messages: ChatMessage[]) => void;
+  onChoicesChange?: (choices: string[]) => void;
   currentPlan?: AssistantPlan | null;
 };
 
-export default function AssistantChat({ lang, initialPrompt, initialMessages = [], onMessagesChange, currentPlan, onInitialPromptConsumed, onConversationStarted, onPlan, onSearch, onUseTemplate }: Props) {
+export default function AssistantChat({ lang, initialPrompt, initialMessages = [], initialChoices = [], onMessagesChange, onChoicesChange, currentPlan, onInitialPromptConsumed, onConversationStarted, onPlan, onSearch, onUseTemplate }: Props) {
   const t = assistantCopy[lang];
   const [messages, setMessages] = useState<ChatMessage[]>(initialMessages);
+  const [choices, setChoices] = useState<string[]>(initialChoices);
   const [input, setInput] = useState('');
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
@@ -44,6 +47,9 @@ export default function AssistantChat({ lang, initialPrompt, initialMessages = [
       const completedMessages = [...nextMessages, { role: 'assistant' as const, text: reply.message }];
       setMessages(completedMessages);
       onMessagesChange?.(completedMessages);
+      const nextChoices = reply.kind === 'clarify' ? reply.choices : [];
+      setChoices(nextChoices);
+      onChoicesChange?.(nextChoices);
       setPendingUserText(null);
       if (reply.kind === 'itinerary') onPlan(reply);
       if (reply.kind === 'service_search') onSearch(reply);
@@ -61,6 +67,8 @@ export default function AssistantChat({ lang, initialPrompt, initialMessages = [
     const trimmed = text.trim();
     if (!trimmed || loading) return;
     onConversationStarted();
+    setChoices([]);
+    onChoicesChange?.([]);
     setInput('');
     const next = [...messages, { role: 'user' as const, text: trimmed }];
     void send(next, trimmed);
@@ -88,9 +96,10 @@ export default function AssistantChat({ lang, initialPrompt, initialMessages = [
       {visibleMessages.map((message, index) => <div key={index} className={`assistant-message ${message.role}`}><span>{message.role === 'user' ? t.you : t.assistant}</span><p>{message.text}</p></div>)}
       {loading && <div className="assistant-message assistant-thinking" role="status"><span>{t.assistant}</span><p>{t.loading}</p></div>}
     </div>
+    {choices.length > 0 && !loading && <div className="assistant-choices" aria-label={t.chooseAnswer}><strong>{t.chooseAnswer}</strong>{choices.map((choice) => <button key={choice} className="button outline" type="button" onClick={() => submit(choice)}>{choice}</button>)}</div>}
     <form className="assistant-compose" onSubmit={handleSubmit}>
       <label className="sr-only" htmlFor="assistant-message">{t.placeholder}</label>
-      <textarea id="assistant-message" rows={2} maxLength={1200} value={input} onChange={(event) => setInput(event.target.value)} placeholder={t.placeholder} disabled={loading} autoFocus onKeyDown={(event) => { if (event.key === 'Enter' && !event.shiftKey) { event.preventDefault(); submit(input); } }} />
+      <textarea id="assistant-message" rows={2} maxLength={1200} value={input} onChange={(event) => setInput(event.target.value)} placeholder={choices.length ? t.otherAnswerPlaceholder : t.placeholder} disabled={loading} autoFocus onKeyDown={(event) => { if (event.key === 'Enter' && !event.shiftKey) { event.preventDefault(); submit(input); } }} />
       <button className="button primary" type="submit" disabled={loading || !input.trim()}>{t.send} ↗</button>
     </form>
     <p className="assistant-privacy">{t.privacy}</p>

@@ -40,6 +40,8 @@ docker compose ps
 
 Mở http://localhost:3000. Xem log bằng `docker compose logs -f`; dừng bằng `docker compose down` (volume `postgres-data` được giữ lại).
 
+GOPU AI trong Docker đọc `GEMINI_API_KEY` từ `.env` ở gốc repo qua Compose. Sau khi thêm hoặc đổi key, chạy lại `docker compose up -d --force-recreate public-web` để container nhận biến môi trường mới; không cần build lại image chỉ vì đổi key.
+
 Compose chạy public web, Identity, Supply, Booking và PostgreSQL. Zalo Mini App và operations portal **chưa** nằm trong Compose. Database Docker là `trip_trip` với ba schema `identity`, `supply`, `booking`, mở tại `127.0.0.1:5433` để xem bằng pgAdmin; PostgreSQL trên máy bạn ở cổng 5432 vẫn tách biệt.
 
 `docker/postgres/init/001-schemas.sql` chỉ tạo schema khi volume mới được khởi tạo. **Compose không chạy Prisma migration** — chạy migration thủ công vào database dev đã chọn (xem bên dưới).
@@ -63,6 +65,8 @@ pnpm dev:web
 
 `pnpm dev:web`, `pnpm dev:zalo`, `pnpm dev:portal`, `pnpm dev:services`, hoặc `pnpm dev` cho tất cả. Đừng chạy public web trực tiếp và container cùng lúc trên cổng 3000.
 
+Khi chạy public web trực tiếp bằng `pnpm dev:web`, đặt `GEMINI_API_KEY` trong `frontend/public-web/.env.local` hoặc export biến trong shell. Next.js không tự đọc `.env` ở gốc repo.
+
 Backend chạy trực tiếp **không tự nạp** `.env` ở gốc repo. Khi cần chạy service ngoài Docker, export biến môi trường trong shell hoặc dùng `dotenv-cli`; đừng sửa code để đọc file `.env` riêng.
 
 Health endpoint chỉ xác nhận process sống, **không** kiểm tra database hay dependency ngoài.
@@ -81,6 +85,8 @@ Toàn bộ danh sách ở [`.env.example`](./.env.example). Nhóm chính:
 | Frontend | `NEXT_PUBLIC_IDENTITY_API_URL`, `NEXT_PUBLIC_SUPPLY_API_URL`, `NEXT_PUBLIC_BOOKING_API_URL`, `NEXT_PUBLIC_FIREBASE_*` |
 
 `GEMINI_API_KEY` tuyệt đối không đặt sau tiền tố `NEXT_PUBLIC_` và không commit.
+
+Client chat cũ vẫn đọc được `chat`, `itinerary` và `service_search` như trước. Phản hồi `clarify` từ `/api/assistant/chat` nay có thêm `choices` (2–4 câu trả lời); client mới hiển thị nút chọn và gửi lựa chọn được bấm như tin nhắn người dùng. Client dùng `clarify` cần hỗ trợ trường này.
 
 ## Database và migration
 

@@ -20,6 +20,8 @@ export type AssistantCopy = {
   demo: string;
   you: string;
   assistant: string;
+  chooseAnswer: string;
+  otherAnswerPlaceholder: string;
   failureNetwork: string;
   failureRoute: string;
   failureServer: string;
@@ -61,6 +63,8 @@ export const assistantCopy: Record<Lang, AssistantCopy> = {
     demo: 'Gợi ý từ dữ liệu minh họa; giá chưa xác minh và không thể hiện tình trạng còn chỗ.',
     you: 'Bạn',
     assistant: 'GOPU AI',
+    chooseAnswer: 'Chọn một câu trả lời:',
+    otherAnswerPlaceholder: 'Hoặc viết câu trả lời khác…',
     failureNetwork: 'Chưa kết nối được Gemini. Tin nhắn của bạn vẫn được giữ lại; bạn có thể thử lại hoặc tiếp tục với lịch trình mẫu.',
     failureRoute: 'Không tìm thấy API chat trên máy chủ web đang mở. Hãy khởi động lại ứng dụng Next.js rồi thử lại.',
     failureServer: 'Không kết nối được tới máy chủ web. Hãy kiểm tra ứng dụng Next.js đang chạy rồi thử lại.',
@@ -105,6 +109,8 @@ export const assistantCopy: Record<Lang, AssistantCopy> = {
     demo: 'Suggestions use illustrative data; prices are unverified and availability is not shown.',
     you: 'You',
     assistant: 'GOPU AI',
+    chooseAnswer: 'Choose an answer:',
+    otherAnswerPlaceholder: 'Or write a different answer…',
     failureNetwork: 'Gemini could not be reached. Your message is still here; retry or continue with a sample itinerary.',
     failureRoute: 'The chat API was not found on this web server. Restart the Next.js app and try again.',
     failureServer: 'The web server could not be reached. Check that the Next.js app is running and try again.',

@@ -81,6 +81,7 @@ export default function Demo() {
   const [guests, setGuests] = useState(4);
   const [assistantSeed, setAssistantSeed] = useState('');
   const [conversation, setConversation] = useState<ChatMessage[]>([]);
+  const [assistantChoices, setAssistantChoices] = useState<string[]>([]);
   const [trip, setTrip] = useState<Trip | null>(null);
   const [planDays, setPlanDays] = useState(3);
   const [planGuests, setPlanGuests] = useState(4);
@@ -257,12 +258,15 @@ export default function Demo() {
               setSelected(service);
               // Mở xem chi tiết và đặt dịch vụ trực tiếp tại trang chủ, không chuyển sang trang khác
             }}
-            onOpenAssistant={(prompt) => {
+            onOpenAssistant={(prompt, messages, choices) => {
+              if (messages) setConversation(messages);
+              if (choices) setAssistantChoices(choices);
               if (prompt) setAssistantSeed(prompt);
               go('itinerary');
             }}
             onPlanCreated={(reply, messages) => {
               setConversation(messages);
+              setAssistantChoices([]);
               setAssistantSeed('');
               applyPlan(reply);
               go('itinerary');
@@ -296,7 +300,9 @@ export default function Demo() {
           <AssistantWorkspace
             initialPrompt={assistantSeed}
             initialMessages={conversation}
+            initialChoices={assistantChoices}
             onMessagesChange={setConversation}
+            onChoicesChange={setAssistantChoices}
             onInitialPromptConsumed={() => setAssistantSeed('')}
             onPlan={applyPlan}
             onUseTemplate={(_text, preferences) => generateSamplePlan(preferences)}

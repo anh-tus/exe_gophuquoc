@@ -8,7 +8,7 @@ import type { Lang } from '../../app/catalog';
 
 type Props = {
   lang: Lang;
-  onOpenAssistant: () => void;
+  onOpenAssistant: (messages: ChatMessage[], choices: string[]) => void;
   onPlanCreated: (reply: Extract<AssistantReply, { kind: 'itinerary' }>, messages: ChatMessage[]) => void;
 };
 
@@ -27,8 +27,13 @@ export default function MiniChatWidget({ lang, onOpenAssistant, onPlanCreated }:
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [messages, setMessages] = useState<Bubble[]>([]);
+  const [choices, setChoices] = useState<string[]>([]);
   const transcriptRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
+  const openAssistant = () => {
+    setIsOpen(false);
+    onOpenAssistant(messages.map(({ role, text }) => ({ role, text })), choices);
+  };
 
   useEffect(() => {
     const transcript = transcriptRef.current;
@@ -54,6 +59,7 @@ export default function MiniChatWidget({ lang, onOpenAssistant, onPlanCreated }:
 
     const next: Bubble[] = [...messages, { id: crypto.randomUUID(), role: 'user', text: trimmed }];
     setMessages(next);
+    setChoices([]);
     setPrompt('');
     setError(null);
     setSubmitting(true);
@@ -70,6 +76,7 @@ export default function MiniChatWidget({ lang, onOpenAssistant, onPlanCreated }:
         hasPlanLink: reply.kind === 'itinerary',
       };
       setMessages([...next, assistant]);
+      setChoices(reply.kind === 'clarify' ? reply.choices : []);
       if (reply.kind === 'itinerary') {
         onPlanCreated(reply, [...next, assistant].map(({ role, text: body }) => ({ role, text: body })));
       }
@@ -102,6 +109,7 @@ export default function MiniChatWidget({ lang, onOpenAssistant, onPlanCreated }:
                 type="button"
                 onClick={() => {
                   setMessages([]);
+                  setChoices([]);
                   setError(null);
                   setPrompt('');
                 }}
@@ -113,10 +121,8 @@ export default function MiniChatWidget({ lang, onOpenAssistant, onPlanCreated }:
               </button>
               <button
                 type="button"
-                onClick={() => {
-                  setIsOpen(false);
-                  onOpenAssistant();
-                }}
+                onClick={openAssistant}
+                disabled={submitting}
                 title={copy.widgetExpand}
                 aria-label={copy.widgetExpand}
                 className="w-9 h-9 rounded-full bg-white/10 hover:bg-white/20 text-white flex items-center justify-center text-xs transition-colors"
@@ -155,10 +161,7 @@ export default function MiniChatWidget({ lang, onOpenAssistant, onPlanCreated }:
                         title: copy.planReadyTitle,
                         body: copy.planReadyBody,
                         cta: copy.planReadyCta,
-                        onOpen: () => {
-                          setIsOpen(false);
-                          onOpenAssistant();
-                        },
+                        onOpen: openAssistant,
                       }
                     : undefined
                 }
@@ -194,6 +197,13 @@ export default function MiniChatWidget({ lang, onOpenAssistant, onPlanCreated }:
               </div>
             )}
 
+            {choices.length > 0 && !submitting && (
+              <div className="flex flex-col gap-1.5" aria-label={copy.chooseAnswer}>
+                <span className="font-bold text-gray-600">{copy.chooseAnswer}</span>
+                {choices.map((choice) => <button key={choice} type="button" onClick={() => void send(choice)} className="text-left px-3 py-2 min-h-11 rounded-xl bg-white hover:bg-teal-50 border border-teal-200 text-gray-800 hover:text-[#087f78] transition-colors text-xs">{choice}</button>)}
+              </div>
+            )}
+
             {error && (
               <div className="rounded-xl border border-amber-200 bg-amber-50 p-3 text-xs text-amber-900" role="alert">
                 <p>{assistantErrorText(error, copy)}</p>
@@ -224,7 +234,7 @@ export default function MiniChatWidget({ lang, onOpenAssistant, onPlanCreated }:
               type="text"
               value={prompt}
               onChange={(event) => setPrompt(event.target.value)}
-              placeholder={copy.widgetPlaceholder}
+              placeholder={choices.length ? copy.otherAnswerPlaceholder : copy.widgetPlaceholder}
               disabled={submitting}
               maxLength={1200}
               className="flex-1 px-3 py-2 min-h-11 rounded-xl border border-gray-200 bg-gray-50 text-xs focus:outline-none focus:border-[#087f78] focus:bg-white"
