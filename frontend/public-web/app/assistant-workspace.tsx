@@ -1,5 +1,7 @@
 'use client';
 
+import { Sparkle, Star } from '@phosphor-icons/react';
+
 import { useState } from 'react';
 import AssistantChat from './assistant-chat';
 import { estimateServiceCost, priceUnitLabel, services, type Lang, type Service } from './catalog';
@@ -125,7 +127,7 @@ export default function AssistantWorkspace(props: Props) {
           <button className="button outline" onClick={props.onShare}>{props.lang === 'vi' ? 'Sao chép liên kết' : 'Copy link'}</button>
           <span role="status">{props.tripMessage}</span>
         </div>
-      </> : <div className="assistant-plan-empty"><span aria-hidden="true">✦</span><p>{t.empty}</p></div>}
+      </> : <div className="assistant-plan-empty"><Sparkle size={24} aria-hidden="true" /><p>{t.empty}</p></div>}
     </section>}
   </div>;
 }
@@ -153,12 +155,12 @@ function ServiceSearchResults({ message, recommendations, lang }: { message: str
         <div className="assistant-search-result-content">
           <span className="chip">{categoryLabels[service.category]} · {service.area} · Demo</span>
           <h3>{lang === 'vi' ? service.vi : service.en}</h3>
-          {service.reviewCount > 0 && <div className="review-summary">★ {service.rating.toFixed(1)} <span>· {service.reviewCount} {lang === 'vi' ? 'đánh giá mẫu' : 'sample reviews'}</span></div>}
+          {service.reviewCount > 0 && <div className="review-summary"><Star size={14} weight="fill" aria-hidden="true" /> {service.rating.toFixed(1)} <span>· {service.reviewCount} {lang === 'vi' ? 'đánh giá mẫu' : 'sample reviews'}</span></div>}
           <p>{recommendation.reason}</p>
           <p className="muted">{lang === 'vi' ? service.descriptionVi : service.descriptionEn}</p>
           <strong>{text.from} {new Intl.NumberFormat(lang === 'vi' ? 'vi-VN' : 'en-US', { style: 'currency', currency: 'VND', maximumFractionDigits: 0 }).format(service.price)} {priceUnitLabel(service.priceUnit, lang)}</strong>
           <button className="button subtle" aria-expanded={expanded} onClick={() => setExpandedId(expanded ? null : service.id)}>{expanded ? text.hide : text.detail}</button>
-          {expanded && <section className="review-list">{service.reviewCount > 0 && <><h4>{text.reviews} · ★ {service.rating.toFixed(1)} ({service.reviewCount})</h4>{service.reviews.map((review, index) => <blockquote key={index}><strong>★ {review.rating}</strong><p>{lang === 'vi' ? review.commentVi : review.commentEn}</p></blockquote>)}</>}<p>{service.area} · {lang === 'vi' ? service.descriptionVi : service.descriptionEn}</p><small>{lang === 'vi' ? 'Thông tin và đánh giá chỉ là minh họa, chưa xác minh.' : 'Details and reviews are illustrative and unverified.'}</small></section>}
+          {expanded && <section className="review-list">{service.reviewCount > 0 && <><h4>{text.reviews} · {service.rating.toFixed(1)} ({service.reviewCount})</h4>{service.reviews.map((review, index) => <blockquote key={index}><strong><Star size={14} weight="fill" aria-hidden="true" /> {review.rating}</strong><p>{lang === 'vi' ? review.commentVi : review.commentEn}</p></blockquote>)}</>}<p>{service.area} · {lang === 'vi' ? service.descriptionVi : service.descriptionEn}</p><small>{lang === 'vi' ? 'Thông tin và đánh giá chỉ là minh họa, chưa xác minh.' : 'Details and reviews are illustrative and unverified.'}</small></section>}
         </div>
       </article>;
     })}
@@ -206,10 +208,10 @@ function PlanActivity({ service, activity, periodLabel, lang, onUpdateTrip, trip
     </div>
     {expanded && <section className="assistant-inline-detail" aria-label={`${name} ${text.detail}`}>
       <div className="assistant-inline-detail-photo" style={{ backgroundImage: `url(${service.image})` }}>{service.imageIsIllustrative && <span className="gopu-image-note">{lang === 'vi' ? 'Ảnh minh họa' : 'Illustrative image'}</span>}</div>
-      <div className="assistant-inline-detail-content"><div className="assistant-inline-detail-heading"><span className="chip">{categoryName} · {lang === 'vi' ? 'Dữ liệu demo' : 'Demo data'}</span>{service.reviewCount > 0 && <strong>★ {service.rating.toFixed(1)} <small>· {service.reviewCount} {lang === 'vi' ? 'lượt đánh giá mẫu' : 'sample reviews'}</small></strong>}</div>
+      <div className="assistant-inline-detail-content"><div className="assistant-inline-detail-heading"><span className="chip">{categoryName} · {lang === 'vi' ? 'Dữ liệu demo' : 'Demo data'}</span>{service.reviewCount > 0 && <strong>{service.rating.toFixed(1)} <small>· {service.reviewCount} {lang === 'vi' ? 'lượt đánh giá mẫu' : 'sample reviews'}</small></strong>}</div>
         <p>{description}</p><p className="muted">{service.area} · {text.from} {new Intl.NumberFormat(lang === 'vi' ? 'vi-VN' : 'en-US', { style: 'currency', currency: 'VND', maximumFractionDigits: 0 }).format(service.price)} {priceUnitLabel(service.priceUnit, lang)}</p>
         <p><strong>{text.duration}:</strong> {activity.durationMinutes} {lang === 'vi' ? 'phút' : 'minutes'}{activity.logistics && <> · <strong>{text.logistics}:</strong> {activity.logistics}</>}{activity.tips && <> · <strong>{text.tips}:</strong> {activity.tips}</>}</p>
-        {service.reviews.length > 0 && <><h5>{text.reviews}</h5>{service.reviews.map((review, index) => <blockquote key={index}><strong>★ {review.rating}</strong><p>{lang === 'vi' ? review.commentVi : review.commentEn}</p></blockquote>)}</>}
+        {service.reviews.length > 0 && <><h5>{text.reviews}</h5>{service.reviews.map((review, index) => <blockquote key={index}><strong>{review.rating}</strong><p>{lang === 'vi' ? review.commentVi : review.commentEn}</p></blockquote>)}</>}
         <p className="assistant-inline-disclaimer">{lang === 'vi' ? 'Giá và đánh giá chỉ là minh họa, chưa xác minh.' : 'Prices and reviews are illustrative and unverified.'}</p>
       </div>
     </section>}

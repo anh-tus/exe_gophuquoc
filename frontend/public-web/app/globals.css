@@ -212,3 +212,45 @@ p{text-wrap:pretty}
 .gopu-image-note{position:absolute;left:9px;bottom:9px;z-index:2;padding:5px 8px;border-radius:999px;background:#0b2b2bd9;color:#fff;font-size:12px;font-weight:700;line-height:1.2;pointer-events:none}
 .service-photo .gopu-image-note{left:10px;bottom:10px}
 .modal-image .gopu-image-note{left:10px;bottom:10px}
+
+/* GOPU public web: one teal accent, quiet movement and clear interaction states. */
+@keyframes gopu-enter {
+  from { opacity: 0; transform: translateY(14px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+@keyframes gopu-pop {
+  from { opacity: 0; transform: translateY(8px) scale(.985); }
+  to { opacity: 1; transform: translateY(0) scale(1); }
+}
+.gopu-home > section:first-child { animation: gopu-enter .55s cubic-bezier(.2,.7,.2,1) both; }
+.gopu-home > section:first-child > div > div { animation: gopu-enter .55s cubic-bezier(.2,.7,.2,1) both; }
+.gopu-home > section:first-child > div > div:nth-child(2) { animation-delay: .08s; }
+.gopu-home .group { transition: border-color .22s ease, box-shadow .22s ease, transform .22s ease; }
+.gopu-home .group:hover { transform: translateY(-3px); box-shadow: 0 14px 32px rgb(6 78 67 / .10); }
+.gopu-home .group:focus-within { outline: 2px solid #087f78; outline-offset: 3px; }
+.gopu-home button, .gopu-home a, .assistant-chat button, .gopu-chat-widget button { transition: background-color .18s ease, color .18s ease, border-color .18s ease, box-shadow .18s ease, transform .18s ease; }
+.gopu-home button:active, .assistant-chat button:active, .gopu-chat-widget button:active { transform: scale(.98); }
+.gopu-chat-widget section[aria-label] { animation: gopu-pop .22s cubic-bezier(.2,.7,.2,1) both; }
+.gopu-chat-widget [role="alert"] { border-color: #a7d7c9; background: #f0f8f5; color: #064e43; }
+.assistant-message { animation: gopu-enter .2s ease-out both; }
+.assistant-choices .button:hover { border-color: #087f78; background: #e5f6f1; }
+.assistant-choices .button:focus-visible, .gopu-chat-widget button:focus-visible { outline: 2px solid #064e43; outline-offset: 3px; }
+.review-summary, .review-list blockquote strong, .assistant-inline-detail-heading > strong { color: #087f78; }
+.assistant-error { border-color: #a7d7c9; background: #f0f8f5; }
+.assistant-error p { color: #064e43; }
+@media (max-width: 520px) {
+  .gopu-home { padding-bottom: 5rem; }
+  .gopu-home > section:first-child { padding-top: 1rem; }
+  .gopu-chat-widget { right: .75rem; left: .75rem; bottom: calc(.75rem + env(safe-area-inset-bottom)); align-items: flex-end; }
+  .gopu-chat-widget section[aria-label] { width: 100%; max-width: none; max-height: min(70dvh, 620px); }
+  .gopu-chat-widget > button { max-width: min(100%, 240px); padding: .7rem 1rem; }
+  .gopu-chat-widget > button span span:last-child { display: none; }
+}
+@media (prefers-reduced-motion: reduce) {
+  html { scroll-behavior: auto; }
+  .gopu-home > section:first-child, .gopu-home > section:first-child > div > div,
+  .gopu-chat-widget section[aria-label], .assistant-message { animation: none !important; }
+  .gopu-home .group, .gopu-home button, .gopu-home a,
+  .assistant-chat button, .gopu-chat-widget button { transition-duration: .01ms !important; }
+  .gopu-home .group:hover { transform: none; }
+}

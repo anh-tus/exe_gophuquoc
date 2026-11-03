@@ -1,8 +1,6 @@
 'use client';
 
 import React from 'react';
-import Image from 'next/image';
-import Icon from '../ui/Icon';
 
 export default function FooterSection({ lang }: { lang: 'vi' | 'en' }) {
   return (
@@ -12,15 +10,6 @@ export default function FooterSection({ lang }: { lang: 'vi' | 'en' }) {
           {/* Column 1: Brand & Office (4 cols) */}
           <div className="lg:col-span-4 space-y-4">
             <div className="flex items-center gap-3">
-              <div className="relative w-10 h-10 rounded-xl overflow-hidden border border-emerald-100 flex-shrink-0">
-                <Image
-                  src="/brand/gopu-logo.png"
-                  alt="GOPU Logo"
-                  width={80}
-                  height={80}
-                  className="w-full h-full object-cover"
-                />
-              </div>
               <div>
                 <span className="text-xl font-extrabold text-[#087f78]">
                   GOPU<span className="text-emerald-500 font-bold text-base">.AI</span>
@@ -39,12 +28,10 @@ export default function FooterSection({ lang }: { lang: 'vi' | 'en' }) {
 
             <div className="text-sm text-gray-500 space-y-1.5 pt-1">
               <p className="flex items-start gap-2">
-                <Icon name="mapPin" className="mt-0.5 h-4 w-4 shrink-0 text-[#087f78]" />
-                <span>Văn phòng: Đường Trần Hưng Đạo, P. Dương Đông, TP. Phú Quốc</span>
+                <span>{lang === 'vi' ? 'Văn phòng: Đường Trần Hưng Đạo, P. Dương Đông, TP. Phú Quốc' : 'Office: Tran Hung Dao Street, Duong Dong Ward, Phu Quoc City'}</span>
               </p>
               <p className="flex items-start gap-2">
-                <Icon name="doc" className="mt-0.5 h-4 w-4 shrink-0 text-[#087f78]" />
-                <span>Đồ án học thuật (EXE) — dịch vụ và giá hiển thị là dữ liệu minh hoạ.</span>
+                <span>{lang === 'vi' ? 'Đồ án học thuật (EXE) — dịch vụ và giá hiển thị là dữ liệu minh hoạ.' : 'Academic EXE project — displayed services and prices are illustrative.'}</span>
               </p>
             </div>
           </div>
@@ -57,27 +44,27 @@ export default function FooterSection({ lang }: { lang: 'vi' | 'en' }) {
             <ul className="text-sm space-y-0.5 text-gray-600">
               <li>
                 <a href="#services" className="inline-flex items-center min-h-11 hover:text-[#087f78] transition-colors">
-                  Tour cano VIP 4 đảo &amp; Lặn san hô
+                  {lang === 'vi' ? 'Tour cano VIP 4 đảo & Lặn san hô' : 'VIP four-island boat tour & snorkeling'}
                 </a>
               </li>
               <li>
                 <a href="#services" className="inline-flex items-center min-h-11 hover:text-[#087f78] transition-colors">
-                  Xe đưa đón sân bay Phú Quốc (Xe riêng)
+                  {lang === 'vi' ? 'Xe đưa đón sân bay Phú Quốc (Xe riêng)' : 'Private Phu Quoc airport transfer'}
                 </a>
               </li>
               <li>
                 <a href="#services" className="inline-flex items-center min-h-11 hover:text-[#087f78] transition-colors">
-                  Thuê xe máy tự lái giao tận khách sạn
+                  {lang === 'vi' ? 'Thuê xe máy tự lái giao tận khách sạn' : 'Self-drive motorbike delivered to your hotel'}
                 </a>
               </li>
               <li>
                 <a href="#services" className="inline-flex items-center min-h-11 hover:text-[#087f78] transition-colors">
-                  Trải nghiệm câu mực đêm &amp; Ngắm hoàng hôn
+                  {lang === 'vi' ? 'Trải nghiệm câu mực đêm & Ngắm hoàng hôn' : 'Night squid fishing & sunset cruise'}
                 </a>
               </li>
               <li>
                 <a href="#services" className="inline-flex items-center min-h-11 hover:text-[#087f78] transition-colors">
-                  Vé cáp treo Hòn Thơm &amp; Sun World
+                  {lang === 'vi' ? 'Vé cáp treo Hòn Thơm & Sun World' : 'Hon Thom cable car & Sun World tickets'}
                 </a>
               </li>
             </ul>
@@ -91,24 +78,24 @@ export default function FooterSection({ lang }: { lang: 'vi' | 'en' }) {
             <ul className="text-sm space-y-0.5 text-gray-600">
               <li>
                 <a href="#price-table" className="inline-flex items-center min-h-11 hover:text-[#087f78] transition-colors">
-                  Bảng giá chuẩn (Chống chặt chém)
+                  {lang === 'vi' ? 'Bảng giá chuẩn (Chống chặt chém)' : 'Standard prices'}
                 </a>
               </li>
               <li>
                 <a href="#weather" className="inline-flex items-center min-h-11 hover:text-[#087f78] transition-colors">
-                  Cảnh báo biển &amp; thời tiết
+                  {lang === 'vi' ? 'Cảnh báo biển & thời tiết' : 'Sea & weather alerts'}
                 </a>
               </li>
               <li>
                 <a href="#price-table" className="inline-flex items-center min-h-11 hover:text-[#087f78] transition-colors">
-                  Chính sách hủy hoàn &amp; bảo hiểm
+                  {lang === 'vi' ? 'Chính sách hủy hoàn & bảo hiểm' : 'Cancellation, refunds & insurance'}
                 </a>
               </li>
               <li>
                 {/* No terms/privacy page exists yet, so this is text rather than a
                     link that would jump somewhere unrelated. */}
                 <span className="inline-flex items-center min-h-11">
-                  Điều khoản dịch vụ &amp; bảo mật
+                  {lang === 'vi' ? 'Điều khoản dịch vụ & bảo mật' : 'Terms of service & privacy'}
                 </span>
               </li>
             </ul>
@@ -145,11 +132,11 @@ export default function FooterSection({ lang }: { lang: 'vi' | 'en' }) {
 
         {/* Bottom Bar */}
         <div className="pt-8 flex flex-col sm:flex-row items-center justify-between gap-4 text-xs text-gray-500">
-          <p>© 2026 GOPU.AI. All rights reserved. Đồ án EXE Phú Quốc Local Companion.</p>
+          <p>{lang === 'vi' ? '© 2026 GOPU.AI. Bảo lưu mọi quyền. Đồ án EXE Phú Quốc Local Companion.' : '© 2026 GOPU.AI. All rights reserved. EXE Phu Quoc Local Companion project.'}</p>
           <div className="flex items-center gap-6">
-            <span>Bảo mật thông tin</span>
-            <span>Điều khoản sử dụng</span>
-            <span>Tiêu chuẩn dịch vụ đảo</span>
+            <span>{lang === 'vi' ? 'Bảo mật thông tin' : 'Privacy'}</span>
+            <span>{lang === 'vi' ? 'Điều khoản sử dụng' : 'Terms of use'}</span>
+            <span>{lang === 'vi' ? 'Tiêu chuẩn dịch vụ đảo' : 'Island service standards'}</span>
           </div>
         </div>
       </div>

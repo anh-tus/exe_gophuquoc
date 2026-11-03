@@ -43,7 +43,7 @@ export default function ServiceDetailPanel({ detail, category, lang }: Props) {
                 {lang === 'vi' ? fact.valueVi : fact.valueEn}
                 {fact.illustrative && (
                   <>
-                    <span aria-hidden="true" className="text-amber-600 font-bold">
+                    <span aria-hidden="true" className="text-[#087f78] font-bold">
                       *
                     </span>
                     <span className="sr-only">{t(' (minh họa)', ' (illustrative)')}</span>
@@ -77,9 +77,6 @@ export default function ServiceDetailPanel({ detail, category, lang }: Props) {
           <ul className="mt-1.5 grid grid-cols-2 gap-x-4 gap-y-1">
             {list.map((entry) => (
               <li key={entry} className="text-xs text-gray-700 leading-snug flex gap-1.5">
-                <span aria-hidden="true" className="text-[#087f78] shrink-0">
-                  ·
-                </span>
                 <span>{entry}</span>
               </li>
             ))}
@@ -89,7 +86,7 @@ export default function ServiceDetailPanel({ detail, category, lang }: Props) {
 
       {hasIllustrative && (
         <p className="text-xs text-gray-600 mt-2.5 leading-snug">
-          <span aria-hidden="true" className="text-amber-600 font-bold">
+          <span aria-hidden="true" className="text-[#087f78] font-bold">
             *
           </span>{' '}
           {t(

@@ -1,6 +1,7 @@
 'use client';
 
 import { useEffect, useRef, useState } from 'react';
+import { ArrowsOut, ArrowClockwise, X, Sparkle, Lightbulb, MapTrifold, ArrowRight } from '@phosphor-icons/react';
 import { assistantErrorText, assistantCopy } from '../../lib/i18n';
 import { AssistantRequestError, requestAssistantReply } from '../../lib/assistant-client';
 import type { AssistantReply, ChatMessage } from '../../app/api/assistant/logic';
@@ -88,7 +89,7 @@ export default function MiniChatWidget({ lang, onOpenAssistant, onPlanCreated }:
   };
 
   return (
-    <div className="fixed bottom-[calc(1.5rem+env(safe-area-inset-bottom))] right-4 sm:right-6 z-40 flex flex-col items-end">
+    <div className="gopu-chat-widget fixed bottom-[calc(1.5rem+env(safe-area-inset-bottom))] right-4 sm:right-6 z-40 flex flex-col items-end">
       {isOpen && (
         <section
           aria-label={copy.widgetTitle}
@@ -96,9 +97,7 @@ export default function MiniChatWidget({ lang, onOpenAssistant, onPlanCreated }:
         >
           <header className="bg-gradient-to-r from-[#087f78] to-[#064e43] text-white p-3.5 flex items-center justify-between shrink-0">
             <div className="flex items-center gap-2.5">
-              <div className="w-8 h-8 rounded-full bg-white/15 flex items-center justify-center text-amber-300 text-sm" aria-hidden="true">
-                ✨
-              </div>
+              <span className="w-8 h-8 rounded-full bg-white/15 flex items-center justify-center text-white" aria-hidden="true"><Sparkle size={18} weight="fill" /></span>
               <div>
                 <h2 className="text-xs font-extrabold text-white leading-tight">{copy.widgetTitle}</h2>
                 <p className="text-xs text-emerald-100/90">{copy.widgetSubtitle}</p>
@@ -115,9 +114,9 @@ export default function MiniChatWidget({ lang, onOpenAssistant, onPlanCreated }:
                 }}
                 title={copy.widgetReset}
                 aria-label={copy.widgetReset}
-                className="w-9 h-9 rounded-full bg-white/10 hover:bg-white/20 text-white flex items-center justify-center text-xs transition-colors"
+                className="min-h-9 rounded-lg bg-white/10 hover:bg-white/20 text-white px-2 flex items-center justify-center text-xs transition-colors"
               >
-                ↺
+                <ArrowClockwise size={18} aria-hidden="true" />
               </button>
               <button
                 type="button"
@@ -127,7 +126,7 @@ export default function MiniChatWidget({ lang, onOpenAssistant, onPlanCreated }:
                 aria-label={copy.widgetExpand}
                 className="w-9 h-9 rounded-full bg-white/10 hover:bg-white/20 text-white flex items-center justify-center text-xs transition-colors"
               >
-                ⤢
+                <ArrowsOut size={18} aria-hidden="true" />
               </button>
               <button
                 type="button"
@@ -136,7 +135,7 @@ export default function MiniChatWidget({ lang, onOpenAssistant, onPlanCreated }:
                 aria-label={copy.widgetClose}
                 className="w-9 h-9 rounded-full bg-white/10 hover:bg-white/20 text-white flex items-center justify-center text-xs transition-colors"
               >
-                ✕
+                <X size={18} aria-hidden="true" />
               </button>
             </div>
           </header>
@@ -190,7 +189,7 @@ export default function MiniChatWidget({ lang, onOpenAssistant, onPlanCreated }:
                       onClick={() => void send(suggestion)}
                       className="text-left px-3 py-2 min-h-11 rounded-xl bg-white hover:bg-teal-50 border border-gray-200/80 hover:border-teal-300 text-gray-700 hover:text-[#087f78] transition-colors text-xs"
                     >
-                      💡 {suggestion}
+                      <Lightbulb size={16} className="inline mr-1 text-[#087f78]" aria-hidden="true" />{suggestion}
                     </button>
                   ))}
                 </div>
@@ -205,12 +204,12 @@ export default function MiniChatWidget({ lang, onOpenAssistant, onPlanCreated }:
             )}
 
             {error && (
-              <div className="rounded-xl border border-amber-200 bg-amber-50 p-3 text-xs text-amber-900" role="alert">
+              <div className="rounded-xl border border-emerald-200 bg-emerald-50 p-3 text-xs text-emerald-900" role="alert">
                 <p>{assistantErrorText(error, copy)}</p>
                 <button
                   type="button"
                   onClick={() => void send(messages.filter((message) => message.role === 'user').at(-1)?.text ?? '')}
-                  className="mt-2 min-h-11 px-3 rounded-lg bg-white border border-amber-300 font-bold text-amber-900"
+                  className="mt-2 min-h-11 px-3 rounded-lg bg-white border border-emerald-300 font-bold text-emerald-900"
                 >
                   {copy.retry}
                 </button>
@@ -257,16 +256,9 @@ export default function MiniChatWidget({ lang, onOpenAssistant, onPlanCreated }:
         aria-expanded={isOpen}
         className="rounded-full bg-[#087f78] hover:bg-[#066862] active:scale-95 text-white p-3 sm:px-5 sm:py-2.5 shadow-2xl shadow-teal-950/30 flex items-center gap-3 border border-white/20 transition-all hover:scale-105 group"
       >
-        <span className="relative w-5 h-5 flex items-center justify-center shrink-0" aria-hidden="true">
-          <svg className="w-5 h-5 text-amber-300 drop-shadow-xs" viewBox="0 0 24 24" fill="currentColor">
-            <path d="M12 0L14.4 9.6L24 12L14.4 14.4L12 24L9.6 14.4L0 12L9.6 9.6L12 0Z" />
-          </svg>
-          <svg className="w-2.5 h-2.5 text-orange-400 absolute -top-1 -left-1 drop-shadow-xs" viewBox="0 0 24 24" fill="currentColor">
-            <path d="M12 0L14.4 9.6L24 12L14.4 14.4L12 24L9.6 14.4L0 12L9.6 9.6L12 0Z" />
-          </svg>
-        </span>
 
-        <span className="text-left hidden sm:block">
+        <Sparkle size={20} weight="fill" className="text-white shrink-0" aria-hidden="true" />
+        <span className="text-left">
           <span className="block font-extrabold text-sm text-white leading-tight tracking-tight">{copy.widgetOpen}</span>
           <span className="block text-xs text-emerald-100/90 font-medium leading-tight mt-0.5">{copy.widgetSubtitle}</span>
         </span>
@@ -301,8 +293,7 @@ function BubbleRow({
         {planLink && (
           <div className="mt-3 p-3 rounded-xl bg-gradient-to-br from-emerald-50 to-teal-50 border border-emerald-200 text-left">
             <div className="flex items-center gap-1.5 font-bold text-xs text-gray-900 mb-1">
-              <span className="text-emerald-700" aria-hidden="true">🗺️</span>
-              <span className="text-emerald-900">{planLink.title}</span>
+              <MapTrifold size={16} className="text-emerald-700" aria-hidden="true" /><span className="text-emerald-900">{planLink.title}</span>
             </div>
             <p className="text-sm text-gray-600 mb-2 leading-[1.6]">{planLink.body}</p>
             <button
@@ -310,8 +301,7 @@ function BubbleRow({
               onClick={planLink.onOpen}
               className="w-full py-2 px-3 min-h-11 rounded-xl bg-[#087f78] hover:bg-[#066862] text-white font-bold text-xs flex items-center justify-center gap-1.5 shadow-xs transition-colors"
             >
-              <span>{planLink.cta}</span>
-              <span aria-hidden="true">→</span>
+              <span>{planLink.cta}</span><ArrowRight size={16} aria-hidden="true" />
             </button>
           </div>
         )}

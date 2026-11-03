@@ -279,7 +279,7 @@ export default function Demo() {
           <ServicesCatalogView
             lang={lang}
             onAddServiceToAi={(service: CatalogServiceItem) => {
-              setAssistantSeed(`Thêm dịch vụ "${service.title}" vào lịch trình`);
+              setAssistantSeed(lang === 'vi' ? 'Thêm dịch vụ "' + service.title + '" vào lịch trình' : 'Add "' + service.title + '" to my itinerary');
               go('itinerary');
             }}
             onViewServiceDetail={(service: CatalogServiceItem) => {
@@ -330,11 +330,11 @@ export default function Demo() {
           <main className="max-w-5xl mx-auto px-4 py-12">
             <div className="page-intro mb-8">
               <span className="eyebrow text-[#087f78] text-xs font-bold uppercase tracking-wider block mb-1">
-                GOPU / Yêu cầu demo
+                GOPU / {lang === 'vi' ? 'Yêu cầu demo' : 'Demo requests'}
               </span>
-              <h1 className="text-3xl font-extrabold text-gray-900">Yêu cầu mẫu của bạn</h1>
+              <h1 className="text-3xl font-extrabold text-gray-900">{lang === 'vi' ? 'Yêu cầu mẫu của bạn' : 'Your sample requests'}</h1>
               <p className="text-sm text-gray-500 mt-1">
-                Các yêu cầu được lưu trên trình duyệt của bạn để trải nghiệm giao diện.
+                {lang === 'vi' ? 'Các yêu cầu được lưu trên trình duyệt của bạn để trải nghiệm giao diện.' : 'Requests are saved in this browser for this demo.'}
               </p>
             </div>
 
@@ -345,15 +345,15 @@ export default function Demo() {
                   return (
                     <article className="bg-white p-5 rounded-2xl border border-gray-200 shadow-sm" key={r.code}>
                       <span className="text-xs font-bold px-2 py-0.5 rounded-[10px] bg-emerald-50 text-[#087f78]">
-                        Đã xác nhận demo
+                        {lang === 'vi' ? 'Đã xác nhận demo' : 'Demo confirmed'}
                       </span>
                       <h2 className="text-base font-bold text-gray-900 mt-2 mb-1">
                         {s ? name(s, lang) : r.serviceId}
                       </h2>
-                      <p className="text-xs text-gray-500">Mã yêu cầu: <strong className="text-gray-900">{r.code}</strong></p>
+                      <p className="text-xs text-gray-500">{lang === 'vi' ? 'Mã yêu cầu: ' : 'Request code: '}<strong className="text-gray-900">{r.code}</strong></p>
                       <p className="text-xs text-gray-500">
-                        Ngày: {formatDate(r.date)}
-                        {r.time ? ` • Giờ: ${r.time}` : ''}
+                        {lang === 'vi' ? 'Ngày: ' : 'Date: '}{formatDate(r.date)}
+                        {r.time ? ' • ' + (lang === 'vi' ? 'Giờ' : 'Time') + ': ' + r.time : ''}
                         {s ? ` • ${quantityLabel(s, lang)}: ${r.guests}` : ''}
                       </p>
                       <strong className="text-base text-[#087f78] block mt-2">{formatMoney(r.total)}</strong>
@@ -363,12 +363,12 @@ export default function Demo() {
               </div>
             ) : (
               <div className="bg-white p-12 rounded-3xl border border-gray-200 text-center">
-                <h2 className="text-xl font-bold text-gray-700 mb-4">Bạn chưa tạo yêu cầu demo nào.</h2>
+                <h2 className="text-xl font-bold text-gray-700 mb-4">{lang === 'vi' ? 'Bạn chưa tạo yêu cầu demo nào.' : 'You have not created a demo request yet.'}</h2>
                 <button
                   className="bg-[#087f78] text-white px-5 py-2.5 rounded-xl font-bold text-xs"
                   onClick={() => go('services')}
                 >
-                  Khám phá dịch vụ đảo ngay
+                  {lang === 'vi' ? 'Khám phá dịch vụ đảo ngay' : 'Explore island services'}
                 </button>
               </div>
             )}
@@ -398,16 +398,13 @@ export default function Demo() {
                 setSelected(null);
                 setSuccess(null);
               }}
-              className="absolute top-4 right-4 z-10 w-11 h-11 rounded-full bg-white/90 hover:bg-white text-gray-700 flex items-center justify-center text-sm font-bold shadow-md transition-colors"
+              className="absolute top-4 right-4 z-10 min-h-11 rounded-full bg-white/90 hover:bg-white text-gray-700 px-3 flex items-center justify-center text-sm font-bold shadow-md transition-colors"
             >
-              ✕
+              {lang === 'vi' ? 'Đóng' : 'Close'}
             </button>
 
             {success ? (
               <div className="p-6 sm:p-8 overflow-y-auto text-center py-6">
-                <div className="w-16 h-16 rounded-full bg-emerald-100 text-emerald-600 flex items-center justify-center text-3xl mx-auto mb-4">
-                  ✓
-                </div>
                 <h3 className="text-xl font-extrabold text-gray-900 mb-1">
                   {isRestaurant
                     ? lang === 'vi' ? 'Đặt Bàn Thành Công!' : 'Table booked!'
@@ -473,11 +470,11 @@ export default function Demo() {
                       className="object-cover"
                     />
                     <div className="absolute top-4 left-4 px-3 py-1 rounded-full bg-white/95 backdrop-blur-sm text-xs font-bold tracking-normal text-gray-800 shadow-xs">
-                      📍 {selected.area}
+                      {selected.area}
                     </div>
                     {selected.rating > 0 && (
                       <div className="absolute bottom-3 left-4 px-2.5 py-0.5 rounded-md bg-black/60 backdrop-blur-sm text-xs font-bold tracking-normal text-white flex items-center gap-1">
-                        <span className="text-amber-400">★</span> {selected.rating} ({selected.reviewCount} đánh giá)
+                        {selected.rating} ({selected.reviewCount} {lang === 'vi' ? 'đánh giá' : 'reviews'})
                       </div>
                     )}
                   </div>
@@ -594,35 +591,35 @@ export default function Demo() {
           <div className="bg-white rounded-3xl max-w-lg w-full p-6 sm:p-8 shadow-2xl border border-gray-100 relative">
             <button
               onClick={() => setFullTourBookingModal(false)}
-              className="absolute top-5 right-5 w-8 h-8 rounded-full bg-gray-100 hover:bg-gray-200 text-gray-500 flex items-center justify-center text-sm font-bold"
+              className="absolute top-5 right-5 min-h-8 rounded-full bg-gray-100 hover:bg-gray-200 text-gray-500 px-3 flex items-center justify-center text-sm font-bold"
             >
-              ✕
+              {lang === 'vi' ? 'Đóng' : 'Close'}
             </button>
 
             <form onSubmit={handleConfirmFullTourBooking}>
               <span className="text-xs font-bold text-[#087f78] uppercase tracking-wider block mb-1">
-                ĐẶT TRỌN GÓI TOUR AI GOPU
+                {lang === 'vi' ? 'ĐẶT TRỌN GÓI TOUR AI GOPU' : 'BOOK THE GOPU AI TOUR PACKAGE'}
               </span>
               <h2 className="text-xl font-extrabold text-gray-900 mb-1">
-                Phú Quốc 3N2Đ: Thiên Đường Biển Đảo &amp; Hải Sản
+                {lang === 'vi' ? 'Phú Quốc 3N2Đ: Thiên Đường Biển Đảo & Hải Sản' : 'Phu Quoc 3D2N: Islands, Beaches & Seafood'}
               </h2>
               <p className="text-xs text-gray-500 mb-4">
-                Mã tour: {FULL_TOUR_PACKAGE.code} • Đoàn {FULL_TOUR_PACKAGE.guests} khách • Xe riêng &amp; Cano VIP
+                {lang === 'vi' ? 'Mã tour: ' : 'Tour code: '}{FULL_TOUR_PACKAGE.code} • {FULL_TOUR_PACKAGE.guests} {lang === 'vi' ? 'khách • Xe riêng & Cano VIP' : 'guests • Private car & VIP speedboat'}
               </p>
 
               <div className="p-4 bg-emerald-50 rounded-2xl border border-emerald-100 mb-4">
                 <div className="flex items-baseline justify-between text-xs mb-1">
-                  <span className="text-gray-600 font-semibold">Tổng chi phí trọn gói:</span>
+                  <span className="text-gray-600 font-semibold">{lang === 'vi' ? 'Tổng chi phí trọn gói:' : 'Package total:'}</span>
                   <span className="text-xl font-extrabold text-[#087f78]">{formatMoney(FULL_TOUR_PACKAGE.totalVnd)}</span>
                 </div>
                 <p className="text-xs text-emerald-800">
-                  ✓ Tiết kiệm {formatMoney(FULL_TOUR_PACKAGE.budgetVnd - FULL_TOUR_PACKAGE.totalVnd)} so với ngân sách ban đầu ({formatMoney(FULL_TOUR_PACKAGE.budgetVnd)})
+                  {lang === 'vi' ? 'Tiết kiệm ' : 'Save '}{formatMoney(FULL_TOUR_PACKAGE.budgetVnd - FULL_TOUR_PACKAGE.totalVnd)} {lang === 'vi' ? 'so với ngân sách ban đầu' : 'compared with your original budget'} ({formatMoney(FULL_TOUR_PACKAGE.budgetVnd)})
                 </p>
               </div>
 
               <div className="space-y-3 mb-5 text-xs">
                 <div>
-                  <label className="block font-bold text-gray-700 mb-1">Họ tên người đại diện</label>
+                  <label className="block font-bold text-gray-700 mb-1">{lang === 'vi' ? 'Họ tên người đại diện' : 'Lead traveller name'}</label>
                   <input
                     required
                     type="text"
@@ -632,7 +629,7 @@ export default function Demo() {
                 </div>
                 <div className="grid grid-cols-2 gap-3">
                   <div>
-                    <label className="block font-bold text-gray-700 mb-1">Số điện thoại / Zalo</label>
+                    <label className="block font-bold text-gray-700 mb-1">{lang === 'vi' ? 'Số điện thoại / Zalo' : 'Phone / Zalo'}</label>
                     <input
                       required
                       type="tel"
@@ -641,7 +638,7 @@ export default function Demo() {
                     />
                   </div>
                   <div>
-                    <label className="block font-bold text-gray-700 mb-1">Ngày bắt đầu chuyến đi</label>
+                    <label className="block font-bold text-gray-700 mb-1">{lang === 'vi' ? 'Ngày bắt đầu chuyến đi' : 'Trip start date'}</label>
                     <input
                       required
                       type="date"
@@ -654,7 +651,7 @@ export default function Demo() {
               </div>
 
               <div className="p-3 bg-gray-50 rounded-xl text-xs text-gray-500 mb-5 leading-relaxed">
-                🛡️ <strong>Cam kết GOPU:</strong> Không phụ thu ẩn, miễn phí dời chuyến khi thời tiết biển xấu, tài xế bản địa đón tại sân bay đúng giờ.
+                <strong>{lang === 'vi' ? 'Cam kết GOPU:' : 'GOPU promise:'}</strong> {lang === 'vi' ? 'Không phụ thu ẩn, miễn phí dời chuyến khi thời tiết biển xấu, tài xế bản địa đón tại sân bay đúng giờ.' : 'No hidden charges, free rescheduling in bad sea weather, and an on-time airport pickup by a local driver.'}
               </div>
 
               <div className="flex items-center gap-3">
@@ -663,13 +660,13 @@ export default function Demo() {
                   onClick={() => setFullTourBookingModal(false)}
                   className="w-1/3 py-3 rounded-xl border border-gray-200 text-xs font-bold text-gray-600 hover:bg-gray-50"
                 >
-                  Đóng
+                  {lang === 'vi' ? 'Đóng' : 'Close'}
                 </button>
                 <button
                   type="submit"
                   className="w-2/3 py-3 rounded-xl bg-[#087f78] hover:bg-[#066862] text-white text-xs font-extrabold shadow-lg shadow-teal-950/10 active:scale-95 transition-all"
                 >
-                  Xác Nhận Giữ Chỗ Ngay
+                  {lang === 'vi' ? 'Xác Nhận Giữ Chỗ Ngay' : 'Confirm reservation'}
                 </button>
               </div>
             </form>

@@ -9,6 +9,10 @@
 import type { Lang } from '../app/catalog';
 
 export type AssistantCopy = {
+  headerStatus: string;
+  headerAccount: string;
+  headerCloseMenu: string;
+  toastClose: string;
   heading: string;
   intro: string;
   placeholder: string;
@@ -51,6 +55,10 @@ export type AssistantCopy = {
 
 export const assistantCopy: Record<Lang, AssistantCopy> = {
   vi: {
+    headerStatus: 'Phú Quốc • Đang hoạt động',
+    headerAccount: 'Tài khoản',
+    headerCloseMenu: 'Đóng',
+    toastClose: 'Đóng thông báo',
     heading: 'GOPU AI · Phú Quốc',
     intro: 'Chia sẻ số ngày, số người, ngân sách tổng và điều bạn thích. Mình sẽ hỏi thêm nếu cần.',
     placeholder: 'Ví dụ: 3 ngày, 5 người, ngân sách 20 triệu…',
@@ -97,6 +105,10 @@ export const assistantCopy: Record<Lang, AssistantCopy> = {
     planReadyCta: 'Xem toàn bộ lịch trình trên GOPU AI',
   },
   en: {
+    headerStatus: 'Phu Quoc • Available',
+    headerAccount: 'Account',
+    headerCloseMenu: 'Close',
+    toastClose: 'Close notification',
     heading: 'GOPU AI · Phu Quoc',
     intro: 'Share your trip length, group size, total budget, and interests. I’ll ask follow-up questions if needed.',
     placeholder: 'For example: 3 days, 5 people, 20 million VND…',

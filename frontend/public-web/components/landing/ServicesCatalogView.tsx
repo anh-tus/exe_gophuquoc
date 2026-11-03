@@ -2,6 +2,7 @@
 
 import React, { useState } from 'react';
 import Image from 'next/image';
+import { MagnifyingGlass, Heart, MapPin, Sparkle, ArrowRight } from '@phosphor-icons/react';
 
 export interface CatalogServiceItem {
   id: string;
@@ -131,6 +132,16 @@ const CATALOG_SERVICES: CatalogServiceItem[] = [
   },
 ];
 
+
+const EN_SERVICE_DATA: Record<string, Pick<CatalogServiceItem, 'title' | 'categoryBadge' | 'highlightBadge' | 'area' | 'description' | 'perks' | 'priceUnit'>> = {
+  'cano-an-thoi': { title: 'An Thoi island speedboat tour and natural coral snorkeling', categoryBadge: 'Tours & experiences', highlightBadge: 'Bestseller', area: 'An Thoi Port, South Island', description: 'Explore May Rut, Gam Ghi and Mong Tay islands. Includes professional 4K drone footage and SUP photos.', perks: ['4K drone footage', 'Snorkeling equipment', 'Eight-course seafood lunch'], priceUnit: '/ person' },
+  'bien-bai-sao': { title: 'A relaxing day at Bai Sao with white-sand beach SUP', categoryBadge: 'Relaxation tours', highlightBadge: 'Relaxing', area: 'Bai Sao, An Thoi', description: 'Enjoy calm water and white sand, a private seaside shelter, a fresh coconut cocktail and unlimited SUP paddling.', perks: ['Free SUP board', 'VIP sun lounger', 'Welcome drink'], priceUnit: '/ person' },
+  'xe-san-bay': { title: 'Private transfer between Phu Quoc Airport and central hotels or resorts', categoryBadge: 'Transport', highlightBadge: 'Always on time', area: 'Phu Quoc International Airport (PQC)', description: 'A driver meets you in arrivals, helps with luggage and takes you in a modern air-conditioned SUV or limousine.', perks: ['Name-sign pickup', 'Luggage included', 'Flight delay waiting'], priceUnit: '/ trip' },
+  'sunset-sanato-phu-quoc': { title: 'Sunset Sanato Beach Club admission and sunset photos', categoryBadge: 'Attractions & shows', highlightBadge: 'Popular photo spot', area: 'Bai Truong, Duong To', description: 'Explore seaside sculptures at sunset. Includes a drink voucher for the beach bar.', perks: ['Admission included', 'One free drink', 'Golden hour at 17:30'], priceUnit: '/ ticket' },
+  'cau-muc-dem-an-thoi': { title: 'Night squid fishing cruise and fresh squid porridge', categoryBadge: 'Tours & experiences', highlightBadge: 'Night experience', area: 'Duong Dong / An Thoi', description: 'Watch the Gulf of Thailand sunset, fish for squid with local crew and enjoy fresh seafood aboard.', perks: ['Fishing gear included', 'Free squid porridge', 'Sunset views'], priceUnit: '/ person' },
+  'thue-xe-may': { title: 'Self-drive scooter and motorbike rental with hotel delivery', categoryBadge: 'Self-drive rental', highlightBadge: 'Delivered to you', area: 'Across Phu Quoc Island', description: 'Modern serviced scooters and motorbikes include two helmets, raincoats and one liter of fuel. Free local delivery.', perks: ['No cash deposit', 'Motorbike insurance', '24/7 roadside help'], priceUnit: '/ day' },
+};
+
 interface ServicesCatalogViewProps {
   onAddServiceToAi: (service: CatalogServiceItem) => void;
   onViewServiceDetail: (service: CatalogServiceItem) => void;
@@ -158,6 +169,13 @@ export default function ServicesCatalogView({
     tip: 'Nên đi cano ra các đảo Nam Đảo trước 8:30 sáng để đón ánh sáng đẹp nhất chụp ảnh và tránh lượng khách đông từ đất liền.',
   });
 
+  const poi = lang === 'vi' ? selectedPoi : {
+    title: 'An Thoi Port (South Island)',
+    badge: 'POPULAR TOUR',
+    desc: 'Departure point for many four-island speedboat tours, including May Rut, Gam Ghi and Mong Tay.',
+    tip: 'Leave for the southern islands before 8:30 a.m. for the best photo light and smaller crowds.',
+  };
+
   const toggleFavorite = (id: string, e: React.MouseEvent) => {
     e.stopPropagation();
     setFavorites((prev) =>
@@ -165,8 +183,11 @@ export default function ServicesCatalogView({
     );
   };
 
+  const t = (vi: string, en: string) => lang === 'vi' ? vi : en;
   const filteredServices = CATALOG_SERVICES.filter((item) => {
-    if (searchTerm.trim() && !item.title.toLowerCase().includes(searchTerm.toLowerCase()) && !item.area.toLowerCase().includes(searchTerm.toLowerCase())) {
+    const query = searchTerm.trim().toLowerCase();
+    const english = EN_SERVICE_DATA[item.id];
+    if (query && ![item.title, item.area, english?.title, english?.area].some((text) => text?.toLowerCase().includes(query))) {
       return false;
     }
     if (categoryFilter !== 'all' && item.categoryBadge !== categoryFilter) {
@@ -184,28 +205,28 @@ export default function ServicesCatalogView({
         {/* Breadcrumb */}
         <div className="flex items-center gap-2 text-xs text-gray-500 mb-4">
           <a href="#" className="hover:text-[#087f78]">GOPU</a>
-          <span>&gt;</span>
-          <span className="text-gray-800 font-semibold">Dịch vụ trải nghiệm Phú Quốc</span>
+
+          <span className="text-gray-800 font-semibold">{t('Dịch vụ trải nghiệm Phú Quốc', 'Phu Quoc experiences')}</span>
         </div>
 
         {/* Heading Section */}
         <div className="flex flex-col lg:flex-row lg:items-end justify-between gap-4 mb-6">
           <div>
             <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold bg-emerald-50 text-[#087f78] border border-emerald-200/80 mb-3">
-              <span>⚓</span>
-              <span>Hải trình Đảo Ngọc 2026 • Đảm bảo giá niêm yết</span>
+
+              <span>{t('Hải trình Đảo Ngọc 2026 • Đảm bảo giá niêm yết', 'Island journeys 2026 • Clear listed prices')}</span>
             </div>
             <h1 className="text-3xl sm:text-4xl font-black text-gray-900 tracking-tight">
-              Dịch vụ cho hành trình đảo ngọc
+              {t('Dịch vụ cho hành trình đảo ngọc', 'Services for your island journey')}
             </h1>
             <p className="text-sm sm:text-base text-gray-500 mt-2 max-w-2xl">
-              Tìm kiếm, so sánh và đặt trước tour cano, lặn ngắm san hô, ẩm thực và xe đưa đón với đối tác địa phương uy tín được kiểm định bởi GOPU.
+              {t('Tìm kiếm, so sánh và đặt trước tour cano, lặn ngắm san hô, ẩm thực và xe đưa đón với đối tác địa phương uy tín được kiểm định bởi GOPU.', 'Explore and compare boat tours, snorkeling, dining and transfers from local providers on Phu Quoc.')}
             </p>
           </div>
 
           <div className="flex items-center gap-2 bg-emerald-50/80 border border-emerald-200 px-3.5 py-2 rounded-2xl text-xs font-bold text-[#087f78]">
-            <span className="w-2 h-2 rounded-full bg-emerald-500 animate-ping" />
-            <span>Thời tiết biển hôm nay: Sóng êm • Thích hợp lặn đảo</span>
+
+            <span>{t('Thời tiết biển hôm nay: Sóng êm • Thích hợp lặn đảo', 'Sea conditions today: Calm waves • Good for snorkeling')}</span>
           </div>
         </div>
 
@@ -214,12 +235,13 @@ export default function ServicesCatalogView({
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-12 gap-3 items-center">
             {/* Search Input (3 cols) */}
             <div className="lg:col-span-3 relative">
-              <span className="absolute left-3.5 top-1/2 -translate-y-1/2 text-gray-500">🔍</span>
+              <MagnifyingGlass size={18} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-gray-500 pointer-events-none" aria-hidden="true" />
+
               <input
                 type="text"
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
-                placeholder="Tìm theo tên tour, địa điểm, từ khóa..."
+                placeholder={t('Tìm theo tên tour, địa điểm, từ khóa...', 'Search tours, places and keywords...')}
                 className="w-full pl-10 pr-4 py-2.5 rounded-xl border border-gray-200 bg-gray-50 text-xs sm:text-sm font-medium focus:outline-none focus:border-[#087f78] focus:bg-white"
               />
             </div>
@@ -231,12 +253,12 @@ export default function ServicesCatalogView({
                 onChange={(e) => setCategoryFilter(e.target.value)}
                 className="w-full px-3 py-2.5 rounded-xl border border-gray-200 bg-gray-50 text-xs font-bold text-gray-700 focus:outline-none focus:border-[#087f78]"
               >
-                <option value="all">Tất cả danh mục</option>
-                <option value="Tour & trải nghiệm">Tour & trải nghiệm</option>
-                <option value="Tour nghỉ dưỡng">Tour nghỉ dưỡng</option>
-                <option value="Di chuyển">Di chuyển</option>
-                <option value="Điểm đến & Show">Điểm đến & Show</option>
-                <option value="Thuê xe tự lái">Thuê xe tự lái</option>
+                <option value="all">{t('Tất cả danh mục', 'All categories')}</option>
+                <option value="Tour & trải nghiệm">{t('Tour & trải nghiệm', 'Tours & experiences')}</option>
+                <option value="Tour nghỉ dưỡng">{t('Tour nghỉ dưỡng', 'Relaxation tours')}</option>
+                <option value="Di chuyển">{t('Di chuyển', 'Transport')}</option>
+                <option value="Điểm đến & Show">{t('Điểm đến & Show', 'Attractions & shows')}</option>
+                <option value="Thuê xe tự lái">{t('Thuê xe tự lái', 'Self-drive rental')}</option>
               </select>
             </div>
 
@@ -247,12 +269,12 @@ export default function ServicesCatalogView({
                 onChange={(e) => setAreaFilter(e.target.value)}
                 className="w-full px-3 py-2.5 rounded-xl border border-gray-200 bg-gray-50 text-xs font-bold text-gray-700 focus:outline-none focus:border-[#087f78]"
               >
-                <option value="all">Toàn đảo Phú Quốc</option>
-                <option value="An Thới">Cảng An Thới (Nam Đảo)</option>
-                <option value="Dương Đông">Dương Đông</option>
-                <option value="Bãi Sao">Bãi Sao</option>
-                <option value="Bãi Trường">Bãi Trường</option>
-                <option value="Sân bay">Sân bay PQC</option>
+                <option value="all">{t('Toàn đảo Phú Quốc', 'Across Phu Quoc Island')}</option>
+                <option value="An Thới">{t('Cảng An Thới (Nam Đảo)', 'An Thoi Port (South Island)')}</option>
+                <option value="Dương Đông">{t('Dương Đông', 'Duong Dong')}</option>
+                <option value="Bãi Sao">{t('Bãi Sao', 'Bai Sao')}</option>
+                <option value="Bãi Trường">{t('Bãi Trường', 'Bai Truong')}</option>
+                <option value="Sân bay">{t('Sân bay PQC', 'PQC Airport')}</option>
               </select>
             </div>
 
@@ -263,10 +285,10 @@ export default function ServicesCatalogView({
                 onChange={(e) => setPriceFilter(e.target.value)}
                 className="w-full px-2.5 py-2.5 rounded-xl border border-gray-200 bg-gray-50 text-xs font-bold text-gray-700 focus:outline-none focus:border-[#087f78]"
               >
-                <option value="all">Mọi mức giá</option>
-                <option value="under500k">&lt; 500.000đ</option>
-                <option value="500k-1m">500k - 1 triệu</option>
-                <option value="above1m">&gt; 1 triệu</option>
+                <option value="all">{t('Mọi mức giá', 'All prices')}</option>
+                <option value="under500k">{t('< 500.000 đ', '< 500,000 VND')}</option>
+                <option value="500k-1m">{t('500k - 1 triệu', '500k–1 million VND')}</option>
+                <option value="above1m">&gt; {t('1 triệu', '1 million VND')}</option>
               </select>
             </div>
 
@@ -277,9 +299,9 @@ export default function ServicesCatalogView({
                 onChange={(e) => setRatingFilter(e.target.value)}
                 className="w-full px-2.5 py-2.5 rounded-xl border border-gray-200 bg-gray-50 text-xs font-bold text-gray-700 focus:outline-none focus:border-[#087f78]"
               >
-                <option value="all">Tất cả đánh giá</option>
-                <option value="4.8">4.8★ trở lên</option>
-                <option value="4.5">4.5★ trở lên</option>
+                <option value="all">{t('Tất cả đánh giá', 'All ratings')}</option>
+                <option value="4.8">4.8 {t('trở lên', 'and above')}</option>
+                <option value="4.5">4.5 {t('trở lên', 'and above')}</option>
               </select>
             </div>
 
@@ -289,7 +311,7 @@ export default function ServicesCatalogView({
                 type="button"
                 className="w-full py-2.5 px-3 rounded-xl bg-[#087f78] hover:bg-[#066862] text-white font-bold text-xs flex items-center justify-center gap-1 shadow-sm whitespace-nowrap"
               >
-                <span>Lọc</span>
+                <span>{t('Lọc', 'Filter')}</span>
               </button>
               <button
                 type="button"
@@ -300,10 +322,10 @@ export default function ServicesCatalogView({
                   setPriceFilter('all');
                   setRatingFilter('all');
                 }}
-                title="Đặt lại bộ lọc"
+                title={t('Đặt lại bộ lọc', 'Reset filters')}
                 className="p-2.5 rounded-xl border border-gray-200 text-gray-500 hover:bg-gray-50 text-xs font-bold"
               >
-                ↺
+                {t('Đặt lại', 'Reset')}
               </button>
             </div>
           </div>
@@ -315,19 +337,25 @@ export default function ServicesCatalogView({
           <div className="lg:col-span-7 space-y-5">
             <div className="flex items-center justify-between text-xs text-gray-500 pb-1">
               <span className="font-bold text-gray-800">
-                Tìm thấy {filteredServices.length} dịch vụ phù hợp
+                {t('Tìm thấy', 'Found')} {filteredServices.length} {t('dịch vụ phù hợp', 'matching services')}
               </span>
               <div className="flex items-center gap-2">
-                <span>Sắp xếp theo:</span>
+                <span>{t('Sắp xếp theo:', 'Sort by:')}</span>
                 <select className="bg-transparent font-bold text-[#087f78] focus:outline-none">
-                  <option>Phổ biến nhất</option>
-                  <option>Giá tăng dần</option>
-                  <option>Đánh giá cao nhất</option>
+                  <option>{t('Phổ biến nhất', 'Most popular')}</option>
+                  <option>{t('Giá tăng dần', 'Price: low to high')}</option>
+                  <option>{t('Đánh giá cao nhất', 'Highest rated')}</option>
                 </select>
               </div>
             </div>
 
             {filteredServices.map((service) => {
+              const display = lang === 'vi' ? service : {
+                ...service,
+                ...EN_SERVICE_DATA[service.id],
+                price: service.price.replaceAll('.', ',').replace('đ', 'VND'),
+                originalPrice: service.originalPrice?.replaceAll('.', ',').replace('đ', 'VND'),
+              };
               const isFav = favorites.includes(service.id);
               return (
                 <div
@@ -338,27 +366,29 @@ export default function ServicesCatalogView({
                   <div className="relative w-full sm:w-56 h-48 sm:h-auto rounded-2xl overflow-hidden bg-gray-100 flex-shrink-0">
                     <Image
                       src={service.imageUrl}
-                      alt={service.title}
+                      alt={display.title}
                       fill
                       className="object-cover"
                     />
                     <div className="absolute top-2.5 left-2.5 flex flex-col gap-1">
                       <span className="text-xs font-bold px-2 py-0.5 rounded-full bg-black/60 text-white backdrop-blur-md">
-                        {service.categoryBadge}
+                        {display.categoryBadge}
                       </span>
-                      {service.highlightBadge && (
-                        <span className="text-xs font-black px-2 py-0.5 rounded-full bg-amber-400 text-amber-950">
-                          {service.highlightBadge}
+                      {display.highlightBadge && (
+                        <span className="text-xs font-black px-2 py-0.5 rounded-full bg-emerald-100 text-emerald-900">
+                          {display.highlightBadge}
                         </span>
                       )}
                     </div>
                     <button
                       onClick={(e) => toggleFavorite(service.id, e)}
-                      className={`absolute top-2.5 right-2.5 w-7 h-7 rounded-full flex items-center justify-center text-xs backdrop-blur-md transition-colors ${
-                        isFav ? 'bg-rose-50 text-rose-500' : 'bg-white/80 text-gray-600 hover:bg-white'
+                      aria-pressed={isFav}
+                      aria-label={isFav ? t('Bỏ lưu dịch vụ', 'Remove saved service') : t('Lưu dịch vụ', 'Save service')}
+                      className={`absolute top-2.5 right-2.5 min-h-7 px-2 rounded-full flex items-center justify-center text-xs backdrop-blur-md transition-colors ${
+                        isFav ? 'bg-emerald-50 text-[#087f78]' : 'bg-white/80 text-gray-600 hover:bg-white'
                       }`}
                     >
-                      {isFav ? '❤️' : '🤍'}
+                      <Heart size={18} weight={isFav ? "fill" : "regular"} aria-hidden="true" />
                     </button>
                   </div>
 
@@ -368,10 +398,10 @@ export default function ServicesCatalogView({
                       {/* Location & Rating */}
                       <div className="flex items-center justify-between text-xs text-gray-500 mb-1.5">
                         <span className="font-medium flex items-center gap-1">
-                          📍 {service.area}
+                          {display.area}
                         </span>
                         <div className="flex items-center gap-1 font-bold text-gray-800">
-                          <span className="text-amber-400">★</span>
+
                           <span>{service.rating}</span>
                           <span className="text-gray-500 font-normal">({service.reviewsCount})</span>
                         </div>
@@ -382,22 +412,22 @@ export default function ServicesCatalogView({
                         onClick={() => onViewServiceDetail(service)}
                         className="font-black text-base text-gray-900 hover:text-[#087f78] cursor-pointer transition-colors leading-snug mb-2"
                       >
-                        {service.title}
+                        {display.title}
                       </h3>
 
                       {/* Description */}
                       <p className="text-xs text-gray-500 leading-relaxed line-clamp-2 mb-3">
-                        {service.description}
+                        {display.description}
                       </p>
 
                       {/* Perks */}
                       <div className="flex flex-wrap items-center gap-1.5 mb-4">
-                        {service.perks.map((perk, pIdx) => (
+                        {display.perks.map((perk, pIdx) => (
                           <span
                             key={pIdx}
                             className="text-xs font-bold bg-emerald-50 text-[#087f78] px-2 py-0.5 rounded-md border border-emerald-100"
                           >
-                            ✓ {perk}
+                            {perk}
                           </span>
                         ))}
                       </div>
@@ -408,16 +438,16 @@ export default function ServicesCatalogView({
                       <div>
                         {service.originalPrice && (
                           <div className="flex items-center gap-1.5 text-xs">
-                            <span className="text-gray-500 line-through">{service.originalPrice}</span>
-                            <span className="text-xs font-bold text-rose-600 bg-rose-50 px-1 rounded-[10px]">
+                            <span className="text-gray-500 line-through">{display.originalPrice}</span>
+                            <span className="text-xs font-bold text-[#087f78] bg-emerald-50 px-1 rounded-[10px]">
                               {service.discountBadge}
                             </span>
                           </div>
                         )}
                         <div className="flex items-baseline gap-1">
-                          <span className="text-xs text-gray-500 font-medium">Từ</span>
-                          <span className="text-xl font-black text-[#087f78]">{service.price}</span>
-                          <span className="text-xs text-gray-500">{service.priceUnit}</span>
+                          <span className="text-xs text-gray-500 font-medium">{t('Từ', 'From')}</span>
+                           <span className="text-xl font-black text-[#087f78]">{display.price}</span>
+                          <span className="text-xs text-gray-500">{display.priceUnit}</span>
                         </div>
                       </div>
 
@@ -426,15 +456,15 @@ export default function ServicesCatalogView({
                           onClick={() => onAddServiceToAi(service)}
                           className="px-3.5 py-2 rounded-xl text-xs font-bold bg-emerald-50 hover:bg-emerald-100 text-[#087f78] border border-emerald-200 transition-colors flex items-center gap-1"
                         >
-                          <span>✨</span>
-                          <span>Thêm vào AI</span>
+
+                          <Sparkle size={15} aria-hidden="true" /><span>{t('Thêm vào AI', 'Add to AI')}</span>
                         </button>
                         <button
                           onClick={() => onViewServiceDetail(service)}
                           className="px-3.5 py-2 rounded-xl text-xs font-bold bg-[#087f78] hover:bg-[#066862] text-white shadow-sm transition-colors flex items-center gap-1"
                         >
-                          <span>Xem chi tiết</span>
-                          <span>→</span>
+                          <span>{t('Xem chi tiết', 'View details')}</span><ArrowRight size={15} aria-hidden="true" />
+
                         </button>
                       </div>
                     </div>
@@ -446,7 +476,7 @@ export default function ServicesCatalogView({
             {/* Pagination */}
             <div className="pt-6 flex items-center justify-center gap-2 text-xs font-bold text-gray-600">
               <button className="px-3 py-2 rounded-xl border border-gray-200 hover:bg-white bg-gray-50 text-gray-500 cursor-not-allowed">
-                &lt; Trang trước
+                {t('Trang trước', 'Previous')}
               </button>
               <button className="w-8 h-8 rounded-xl bg-[#087f78] text-white flex items-center justify-center shadow-sm">
                 1
@@ -462,7 +492,7 @@ export default function ServicesCatalogView({
                 8
               </button>
               <button className="px-3 py-2 rounded-xl border border-gray-200 hover:bg-white bg-white shadow-xs">
-                Trang sau &gt;
+                {t('Trang sau', 'Next')}
               </button>
             </div>
           </div>
@@ -473,8 +503,8 @@ export default function ServicesCatalogView({
             <div className="bg-white rounded-3xl p-4 border border-gray-200 shadow-md">
               <div className="flex items-center justify-between mb-3 text-xs font-bold text-gray-800">
                 <span className="flex items-center gap-1.5">
-                  <span>🗺️</span>
-                  <span>Bản đồ Đảo Ngọc</span>
+
+                  <span>{t('Bản đồ Đảo Ngọc', 'Island map')}</span>
                 </span>
                 <div className="flex items-center gap-1 bg-gray-100 p-0.5 rounded-lg text-xs">
                   <button
@@ -487,7 +517,7 @@ export default function ServicesCatalogView({
                     onClick={() => setMapMode('satellite')}
                     className={`px-2 py-0.5 rounded-[10px] ${mapMode === 'satellite' ? 'bg-white shadow-xs text-[#087f78]' : 'text-gray-500'}`}
                   >
-                    Vệ tinh
+                    {t('Vệ tinh', 'Satellite')}
                   </button>
                 </div>
               </div>
@@ -495,14 +525,14 @@ export default function ServicesCatalogView({
               {/* Map Iframe */}
               <div className="relative h-80 w-full rounded-2xl overflow-hidden border border-gray-200">
                 <iframe
-                  title="Bản đồ du lịch Phú Quốc"
+                  title={t('Bản đồ du lịch Phú Quốc', 'Phu Quoc travel map')}
                   width="100%"
                   height="100%"
                   className="border-0"
                   src="https://www.openstreetmap.org/export/embed.html?bbox=103.80%2C9.95%2C104.15%2C100.45&amp;layer=mapnik&amp;marker=10.027%2C104.017"
                 />
                 <div className="absolute top-3 left-3 bg-white/90 backdrop-blur-md px-2.5 py-1 rounded-lg text-xs font-bold text-emerald-800 border border-emerald-200">
-                  📍 Đang xem: Cảng An Thới
+                   {t('Đang xem: Cảng An Thới', 'Viewing: An Thoi Port')}
                 </div>
               </div>
 
@@ -510,43 +540,43 @@ export default function ServicesCatalogView({
               <div className="mt-4 p-4 rounded-2xl bg-gray-50 border border-gray-200/80">
                 <div className="flex items-center justify-between mb-1.5">
                   <div className="flex items-center gap-2">
-                    <span className="text-sm">📍</span>
-                    <h4 className="font-bold text-sm text-gray-900">{selectedPoi.title}</h4>
+
+                    <h4 className="font-bold text-sm text-gray-900">{poi.title}</h4>
                   </div>
-                  <span className="text-xs font-black text-rose-600 bg-rose-50 px-2 py-0.5 rounded-[10px]">
-                    {selectedPoi.badge}
+                  <span className="text-xs font-black text-[#087f78] bg-emerald-50 px-2 py-0.5 rounded-[10px]">
+                    {poi.badge}
                   </span>
                 </div>
                 <p className="text-xs text-gray-500 leading-relaxed mb-3">
-                  {selectedPoi.desc}
+                  {poi.desc}
                 </p>
 
                 <div className="flex items-center justify-between text-xs font-bold">
                   <a href="#services-list" className="text-[#087f78] hover:underline flex items-center gap-1">
-                    <span>Xem tour tại điểm này</span> <span>&gt;</span>
+                    <span>{t('Xem tour tại điểm này', 'View tours here')}</span>
                   </a>
                   <button
                     type="button"
                     onClick={() =>
                       window.open(
-                        `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(`${selectedPoi.title} Phú Quốc`)}`,
+                        `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(`${poi.title} Phu Quoc`)}`,
                         '_blank',
                         'noopener,noreferrer'
                       )
                     }
                     className="text-gray-600 hover:text-gray-900 flex items-center gap-1 min-h-11"
                   >
-                    <span aria-hidden="true">🧭</span> <span>Chỉ đường</span>
+                     <span>{t('Chỉ đường', 'Directions')}</span>
                   </button>
                 </div>
               </div>
 
               {/* Local Smart Tip Box */}
               <div className="mt-3 p-3.5 rounded-2xl bg-emerald-50/70 border border-emerald-200/70 flex items-start gap-2.5">
-                <span className="text-base">💡</span>
+
                 <div className="text-xs text-gray-700 leading-relaxed">
-                  <strong className="text-[#087f78] block mb-0.5">GOPU Local Tip:</strong>
-                  {selectedPoi.tip}
+                  <strong className="text-[#087f78] block mb-0.5">{t('Mẹo địa phương GOPU:', 'GOPU local tip:')}</strong>
+                  {poi.tip}
                 </div>
               </div>
             </div>
@@ -560,10 +590,10 @@ export default function ServicesCatalogView({
           onClick={onOpenAiPlanner}
           className="bg-gradient-to-r from-[#087f78] to-teal-600 hover:from-[#066862] hover:to-teal-700 text-white font-bold text-xs sm:text-sm px-5 py-3 rounded-full shadow-2xl flex items-center gap-2.5 transform hover:scale-105 active:scale-95 transition-all border border-emerald-300/30"
         >
-          <span className="text-base">✨</span>
-          <div className="text-left leading-tight">
-            <span className="block font-black">Chat với GOPU AI</span>
-            <span className="text-xs text-emerald-200 font-normal">Tạo lịch trình tự động 24/7</span>
+
+          <Sparkle size={22} weight="fill" aria-hidden="true" /><div className="text-left leading-tight">
+            <span className="block font-black">{t('Chat với GOPU AI', 'Chat with GOPU AI')}</span>
+            <span className="text-xs text-emerald-200 font-normal">{t('Tạo lịch trình tự động 24/7', 'Plan your trip anytime')}</span>
           </div>
         </button>
       </div>

@@ -1,9 +1,9 @@
 'use client';
 
 import React, { useState } from 'react';
-import Image from 'next/image';
-import Icon from '../ui/Icon';
 import { useToast } from '../ui/Toast';
+import { BookmarkSimple, UserCircle, List, X, Sparkle } from '@phosphor-icons/react';
+import { assistantCopy } from '../../lib/i18n';
 
 interface HeaderProps {
   currentTab: string;
@@ -24,7 +24,7 @@ export default function HeaderSection({
   const navItems = [
     { id: 'home', labelVi: 'Trang chủ', labelEn: 'Home' },
     { id: 'services', labelVi: 'Dịch vụ & đánh giá', labelEn: 'Services & Reviews' },
-    { id: 'itinerary', labelVi: 'Lập kế hoạch GOPU AI', labelEn: 'GOPU AI Planner', hasSparkle: true },
+    { id: 'itinerary', labelVi: 'Lập kế hoạch GOPU AI', labelEn: 'GOPU AI Planner',  },
     { id: 'requests', labelVi: 'Yêu cầu mẫu', labelEn: 'Sample Requests' },
     { id: 'price-table', labelVi: 'Bảng giá', labelEn: 'Price Standard' },
   ];
@@ -36,7 +36,6 @@ export default function HeaderSection({
       <div className="bg-[#0b2b2b] text-white text-xs py-1.5 px-4">
         <div className="max-w-7xl mx-auto flex items-center justify-between gap-4">
           <div className="flex items-center gap-2 min-w-0">
-            <span className="inline-block w-2 h-2 rounded-full bg-emerald-400 flex-shrink-0" aria-hidden="true" />
             <span className="text-emerald-300 font-semibold uppercase text-xs tracking-wider flex-shrink-0">
               {lang === 'vi' ? 'GOPU Phú Quốc:' : 'GOPU Phu Quoc:'}
             </span>
@@ -62,24 +61,13 @@ export default function HeaderSection({
           onClick={() => onSelectTab('home')}
           className="flex items-center gap-2 text-left focus:outline-none group shrink-0"
         >
-          <div className="relative w-11 h-11 rounded-xl overflow-hidden shadow-sm border border-emerald-100 flex-shrink-0">
-            <Image
-              src="/brand/gopu-logo.png"
-              alt="GOPU Logo"
-              width={96}
-              height={96}
-              className="w-full h-full object-cover"
-              priority
-            />
-          </div>
           <div>
             <div className="flex items-center gap-1.5">
               <span className="text-2xl font-extrabold tracking-tight text-[#087f78] leading-none">
                 GOPU<span className="text-emerald-500 font-bold text-xl">.AI</span>
               </span>
               <span className="hidden xl:inline-flex items-center gap-1 text-xs font-bold text-emerald-800 bg-emerald-50 px-2 py-0.5 rounded-full border border-emerald-200">
-                <span className="w-1.5 h-1.5 rounded-full bg-emerald-500" />
-                Phú Quốc • Đang hoạt động
+                {assistantCopy[lang].headerStatus}
               </span>
             </div>
             <p className="hidden sm:block text-xs uppercase font-bold tracking-wider text-gray-500 mt-0.5">
@@ -116,8 +104,7 @@ export default function HeaderSection({
             className="shrink-0 text-xs font-bold text-gray-600 hover:text-[#087f78] bg-gray-50 hover:bg-emerald-50 min-h-11 px-2.5 py-1.5 rounded-xl border border-gray-200 transition-colors flex items-center gap-1 whitespace-nowrap"
             aria-label={lang === 'vi' ? 'Xem lịch trình đã lưu' : 'View saved itineraries'}
           >
-            <Icon name="bookmark" className="h-4 w-4" />
-            <span>{lang === 'vi' ? 'Lịch trình đã lưu' : 'Saved itineraries'}</span>
+            <BookmarkSimple size={16} aria-hidden="true" /><span>{lang === 'vi' ? 'Lịch trình đã lưu' : 'Saved itineraries'}</span>
           </button>
 
           {/* User Profile Avatar */}
@@ -127,9 +114,9 @@ export default function HeaderSection({
               toast(lang === 'vi' ? 'Tài khoản GOPU sẽ khả dụng khi bật đăng nhập.' : 'GOPU accounts arrive with sign-in.')
             }
             aria-label={lang === 'vi' ? 'Tài khoản GOPU' : 'GOPU account'}
-            className="w-11 h-11 rounded-full bg-emerald-700 text-white flex items-center justify-center font-bold text-xs shadow-sm hover:ring-2 hover:ring-emerald-400 transition-all flex-shrink-0"
+            className="min-h-11 px-3 rounded-full bg-emerald-700 text-white flex items-center justify-center font-bold text-xs shadow-sm hover:ring-2 hover:ring-emerald-400 transition-all flex-shrink-0"
           >
-            <Icon name="user" className="h-4 w-4" />
+            <UserCircle size={18} aria-hidden="true" />
           </button>
         </div>
 
@@ -154,7 +141,7 @@ export default function HeaderSection({
             className="min-w-11 min-h-11 p-2.5 rounded-xl text-gray-700 hover:bg-gray-100 border border-gray-200"
             aria-label="Toggle navigation"
           >
-            <span className="text-xl leading-none">{mobileMenuOpen ? '✕' : '☰'}</span>
+            {mobileMenuOpen ? <X size={20} aria-hidden="true" /> : <List size={20} aria-hidden="true" />}
           </button>
         </div>
       </div>
@@ -174,8 +161,7 @@ export default function HeaderSection({
                     : 'text-gray-600 hover:text-[#087f78] hover:bg-white'
                 }`}
               >
-                {item.hasSparkle && <span aria-hidden="true">✨</span>}
-                <span>{lang === 'vi' ? item.labelVi : item.labelEn}</span>
+                {item.id === 'itinerary' && <Sparkle size={16} aria-hidden="true" />}<span>{lang === 'vi' ? item.labelVi : item.labelEn}</span>
               </button>
             );
           })}
@@ -199,7 +185,6 @@ export default function HeaderSection({
                     : 'text-gray-700 hover:bg-gray-50'
                 }`}
               >
-                {item.hasSparkle && <span>✨</span>}
                 <span>{lang === 'vi' ? item.labelVi : item.labelEn}</span>
               </button>
             ))}
