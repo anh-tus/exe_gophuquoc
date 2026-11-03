@@ -1,6 +1,6 @@
 import assert from 'node:assert/strict';
 import test from 'node:test';
-import { buildVisibleMessages, getDayPeriod, isRetryableGeminiStatus, parseAssistantReply, sanitizeMessages } from './logic.ts';
+import { buildVisibleMessages, generateInstantConciergeReply, getDayPeriod, isRetryableGeminiStatus, parseAssistantReply, sanitizeMessages } from './logic.ts';
 
 const catalog = ['cano-an-thoi', 'com-nha-phu-quoc', 'khach-san-duong-dong', 'xe-san-bay', 'spa-duong-dong', 'giat-la-trung-tam', 'hai-san-bai-truong'];
 
@@ -196,4 +196,24 @@ test('shows the pending user message after the successful conversation without c
   assert.equal(visible[2].role, 'user');
   assert.equal(visible[2].text, '3 ngày, 5 người.');
   assert.equal(history.length, 2);
+});
+
+test('generateInstantConciergeReply generates a valid plan matching user preferences in 1ms', () => {
+  const messages = [{ role: 'user', text: 'lên plan cho tôi ở phú quốc 1 ngày cho 1 ng với 1 tr' }];
+  const reply = generateInstantConciergeReply(messages, 'vi');
+  assert.equal(reply.kind, 'itinerary');
+  assert.equal(reply.preferences.days, 1);
+  assert.equal(reply.preferences.guests, 1);
+  assert.equal(reply.preferences.budgetVnd, 1000000);
+  assert.equal(reply.plan.days.length, 1);
+  assert.ok(reply.plan.days[0].activities.length >= 3);
+  const periods = new Set(reply.plan.days[0].activities.map((a) => getDayPeriod(a.time)));
+  assert.ok(periods.has('morning') && periods.has('lunch') && periods.has('evening'));
+});
+
+test('generateInstantConciergeReply handles conversational question as chat', () => {
+  const messages = [{ role: 'user', text: 'thời tiết phú quốc thế nào?' }];
+  const reply = generateInstantConciergeReply(messages, 'vi');
+  assert.equal(reply.kind, 'chat');
+  assert.ok(reply.message.length > 20);
 });

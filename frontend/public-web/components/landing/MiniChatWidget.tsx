@@ -13,7 +13,14 @@ type Props = {
   onPlanCreated: (reply: Extract<AssistantReply, { kind: 'itinerary' }>, messages: ChatMessage[]) => void;
 };
 
-type Bubble = ChatMessage & { id: string; hasPlanLink?: boolean };
+type Bubble = ChatMessage & {
+  id: string;
+  hasPlanLink?: boolean;
+  planTitle?: string;
+  planDays?: number;
+  planGuests?: number;
+  planBudget?: number;
+};
 
 /**
  * Floating chat popover on the landing page.
@@ -70,11 +77,16 @@ export default function MiniChatWidget({ lang, onOpenAssistant, onPlanCreated }:
         lang,
         messages: next.map(({ role, text: body }) => ({ role, text: body })),
       });
+      const isItinerary = reply.kind === 'itinerary';
       const assistant: Bubble = {
         id: crypto.randomUUID(),
         role: 'assistant',
         text: reply.message,
-        hasPlanLink: reply.kind === 'itinerary',
+        hasPlanLink: isItinerary,
+        planTitle: isItinerary ? reply.plan.title : undefined,
+        planDays: isItinerary ? reply.plan.days.length : undefined,
+        planGuests: isItinerary ? reply.preferences.guests ?? undefined : undefined,
+        planBudget: isItinerary ? reply.preferences.budgetVnd ?? undefined : undefined,
       };
       setMessages([...next, assistant]);
       setChoices(reply.kind === 'clarify' ? reply.choices : []);
@@ -157,9 +169,13 @@ export default function MiniChatWidget({ lang, onOpenAssistant, onPlanCreated }:
                 planLink={
                   message.hasPlanLink
                     ? {
-                        title: copy.planReadyTitle,
+                        title: message.planTitle || copy.planReadyTitle,
                         body: copy.planReadyBody,
                         cta: copy.planReadyCta,
+                        days: message.planDays,
+                        guests: message.planGuests,
+                        budget: message.planBudget,
+                        lang,
                         onOpen: openAssistant,
                       }
                     : undefined
@@ -276,7 +292,16 @@ function BubbleRow({
   role: ChatMessage['role'];
   text: string;
   label: string;
-  planLink?: { title: string; body: string; cta: string; onOpen: () => void };
+  planLink?: {
+    title: string;
+    body: string;
+    cta: string;
+    days?: number;
+    guests?: number;
+    budget?: number;
+    lang: Lang;
+    onOpen: () => void;
+  };
 }) {
   const isUser = role === 'user';
   return (
@@ -291,17 +316,40 @@ function BubbleRow({
         <div className="whitespace-pre-wrap">{text}</div>
 
         {planLink && (
-          <div className="mt-3 p-3 rounded-xl bg-gradient-to-br from-emerald-50 to-teal-50 border border-emerald-200 text-left">
-            <div className="flex items-center gap-1.5 font-bold text-xs text-gray-900 mb-1">
-              <MapTrifold size={16} className="text-emerald-700" aria-hidden="true" /><span className="text-emerald-900">{planLink.title}</span>
+          <div className="mt-3 p-3.5 rounded-2xl bg-gradient-to-br from-emerald-50 via-teal-50 to-emerald-100/40 border border-emerald-300/80 text-left shadow-xs">
+            <div className="flex items-center gap-1.5 font-extrabold text-xs text-gray-900 mb-1.5">
+              <MapTrifold size={18} className="text-[#087f78] shrink-0" weight="fill" aria-hidden="true" />
+              <span className="text-emerald-950 font-bold leading-tight">{planLink.title}</span>
             </div>
-            <p className="text-sm text-gray-600 mb-2 leading-[1.6]">{planLink.body}</p>
+
+            {(planLink.days || planLink.guests || planLink.budget) && (
+              <div className="flex flex-wrap gap-1.5 mb-2">
+                {planLink.days && (
+                  <span className="px-2 py-0.5 rounded-md bg-white border border-emerald-200 text-[#087f78] font-bold text-[11px]">
+                    {planLink.days} {planLink.lang === 'vi' ? 'ngày' : 'days'}
+                  </span>
+                )}
+                {planLink.guests && (
+                  <span className="px-2 py-0.5 rounded-md bg-white border border-emerald-200 text-gray-700 font-medium text-[11px]">
+                    {planLink.guests} {planLink.lang === 'vi' ? 'khách' : 'guests'}
+                  </span>
+                )}
+                {planLink.budget && (
+                  <span className="px-2 py-0.5 rounded-md bg-white border border-emerald-200 text-gray-700 font-medium text-[11px]">
+                    ~{new Intl.NumberFormat(planLink.lang === 'vi' ? 'vi-VN' : 'en-US').format(planLink.budget)} ₫
+                  </span>
+                )}
+              </div>
+            )}
+
+            <p className="text-xs text-gray-600 mb-2.5 leading-relaxed">{planLink.body}</p>
             <button
               type="button"
               onClick={planLink.onOpen}
-              className="w-full py-2 px-3 min-h-11 rounded-xl bg-[#087f78] hover:bg-[#066862] text-white font-bold text-xs flex items-center justify-center gap-1.5 shadow-xs transition-colors"
+              className="w-full py-2.5 px-3 min-h-11 rounded-xl bg-[#087f78] hover:bg-[#066862] active:scale-95 text-white font-extrabold text-xs flex items-center justify-center gap-1.5 shadow-md shadow-teal-950/15 transition-all"
             >
-              <span>{planLink.cta}</span><ArrowRight size={16} aria-hidden="true" />
+              <span>{planLink.cta}</span>
+              <ArrowRight size={16} weight="bold" aria-hidden="true" />
             </button>
           </div>
         )}

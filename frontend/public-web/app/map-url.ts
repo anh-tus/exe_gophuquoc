@@ -17,3 +17,11 @@ export function phuQuocMapUrl() {
   url.searchParams.set('marker', '10.027,104.017');
   return url.toString();
 }
+
+export function phuQuocGoogleMapUrl(options?: { satellite?: boolean; lat?: number; lon?: number; zoom?: number }) {
+  const lat = options?.lat ?? 10.22;
+  const lon = options?.lon ?? 103.96;
+  const zoom = options?.zoom ?? 11;
+  const type = options?.satellite ? 'k' : 'm';
+  return `https://maps.google.com/maps?q=${lat},${lon}&z=${zoom}&t=${type}&hl=vi&output=embed`;
+}

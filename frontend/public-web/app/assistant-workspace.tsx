@@ -34,6 +34,8 @@ type Props = {
   onShare: () => void;
   tripMessage: string;
   chatOnly?: boolean;
+  onSelectService?: (service: Service) => void;
+  onBookFullTrip?: () => void;
 };
 
 const copy = {
@@ -79,7 +81,7 @@ export default function AssistantWorkspace(props: Props) {
   return <div className={props.chatOnly ? 'assistant-workspace assistant-workspace-chat-only' : 'assistant-workspace'}>
     <div className="assistant-workspace-chat">
       <AssistantChat lang={props.lang} initialPrompt={props.initialPrompt} initialMessages={props.initialMessages} initialChoices={props.initialChoices} onMessagesChange={props.onMessagesChange} onChoicesChange={props.onChoicesChange} currentPlan={props.trip?.planDays ? { title: props.trip.planTitle || '', days: props.trip.planDays } : null} onInitialPromptConsumed={props.onInitialPromptConsumed} onConversationStarted={() => setChatStarted(true)} onPlan={acceptPlan} onSearch={setSearchResults} onUseTemplate={props.onUseTemplate} />
-      {props.chatOnly && searchResults && <ServiceSearchResults message={searchResults.message} recommendations={searchResults.recommendations} lang={props.lang} />}
+      {props.chatOnly && searchResults && <ServiceSearchResults message={searchResults.message} recommendations={searchResults.recommendations} lang={props.lang} onSelectService={props.onSelectService} />}
     </div>
 
     {!props.chatOnly && <section className="assistant-plan-panel" aria-labelledby="assistant-plan-heading">
@@ -96,7 +98,69 @@ export default function AssistantWorkspace(props: Props) {
         <button className="button outline assistant-sample-button" onClick={props.onGenerate}>{props.lang === 'vi' ? 'Tạo lịch trình mẫu' : 'Create sample plan'}</button>
       </div>}
 
-      {searchResults ? <ServiceSearchResults message={searchResults.message} recommendations={searchResults.recommendations} lang={props.lang} /> : props.trip ? <>
+      {searchResults ? <ServiceSearchResults message={searchResults.message} recommendations={searchResults.recommendations} lang={props.lang} onSelectService={props.onSelectService} /> : props.trip ? <>
+        {/* Full Tour Package Booking Callout */}
+        <div style={{
+          background: 'linear-gradient(135deg, #065f57 0%, #087f78 60%, #0e9f8f 100%)',
+          color: '#ffffff',
+          borderRadius: '1rem',
+          padding: '1.25rem',
+          margin: '0.75rem 0 1rem 0',
+          boxShadow: '0 8px 24px -4px rgba(8, 127, 120, 0.25)',
+          display: 'flex',
+          flexDirection: 'column',
+          gap: '0.9rem'
+        }}>
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', flexWrap: 'wrap', gap: '0.75rem' }}>
+            <div style={{ flex: '1 1 260px' }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', marginBottom: '0.35rem' }}>
+                <span style={{ backgroundColor: 'rgba(255,255,255,0.22)', padding: '0.2rem 0.6rem', borderRadius: '999px', fontSize: '0.7rem', fontWeight: 800, textTransform: 'uppercase', letterSpacing: '0.05em' }}>
+                  {props.lang === 'vi' ? '🎯 Đặt trọn gói toàn bộ tour' : '🎯 Full Package Booking'}
+                </span>
+                <span style={{ fontSize: '0.75rem', opacity: 0.9 }}>
+                  {props.trip.days} {props.lang === 'vi' ? 'ngày' : 'days'} · {props.trip.guests || props.guests} {props.lang === 'vi' ? 'khách' : 'guests'} · {props.trip.ids.length} {props.lang === 'vi' ? 'dịch vụ' : 'activities'}
+                </span>
+              </div>
+              <h3 style={{ fontSize: '1.15rem', fontWeight: 800, margin: '0 0 0.25rem 0', color: '#ffffff' }}>
+                {props.trip.planTitle || (props.lang === 'vi' ? 'Lịch trình Phú Quốc trọn gói' : 'Phu Quoc Full Itinerary')}
+              </h3>
+              <p style={{ fontSize: '0.8rem', margin: 0, opacity: 0.92, lineHeight: 1.45 }}>
+                {props.lang === 'vi'
+                  ? 'Giữ chỗ toàn bộ tour biển, khách sạn, nhà hàng & xe di chuyển theo đúng lịch trình đã lên chỉ với 1 bước.'
+                  : 'Hold all tours, hotels, restaurants & transfers in your itinerary at once in a single step.'}
+              </p>
+            </div>
+            <div style={{ textAlign: 'right', alignSelf: 'center' }}>
+              <div style={{ fontSize: '0.75rem', opacity: 0.85 }}>{t.estimated}</div>
+              <div style={{ fontSize: '1.35rem', fontWeight: 900 }}>
+                {new Intl.NumberFormat(props.lang === 'vi' ? 'vi-VN' : 'en-US', { style: 'currency', currency: 'VND', maximumFractionDigits: 0 }).format(total)}
+              </div>
+            </div>
+          </div>
+          {props.onBookFullTrip && (
+            <div style={{ display: 'flex', justifyContent: 'flex-end' }}>
+              <button
+                type="button"
+                onClick={props.onBookFullTrip}
+                className="button primary"
+                style={{
+                  backgroundColor: '#f59e0b',
+                  color: '#111827',
+                  fontWeight: 800,
+                  fontSize: '0.875rem',
+                  padding: '0.65rem 1.25rem',
+                  border: 'none',
+                  borderRadius: '0.75rem',
+                  boxShadow: '0 4px 12px rgba(245, 158, 11, 0.4)',
+                  cursor: 'pointer'
+                }}
+              >
+                {props.lang === 'vi' ? '🚀 Đặt tổng quát toàn bộ lịch trình này' : '🚀 Book entire itinerary package'}
+              </button>
+            </div>
+          )}
+        </div>
+
         <p className="assistant-plan-note">{props.trip.guests || props.guests} {t.group} · {t.notVerified} · {t.noAvailability}</p>
         <div className="assistant-plan-days">
           {Array.from({ length: props.trip.days }, (_, dayIndex) => {
@@ -117,12 +181,21 @@ export default function AssistantWorkspace(props: Props) {
                 const flatIndex = dayOffset + itemIndex;
                 const service = services.find((item) => item.id === activity.serviceId);
                 if (!service) return null;
-                return <PlanActivity key={`${flatIndex}-${service.id}`} service={service} activity={activity} periodLabel={dayPeriodLabel(activity.time, props.lang)} lang={props.lang} onUpdateTrip={props.onUpdateTrip} trip={props.trip!} itemIndex={flatIndex} dayIndex={dayIndex} activityIndex={itemIndex} guests={props.guests} categoryName={categoryName(service)} name={name(service)} description={description(service)} />;
+                return <PlanActivity key={`${flatIndex}-${service.id}`} service={service} activity={activity} periodLabel={dayPeriodLabel(activity.time, props.lang)} lang={props.lang} onUpdateTrip={props.onUpdateTrip} trip={props.trip!} itemIndex={flatIndex} dayIndex={dayIndex} activityIndex={itemIndex} guests={props.guests} categoryName={categoryName(service)} name={name(service)} description={description(service)} onSelectService={props.onSelectService} />;
               }) : <p className="muted">{props.lang === 'vi' ? 'Chưa có hoạt động. Hãy tạo hoặc chỉnh lịch trình.' : 'No activities yet. Create or edit your plan.'}</p>}
             </section>;
           })}
         </div>
         <div className="assistant-plan-actions">
+          {props.onBookFullTrip && (
+            <button
+              className="button primary"
+              style={{ backgroundColor: '#087f78', fontWeight: 800 }}
+              onClick={props.onBookFullTrip}
+            >
+              {props.lang === 'vi' ? '🎯 Đặt trọn gói lịch trình' : '🎯 Book full package'}
+            </button>
+          )}
           <button className="button primary" onClick={props.onSave}>{props.lang === 'vi' ? 'Lưu lịch trình' : 'Save itinerary'}</button>
           <button className="button outline" onClick={props.onShare}>{props.lang === 'vi' ? 'Sao chép liên kết' : 'Copy link'}</button>
           <span role="status">{props.tripMessage}</span>
@@ -132,7 +205,7 @@ export default function AssistantWorkspace(props: Props) {
   </div>;
 }
 
-function ServiceSearchResults({ message, recommendations, lang }: { message: string; recommendations: ServiceRecommendation[]; lang: Lang }) {
+function ServiceSearchResults({ message, recommendations, lang, onSelectService }: { message: string; recommendations: ServiceRecommendation[]; lang: Lang; onSelectService?: (service: Service) => void }) {
   const [expandedId, setExpandedId] = useState<string | null>(null);
   const text = lang === 'vi'
     ? { count: 'dịch vụ phù hợp trong danh mục demo', detail: 'Xem chi tiết', hide: 'Thu gọn', reviews: 'Đánh giá minh họa', from: 'Giá tham khảo từ', unknown: 'Không tìm thấy dịch vụ trong danh mục.' }
@@ -159,7 +232,24 @@ function ServiceSearchResults({ message, recommendations, lang }: { message: str
           <p>{recommendation.reason}</p>
           <p className="muted">{lang === 'vi' ? service.descriptionVi : service.descriptionEn}</p>
           <strong>{text.from} {new Intl.NumberFormat(lang === 'vi' ? 'vi-VN' : 'en-US', { style: 'currency', currency: 'VND', maximumFractionDigits: 0 }).format(service.price)} {priceUnitLabel(service.priceUnit, lang)}</strong>
-          <button className="button subtle" aria-expanded={expanded} onClick={() => setExpandedId(expanded ? null : service.id)}>{expanded ? text.hide : text.detail}</button>
+          <div className="flex items-center gap-2 mt-2">
+            <button className="button subtle" aria-expanded={expanded} onClick={() => setExpandedId(expanded ? null : service.id)}>{expanded ? text.hide : text.detail}</button>
+            {onSelectService && (
+              <button
+                className="button primary"
+                style={{ backgroundColor: '#087f78', color: '#ffffff', fontWeight: 700 }}
+                onClick={() => onSelectService(service)}
+              >
+                {service.category === 'restaurant'
+                  ? (lang === 'vi' ? 'Đặt bàn' : 'Book table')
+                  : service.category === 'tour'
+                  ? (lang === 'vi' ? 'Đặt tour' : 'Book tour')
+                  : service.category === 'stay'
+                  ? (lang === 'vi' ? 'Đặt phòng' : 'Book stay')
+                  : (lang === 'vi' ? 'Đặt dịch vụ' : 'Book service')}
+              </button>
+            )}
+          </div>
           {expanded && <section className="review-list">{service.reviewCount > 0 && <><h4>{text.reviews} · {service.rating.toFixed(1)} ({service.reviewCount})</h4>{service.reviews.map((review, index) => <blockquote key={index}><strong><Star size={14} weight="fill" aria-hidden="true" /> {review.rating}</strong><p>{lang === 'vi' ? review.commentVi : review.commentEn}</p></blockquote>)}</>}<p>{service.area} · {lang === 'vi' ? service.descriptionVi : service.descriptionEn}</p><small>{lang === 'vi' ? 'Thông tin và đánh giá chỉ là minh họa, chưa xác minh.' : 'Details and reviews are illustrative and unverified.'}</small></section>}
         </div>
       </article>;
@@ -175,9 +265,9 @@ function dayPeriodLabel(time: string, lang: Lang): string {
   return labels[period];
 }
 
-function PlanActivity({ service, activity, periodLabel, lang, onUpdateTrip, trip, itemIndex, dayIndex, activityIndex, guests, categoryName, name, description }: {
+function PlanActivity({ service, activity, periodLabel, lang, onUpdateTrip, trip, itemIndex, dayIndex, activityIndex, guests, categoryName, name, description, onSelectService }: {
   service: Service; activity: AssistantActivity; periodLabel: string; lang: Lang; onUpdateTrip: (trip: Trip) => void; trip: Trip; itemIndex: number;
-  dayIndex: number; activityIndex: number; guests: number; categoryName: string; name: string; description: string;
+  dayIndex: number; activityIndex: number; guests: number; categoryName: string; name: string; description: string; onSelectService?: (service: Service) => void;
 }) {
   const [expanded, setExpanded] = useState(false);
   const text = lang === 'vi' ? { detail: 'Xem chi tiết', hide: 'Thu gọn', replace: 'Đổi', remove: 'Xóa', reviews: 'Đánh giá minh họa', from: 'Từ', duration: 'Thời lượng', logistics: 'Di chuyển', tips: 'Mẹo chuẩn bị' } : { detail: 'View details', hide: 'Hide details', replace: 'Replace', remove: 'Remove', reviews: 'Illustrative reviews', from: 'From', duration: 'Duration', logistics: 'Getting there', tips: 'Helpful tips' };
@@ -203,6 +293,23 @@ function PlanActivity({ service, activity, periodLabel, lang, onUpdateTrip, trip
     <div className="assistant-plan-activity-main"><span className="chip assistant-plan-period">{periodLabel}</span> <span className="chip">{categoryName} · {service.area}</span><h4>{name}</h4><p><strong className="trip-time">{activity.time}–{activity.endTime} · {activity.durationMinutes} {lang === 'vi' ? 'phút' : 'min'} · </strong>{activity.note || description}</p><strong>{new Intl.NumberFormat(lang === 'vi' ? 'vi-VN' : 'en-US', { style: 'currency', currency: 'VND', maximumFractionDigits: 0 }).format(activityCost)} <small>{priceUnitLabel(service.priceUnit, lang)}</small></strong></div>
     <div className="trip-actions assistant-plan-item-actions">
       <button aria-expanded={expanded} onClick={() => setExpanded(!expanded)}>{expanded ? text.hide : text.detail}</button>
+      {onSelectService && (
+        <button
+          className="button primary"
+          style={{ backgroundColor: '#087f78', color: '#ffffff', fontWeight: 700 }}
+          onClick={() => onSelectService(service)}
+        >
+          {service.category === 'restaurant'
+            ? (lang === 'vi' ? 'Đặt bàn' : 'Book table')
+            : service.category === 'tour'
+            ? (lang === 'vi' ? 'Đặt tour' : 'Book tour')
+            : service.category === 'stay'
+            ? (lang === 'vi' ? 'Đặt phòng' : 'Book stay')
+            : service.category === 'transport'
+            ? (lang === 'vi' ? 'Đặt xe' : 'Book ride')
+            : (lang === 'vi' ? 'Đặt dịch vụ' : 'Book')}
+        </button>
+      )}
       <button onClick={replaceActivity}>{text.replace}</button>
       <button onClick={removeActivity}>{text.remove}</button>
     </div>
@@ -212,9 +319,25 @@ function PlanActivity({ service, activity, periodLabel, lang, onUpdateTrip, trip
         <p>{description}</p><p className="muted">{service.area} · {text.from} {new Intl.NumberFormat(lang === 'vi' ? 'vi-VN' : 'en-US', { style: 'currency', currency: 'VND', maximumFractionDigits: 0 }).format(service.price)} {priceUnitLabel(service.priceUnit, lang)}</p>
         <p><strong>{text.duration}:</strong> {activity.durationMinutes} {lang === 'vi' ? 'phút' : 'minutes'}{activity.logistics && <> · <strong>{text.logistics}:</strong> {activity.logistics}</>}{activity.tips && <> · <strong>{text.tips}:</strong> {activity.tips}</>}</p>
         {service.reviews.length > 0 && <><h5>{text.reviews}</h5>{service.reviews.map((review, index) => <blockquote key={index}><strong>{review.rating}</strong><p>{lang === 'vi' ? review.commentVi : review.commentEn}</p></blockquote>)}</>}
-        <p className="assistant-inline-disclaimer">{lang === 'vi' ? 'Giá và đánh giá chỉ là minh họa, chưa xác minh.' : 'Prices and reviews are illustrative and unverified.'}</p>
+        {onSelectService && (
+          <div style={{ marginTop: '0.75rem' }}>
+            <button
+              className="button primary"
+              style={{ backgroundColor: '#087f78', color: '#ffffff', fontWeight: 700, width: '100%', padding: '0.6rem 1rem' }}
+              onClick={() => onSelectService(service)}
+            >
+              {service.category === 'restaurant'
+                ? (lang === 'vi' ? 'Xác nhận đặt bàn (Demo)' : 'Confirm table booking (Demo)')
+                : service.category === 'tour'
+                ? (lang === 'vi' ? 'Xác nhận đặt tour (Demo)' : 'Confirm tour booking (Demo)')
+                : service.category === 'stay'
+                ? (lang === 'vi' ? 'Xác nhận đặt phòng (Demo)' : 'Confirm stay booking (Demo)')
+                : (lang === 'vi' ? 'Xác nhận đặt dịch vụ (Demo)' : 'Confirm booking (Demo)')}
+            </button>
+          </div>
+        )}
+        <p className="assistant-inline-disclaimer" style={{ marginTop: '0.5rem' }}>{lang === 'vi' ? 'Giá và đánh giá chỉ là minh họa, chưa xác minh.' : 'Prices and reviews are illustrative and unverified.'}</p>
       </div>
     </section>}
   </article>;
 }
-

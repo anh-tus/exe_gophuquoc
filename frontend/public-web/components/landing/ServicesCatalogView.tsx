@@ -4,7 +4,7 @@ import React, { useState } from 'react';
 import Image from 'next/image';
 import { MagnifyingGlass, Heart, MapPin, Sparkle, ArrowRight } from '@phosphor-icons/react';
 import SelectMenu from '../ui/SelectMenu';
-import { phuQuocMapUrl } from '../../app/map-url';
+import { phuQuocMapUrl, phuQuocGoogleMapUrl } from '../../app/map-url';
 import { services, type ServiceCategory } from '../../app/catalog';
 import { filterCatalogServices } from '../../app/catalog-filter';
 
@@ -211,6 +211,7 @@ export default function ServicesCatalogView({
   const [ratingFilter, setRatingFilter] = useState('all');
   const [sortOrder, setSortOrder] = useState<'popular' | 'price-asc' | 'rating-desc'>('popular');
   const [favorites, setFavorites] = useState<string[]>([]);
+  const [mapMode, setMapMode] = useState<'standard' | 'satellite'>('standard');
   const [selectedPoi, setSelectedPoi] = useState({
     title: 'Cảng An Thới (Nam Đảo)',
     badge: 'TOUR HOT',
@@ -514,36 +515,64 @@ export default function ServicesCatalogView({
             <div className="bg-white rounded-3xl p-4 border border-gray-200 shadow-md">
               <div className="flex items-center justify-between mb-3 text-xs font-bold text-gray-800">
                 <span className="flex items-center gap-1.5">
-
+                  <MapPin size={16} className="text-[#087f78]" weight="bold" />
                   <span>{t('Bản đồ Đảo Ngọc', 'Island map')}</span>
                 </span>
-                <a
-                  href="https://www.google.com/maps/@?api=1&map_action=map&center=10.2%2C103.97&zoom=11&basemap=satellite"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="rounded-lg bg-gray-100 px-3 py-2 text-xs font-bold text-[#087f78] hover:bg-emerald-50"
-                >
-                  {t('Xem vệ tinh ↗', 'Satellite view ↗')}
-                </a>
+                <div className="flex items-center gap-1 bg-gray-100 p-1 rounded-xl">
+                  <button
+                    type="button"
+                    onClick={() => setMapMode('standard')}
+                    className={`px-2.5 py-1 rounded-lg text-xs font-bold transition-all ${
+                      mapMode === 'standard' ? 'bg-white text-[#087f78] shadow-xs' : 'text-gray-500 hover:text-gray-900'
+                    }`}
+                  >
+                    {t('Bản đồ', 'Map')}
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => setMapMode('satellite')}
+                    className={`px-2.5 py-1 rounded-lg text-xs font-bold transition-all ${
+                      mapMode === 'satellite' ? 'bg-white text-[#087f78] shadow-xs' : 'text-gray-500 hover:text-gray-900'
+                    }`}
+                  >
+                    {t('Vệ tinh', 'Satellite')}
+                  </button>
+                </div>
               </div>
 
               {/* Map Iframe */}
-              <div className="relative h-80 w-full rounded-2xl overflow-hidden border border-gray-200">
+              <div className="relative h-80 w-full rounded-2xl overflow-hidden border border-gray-200 bg-gray-100">
                 <iframe
                   title={t('Bản đồ du lịch Phú Quốc', 'Phu Quoc travel map')}
                   width="100%"
                   height="100%"
                   className="border-0"
-                  src={phuQuocMapUrl()}
-                  referrerPolicy="strict-origin-when-cross-origin"
+                  src={phuQuocGoogleMapUrl({ satellite: mapMode === 'satellite' })}
+                  referrerPolicy="no-referrer-when-downgrade"
+                  loading="lazy"
                 />
-                <div className="absolute top-3 left-3 bg-white/90 backdrop-blur-md px-2.5 py-1 rounded-lg text-xs font-bold text-emerald-800 border border-emerald-200">
-                   {t('Đang xem: Cảng An Thới', 'Viewing: An Thoi Port')}
+                <div className="absolute top-3 left-3 bg-white/95 backdrop-blur-md px-2.5 py-1 rounded-lg text-xs font-bold text-emerald-800 border border-emerald-200 shadow-xs">
+                   {t('Đang xem: Phú Quốc (Đảo Ngọc)', 'Viewing: Phu Quoc Island')}
                 </div>
               </div>
-              <a href={phuQuocMapUrl()} target="_blank" rel="noopener noreferrer" className="mt-2 inline-flex min-h-11 items-center text-xs font-bold text-[#087f78] hover:underline">
-                {t('Mở bản đồ trong tab mới', 'Open map in a new tab')}
-              </a>
+              <div className="flex items-center justify-between mt-2 pt-1 text-xs">
+                <a
+                  href={`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent('Phú Quốc, Kiên Giang')}`}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="inline-flex min-h-11 items-center font-bold text-[#087f78] hover:underline"
+                >
+                  {t('Mở trong Google Maps ↗', 'Open in Google Maps ↗')}
+                </a>
+                <a
+                  href={phuQuocMapUrl()}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="inline-flex min-h-11 items-center text-gray-400 hover:text-gray-600 hover:underline"
+                >
+                  {t('Xem OpenStreetMap', 'View OpenStreetMap')}
+                </a>
+              </div>
 
               {/* Selected POI Details Card */}
               <div className="mt-4 p-4 rounded-2xl bg-gray-50 border border-gray-200/80">
